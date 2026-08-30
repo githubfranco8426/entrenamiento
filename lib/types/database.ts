@@ -32,6 +32,8 @@ export interface Database {
           equipment: string | null;
           is_custom: boolean;
           plate_increment_kg: number;
+          thumbnail_url: string | null;
+          video_url: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["exercises"]["Row"]> & { name: string };

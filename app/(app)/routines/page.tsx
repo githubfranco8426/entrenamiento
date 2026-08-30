@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { RoutineForm } from "@/components/routines/routine-form";
+import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 
 export default async function RoutinesPage() {
   const supabase = await createClient();
@@ -9,7 +10,7 @@ export default async function RoutinesPage() {
   const [{ data: routines }, { data: exercises }] = await Promise.all([
     supabase
       .from("routines")
-      .select("*, routine_exercises(*, exercises(name), target_sets(*))")
+      .select("*, routine_exercises(*, exercises(name, thumbnail_url), target_sets(*))")
       .order("order_index"),
     supabase.from("exercises").select("id, name").order("name"),
   ]);
@@ -48,12 +49,21 @@ export default async function RoutinesPage() {
                   return (
                     <div key={re.id}>
                       {i > 0 && <Separator className="my-2" />}
-                      <p className="text-sm font-medium">{re.exercises?.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {sets.length} sets
-                        {first?.target_reps_min && ` · ${first.target_reps_min}-${first.target_reps_max ?? first.target_reps_min} reps`}
-                        {first?.target_rpe && ` · RPE ${first.target_rpe}`}
-                      </p>
+                      <div className="flex items-center gap-2.5">
+                        <ExerciseThumbnail
+                          src={re.exercises?.thumbnail_url}
+                          alt={re.exercises?.name ?? ""}
+                          className="size-8"
+                        />
+                        <div>
+                          <p className="text-sm font-medium">{re.exercises?.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {sets.length} sets
+                            {first?.target_reps_min && ` · ${first.target_reps_min}-${first.target_reps_max ?? first.target_reps_min} reps`}
+                            {first?.target_rpe && ` · RPE ${first.target_rpe}`}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}

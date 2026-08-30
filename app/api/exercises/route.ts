@@ -22,10 +22,12 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const body = await request.json();
-  const { name, muscleGroup, equipment } = body as {
+  const { name, muscleGroup, equipment, thumbnailUrl, videoUrl } = body as {
     name: string;
     muscleGroup?: string;
     equipment?: string;
+    thumbnailUrl?: string;
+    videoUrl?: string;
   };
 
   const { data, error } = await supabase
@@ -35,6 +37,8 @@ export async function POST(request: Request) {
       name,
       muscle_group: muscleGroup ?? null,
       equipment: equipment ?? null,
+      thumbnail_url: thumbnailUrl ?? null,
+      video_url: videoUrl ?? null,
       is_custom: true,
     })
     .select()

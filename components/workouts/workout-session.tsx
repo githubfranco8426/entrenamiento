@@ -15,11 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
+import { PlayCircleIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
   name: string;
   plate_increment_kg: number;
+  thumbnail_url: string | null;
+  video_url: string | null;
 }
 
 interface TargetSet {
@@ -67,6 +71,8 @@ interface Block {
   exerciseId: string;
   exerciseName: string;
   plateIncrementKg: number;
+  thumbnailUrl: string | null;
+  videoUrl: string | null;
   routineExerciseId: string | null;
   targetSets: TargetSet[];
   loggedSets: SetLog[];
@@ -86,6 +92,8 @@ function buildInitialBlocks(workout: WorkoutData): Block[] {
       exerciseId: re.exercise_id,
       exerciseName: re.exercises.name,
       plateIncrementKg: re.exercises.plate_increment_kg,
+      thumbnailUrl: re.exercises.thumbnail_url,
+      videoUrl: re.exercises.video_url,
       routineExerciseId: re.id,
       targetSets: [...re.target_sets].sort((a, b) => a.set_index - b.set_index),
       loggedSets: [...(matchingWe?.set_logs ?? [])].sort((a, b) => a.set_index - b.set_index),
@@ -100,6 +108,8 @@ function buildInitialBlocks(workout: WorkoutData): Block[] {
       exerciseId: we.exercise_id,
       exerciseName: we.exercises.name,
       plateIncrementKg: we.exercises.plate_increment_kg,
+      thumbnailUrl: we.exercises.thumbnail_url,
+      videoUrl: we.exercises.video_url,
       routineExerciseId: null,
       targetSets: [],
       loggedSets: [...we.set_logs].sort((a, b) => a.set_index - b.set_index),
@@ -132,6 +142,8 @@ export function WorkoutSession({
         exerciseId: ex.id,
         exerciseName: ex.name,
         plateIncrementKg: ex.plate_increment_kg,
+        thumbnailUrl: ex.thumbnail_url,
+        videoUrl: ex.video_url,
         routineExerciseId: null,
         targetSets: [],
         loggedSets: [],
@@ -307,15 +319,30 @@ function ExerciseBlockCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{block.exerciseName}</CardTitle>
-        {block.targetSets.length > 0 && (
-          <CardDescription>
-            {block.targetSets.length} sets objetivo
-            {nextTarget?.target_reps_min &&
-              ` · ${nextTarget.target_reps_min}-${nextTarget.target_reps_max ?? nextTarget.target_reps_min} reps`}
-            {nextTarget?.target_rpe && ` · RPE ${nextTarget.target_rpe}`}
-          </CardDescription>
-        )}
+        <div className="flex items-center gap-3">
+          <ExerciseThumbnail src={block.thumbnailUrl} alt={block.exerciseName} className="size-11" />
+          <div className="flex-1">
+            <CardTitle>{block.exerciseName}</CardTitle>
+            {block.targetSets.length > 0 && (
+              <CardDescription>
+                {block.targetSets.length} sets objetivo
+                {nextTarget?.target_reps_min &&
+                  ` · ${nextTarget.target_reps_min}-${nextTarget.target_reps_max ?? nextTarget.target_reps_min} reps`}
+                {nextTarget?.target_rpe && ` · RPE ${nextTarget.target_rpe}`}
+              </CardDescription>
+            )}
+          </div>
+          {block.videoUrl && (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              render={<a href={block.videoUrl} target="_blank" rel="noreferrer" />}
+            >
+              <PlayCircleIcon />
+              <span className="sr-only">Ver ejecución</span>
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {block.loggedSets.length > 0 && (

@@ -3,6 +3,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { ExerciseForm } from "@/components/exercises/exercise-form";
+import { ExerciseMediaDialog } from "@/components/exercises/exercise-media-dialog";
+import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
+import { Button } from "@/components/ui/button";
+import { PlayCircleIcon } from "lucide-react";
 
 export default async function ExercisesPage() {
   const supabase = await createClient();
@@ -30,15 +34,21 @@ export default async function ExercisesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead></TableHead>
                   <TableHead>Nombre</TableHead>
                   <TableHead>Grupo muscular</TableHead>
                   <TableHead>Equipo</TableHead>
                   <TableHead>Origen</TableHead>
+                  <TableHead>Ejecución</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {(exercises ?? []).map((ex) => (
                   <TableRow key={ex.id}>
+                    <TableCell>
+                      <ExerciseThumbnail src={ex.thumbnail_url} alt={ex.name} />
+                    </TableCell>
                     <TableCell className="font-medium">{ex.name}</TableCell>
                     <TableCell>{ex.muscle_group ?? "—"}</TableCell>
                     <TableCell>{ex.equipment ?? "—"}</TableCell>
@@ -46,6 +56,23 @@ export default async function ExercisesPage() {
                       <Badge variant={ex.hevy_template_id ? "secondary" : "outline"}>
                         {ex.hevy_template_id ? "Hevy" : "Manual"}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {ex.video_url ? (
+                        <Button variant="ghost" size="sm" render={<a href={ex.video_url} target="_blank" rel="noreferrer" />}>
+                          <PlayCircleIcon /> Ver
+                        </Button>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <ExerciseMediaDialog
+                        exerciseId={ex.id}
+                        exerciseName={ex.name}
+                        initialThumbnailUrl={ex.thumbnail_url}
+                        initialVideoUrl={ex.video_url}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}

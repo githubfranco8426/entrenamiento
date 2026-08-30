@@ -13,6 +13,8 @@ export function ExerciseForm() {
   const [name, setName] = useState("");
   const [muscleGroup, setMuscleGroup] = useState("");
   const [equipment, setEquipment] = useState("");
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,6 +27,8 @@ export function ExerciseForm() {
         name,
         muscleGroup: muscleGroup || undefined,
         equipment: equipment || undefined,
+        thumbnailUrl: thumbnailUrl || undefined,
+        videoUrl: videoUrl || undefined,
       }),
     });
 
@@ -37,6 +41,8 @@ export function ExerciseForm() {
     setName("");
     setMuscleGroup("");
     setEquipment("");
+    setThumbnailUrl("");
+    setVideoUrl("");
     toast.success("Ejercicio agregado");
     router.refresh();
   }
@@ -61,6 +67,26 @@ export function ExerciseForm() {
           id="ex-equipment"
           value={equipment}
           onChange={(e) => setEquipment(e.target.value)}
+        />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="ex-thumbnail">Imagen (opcional)</Label>
+        <Input
+          id="ex-thumbnail"
+          type="url"
+          placeholder="https://..."
+          value={thumbnailUrl}
+          onChange={(e) => setThumbnailUrl(e.target.value)}
+        />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="ex-video">Video ejecución (opcional)</Label>
+        <Input
+          id="ex-video"
+          type="url"
+          placeholder="https://youtube.com/..."
+          value={videoUrl}
+          onChange={(e) => setVideoUrl(e.target.value)}
         />
       </div>
       <Button type="submit" disabled={loading}>

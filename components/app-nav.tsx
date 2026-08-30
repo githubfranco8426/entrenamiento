@@ -5,24 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  LayoutDashboardIcon,
-  ClipboardListIcon,
-  DumbbellIcon,
-  CalendarRangeIcon,
-  SparklesIcon,
-  SettingsIcon,
-  LogOutIcon,
-} from "lucide-react";
-
-const LINKS = [
-  { href: "/dashboard", label: "Panel", icon: LayoutDashboardIcon },
-  { href: "/routines", label: "Rutinas", icon: ClipboardListIcon },
-  { href: "/exercises", label: "Ejercicios", icon: DumbbellIcon },
-  { href: "/program", label: "Programa", icon: CalendarRangeIcon },
-  { href: "/ai", label: "IA", icon: SparklesIcon },
-  { href: "/settings", label: "Ajustes", icon: SettingsIcon },
-];
+import { NAV_LINKS } from "@/components/nav-links";
+import { DumbbellIcon, LogOutIcon } from "lucide-react";
 
 export function AppNav({ email }: { email: string | null }) {
   const pathname = usePathname();
@@ -36,7 +20,7 @@ export function AppNav({ email }: { email: string | null }) {
   }
 
   return (
-    <aside className="flex w-60 shrink-0 flex-col gap-1 bg-sidebar px-3 py-5 text-sidebar-foreground">
+    <aside className="hidden w-60 shrink-0 flex-col gap-1 bg-sidebar px-3 py-5 text-sidebar-foreground sm:flex">
       <div className="mb-4 flex items-center gap-2 px-2">
         <div className="flex size-8 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
           <DumbbellIcon className="size-4" />
@@ -45,7 +29,7 @@ export function AppNav({ email }: { email: string | null }) {
       </div>
 
       <nav className="flex flex-1 flex-col gap-1">
-        {LINKS.map((link) => {
+        {NAV_LINKS.map((link) => {
           const Icon = link.icon;
           const active = pathname.startsWith(link.href);
           return (
