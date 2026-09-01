@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { repsInReserve } from "@/lib/autoregulation/rpe-tables";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import {
@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
-import { PlayCircleIcon } from "lucide-react";
+import { PlayCircleIcon, CheckIcon, PlusIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
@@ -34,10 +34,9 @@ interface TargetSet {
   target_reps_min: number | null;
   target_reps_max: number | null;
   target_rpe: number | null;
+  target_weight_kg: number | null;
+  rest_seconds: number | null;
 }
-
-const LOG_INPUT_CLASS =
-  "bg-foreground dark:bg-foreground text-background placeholder:text-background/50 border-transparent font-mono text-center";
 
 const SET_TYPE_LABELS: Record<string, string> = {
   myo: "+ Myo-reps",
@@ -134,12 +133,15 @@ function buildInitialBlocks(workout: WorkoutData): Block[] {
 export function WorkoutSession({
   workout,
   allExercises,
+  estimatedOneRepMaxByExercise,
 }: {
   workout: WorkoutData;
   allExercises: ExerciseOption[];
+  estimatedOneRepMaxByExercise: Record<string, number>;
 }) {
   const router = useRouter();
   const [blocks, setBlocks] = useState<Block[]>(() => buildInitialBlocks(workout));
+  const [extraRowsByBlock, setExtraRowsByBlock] = useState<Record<string, number>>({});
   const [ended, setEnded] = useState(!!workout.ended_at);
   const [addExerciseId, setAddExerciseId] = useState("");
   const [finishing, setFinishing] = useState(false);
@@ -241,24 +243,37 @@ export function WorkoutSession({
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-lg font-semibold">
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            {workout.routines?.day_label ?? "Entreno libre"}
+          </p>
+          <h1 className="font-heading text-xl font-bold uppercase tracking-tight">
             {workout.routines?.title ?? "Entreno libre"}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="font-mono text-xs text-muted-foreground">
             {format(new Date(workout.started_at), "dd/MM/yyyy HH:mm")}
           </p>
         </div>
         {ended ? (
           <Badge variant="secondary">Finalizado</Badge>
         ) : (
-          <Button onClick={finishWorkout} disabled={finishing}>
-            {finishing ? "Finalizando..." : "Finalizar entrenamiento"}
+          <Button onClick={finishWorkout} disabled={finishing} className="font-semibold uppercase tracking-wide">
+            {finishing ? "Finalizando..." : "Finalizar"}
           </Button>
         )}
       </div>
 
       {blocks.map((block) => (
-        <ExerciseBlockCard key={block.key} block={block} ended={ended} onLogSet={logSet} />
+        <ExerciseBlockCard
+          key={block.key}
+          block={block}
+          ended={ended}
+          onLogSet={logSet}
+          estimatedOneRepMaxKg={estimatedOneRepMaxByExercise[block.exerciseId] ?? null}
+          extraRows={extraRowsByBlock[block.key] ?? 0}
+          onAddRow={() =>
+            setExtraRowsByBlock((prev) => ({ ...prev, [block.key]: (prev[block.key] ?? 0) + 1 }))
+          }
+        />
       ))}
 
       {!ended && (
@@ -293,62 +308,70 @@ export function WorkoutSession({
   );
 }
 
+/** RIR por defecto cuando el set objetivo no define target_rpe (p. ej. ejercicios libres). */
+const DEFAULT_TARGET_RIR = 2;
+
+const ROW_GRID = "grid grid-cols-[2.5rem_1fr_1fr_3.5rem_2.75rem] items-center gap-2";
+
+function formatRest(seconds: number | null): string | null {
+  if (!seconds) return null;
+  if (seconds < 60) return `${seconds}s`;
+  const min = Math.floor(seconds / 60);
+  const rem = seconds % 60;
+  return rem === 0 ? `${min} min` : `${min}:${String(rem).padStart(2, "0")} min`;
+}
+
 function ExerciseBlockCard({
   block,
   ended,
   onLogSet,
+  estimatedOneRepMaxKg,
+  extraRows,
+  onAddRow,
 }: {
   block: Block;
   ended: boolean;
   onLogSet: (block: Block, weightKg: number, reps: number, rpeActual: number) => Promise<void>;
+  estimatedOneRepMaxKg: number | null;
+  extraRows: number;
+  onAddRow: () => void;
 }) {
-  const [weight, setWeight] = useState("");
-  const [reps, setReps] = useState("");
-  const [rpe, setRpe] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
   const nextIndex = block.loggedSets.length;
   const nextTarget = block.targetSets[nextIndex] ?? null;
-  const hasMoreTargets = block.targetSets.length === 0 || nextIndex < block.targetSets.length;
+  const allTargetsLogged = nextIndex >= block.targetSets.length;
+  const rowCount = Math.max(block.targetSets.length, nextIndex + (ended ? 0 : 1)) + (allTargetsLogged ? extraRows : 0);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const w = Number(weight);
-    const r = Number(reps);
-    const p = Number(rpe);
-    if (!w || !r || !p) {
-      toast.error("Completá peso, reps y RPE");
-      return;
-    }
-    setSubmitting(true);
-    await onLogSet(block, w, r, p);
-    setSubmitting(false);
-    setWeight("");
-    setReps("");
-    setRpe("");
-  }
+  const headerTarget = nextTarget ?? block.targetSets[0] ?? null;
+  const targetRir = headerTarget?.target_rpe != null ? Math.round(repsInReserve(headerTarget.target_rpe)) : null;
+  const restLabel = formatRest(headerTarget?.rest_seconds ?? null);
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="overflow-hidden py-0 gap-0">
+      <CardHeader className="flex-row items-center justify-between gap-3 border-b border-border bg-muted/30 py-3">
         <div className="flex items-center gap-3">
           <ExerciseThumbnail src={block.thumbnailUrl} alt={block.exerciseName} className="size-11" />
-          <div className="flex-1">
+          <div>
             <div className="flex items-center gap-2">
-              <CardTitle>{block.exerciseName}</CardTitle>
+              <CardTitle className="text-base">{block.exerciseName}</CardTitle>
               {nextTarget?.set_type && nextTarget.set_type !== "normal" && (
                 <Badge className="bg-primary/15 text-primary">{SET_TYPE_LABELS[nextTarget.set_type] ?? nextTarget.set_type}</Badge>
               )}
             </div>
-            {block.targetSets.length > 0 && (
-              <CardDescription>
-                {block.targetSets.length} sets objetivo
-                {nextTarget?.target_reps_min &&
-                  ` · ${nextTarget.target_reps_min}-${nextTarget.target_reps_max ?? nextTarget.target_reps_min} reps`}
-                {nextTarget?.target_rpe && ` · RPE ${nextTarget.target_rpe}`}
+            {(targetRir != null || restLabel) && (
+              <CardDescription className="font-mono text-xs">
+                {targetRir != null && `Target RIR ${targetRir}`}
+                {targetRir != null && restLabel && " · "}
+                {restLabel && `Descanso ${restLabel}`}
               </CardDescription>
             )}
           </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {estimatedOneRepMaxKg != null && (
+            <span className="whitespace-nowrap rounded-md border border-border bg-card px-2 py-1 font-mono text-xs text-secondary">
+              e1RM {estimatedOneRepMaxKg}kg
+            </span>
+          )}
           {block.videoUrl && (
             <Button
               variant="ghost"
@@ -361,72 +384,155 @@ function ExerciseBlockCard({
           )}
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        {block.loggedSets.length > 0 && (
-          <div className="overflow-hidden rounded-lg border border-border">
-            <div className="grid grid-cols-4 gap-2 border-b border-border bg-muted/40 px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-              <span>Set</span>
-              <span>Kg</span>
-              <span>Reps</span>
-              <span>RPE</span>
-            </div>
-            {block.loggedSets.map((s) => (
-              <div
-                key={s.id}
-                className="grid grid-cols-4 gap-2 border-b border-border/60 px-3 py-1.5 font-mono text-sm last:border-b-0"
-              >
-                <span className="text-muted-foreground">{s.set_index + 1}</span>
-                <span>{s.weight_kg}</span>
-                <span>{s.reps}</span>
-                <span
-                  className={
-                    s.rpe_actual != null && s.rpe_actual >= 9
-                      ? "text-destructive"
-                      : s.rpe_actual != null && s.rpe_actual >= 7
-                        ? "text-secondary"
-                        : "text-foreground"
-                  }
-                >
-                  {s.rpe_actual}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+      <CardContent className="flex flex-col gap-0 px-0 pb-0">
+        <div className={cn(ROW_GRID, "border-b border-border px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground")}>
+          <span className="text-center">Set</span>
+          <span className="text-center">Kg</span>
+          <span className="text-center">Reps</span>
+          <span className="text-center">Rir</span>
+          <span className="text-center">Ok</span>
+        </div>
 
-        {!ended && hasMoreTargets && (
-          <form onSubmit={handleSubmit} className="flex items-end gap-2">
-            <Input
-              type="number"
-              step="0.5"
-              placeholder="Peso (kg)"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              className={cn(LOG_INPUT_CLASS, "w-24")}
+        {Array.from({ length: rowCount }, (_, i) => i).map((i) => {
+          const loggedSet = block.loggedSets[i] ?? null;
+          const targetSet = block.targetSets[i] ?? null;
+          const status: "done" | "active" | "pending" = loggedSet ? "done" : i === nextIndex ? "active" : "pending";
+          return (
+            <SetRow
+              key={i}
+              index={i}
+              status={ended && status === "active" ? "pending" : status}
+              loggedSet={loggedSet}
+              targetSet={targetSet}
+              onSubmit={(weightKg, reps, rpeActual) => onLogSet(block, weightKg, reps, rpeActual)}
             />
-            <Input
-              type="number"
-              placeholder="Reps"
-              value={reps}
-              onChange={(e) => setReps(e.target.value)}
-              className={cn(LOG_INPUT_CLASS, "w-20")}
-            />
-            <Input
-              type="number"
-              step="0.5"
-              min="5"
-              max="10"
-              placeholder="RPE"
-              value={rpe}
-              onChange={(e) => setRpe(e.target.value)}
-              className={cn(LOG_INPUT_CLASS, "w-20")}
-            />
-            <Button type="submit" size="sm" disabled={submitting}>
-              {submitting ? "..." : `Registrar set ${nextIndex + 1}`}
-            </Button>
-          </form>
+          );
+        })}
+
+        {!ended && allTargetsLogged && (
+          <button
+            type="button"
+            onClick={onAddRow}
+            className="flex items-center justify-center gap-1.5 border-b border-border py-2.5 font-mono text-xs font-medium uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <PlusIcon className="size-3.5" />
+            Agregar set
+          </button>
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function SetRow({
+  index,
+  status,
+  loggedSet,
+  targetSet,
+  onSubmit,
+}: {
+  index: number;
+  status: "done" | "active" | "pending";
+  loggedSet: SetLog | null;
+  targetSet: TargetSet | null;
+  onSubmit: (weightKg: number, reps: number, rpeActual: number) => Promise<void>;
+}) {
+  const defaultWeight = targetSet?.target_weight_kg != null ? String(targetSet.target_weight_kg) : "";
+  const defaultReps =
+    targetSet?.target_reps_max != null
+      ? String(targetSet.target_reps_max)
+      : targetSet?.target_reps_min != null
+        ? String(targetSet.target_reps_min)
+        : "";
+  const defaultRir = targetSet?.target_rpe != null ? String(Math.round(repsInReserve(targetSet.target_rpe))) : String(DEFAULT_TARGET_RIR);
+
+  const [weight, setWeight] = useState(defaultWeight);
+  const [reps, setReps] = useState(defaultReps);
+  const [rir, setRir] = useState(defaultRir);
+  const [submitting, setSubmitting] = useState(false);
+
+  if (status === "done" && loggedSet) {
+    const doneRir = loggedSet.rpe_actual != null ? Math.round(repsInReserve(loggedSet.rpe_actual)) : null;
+    return (
+      <div className={cn(ROW_GRID, "border-b border-border/60 px-3 py-1.5 font-mono text-sm text-muted-foreground")}>
+        <span className="text-center">{index + 1}</span>
+        <span className="text-center text-foreground">{loggedSet.weight_kg ?? "—"}</span>
+        <span className="text-center text-foreground">{loggedSet.reps ?? "—"}</span>
+        <span className="text-center">{doneRir ?? "—"}</span>
+        <span className="flex justify-center">
+          <span className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <CheckIcon className="size-3.5" />
+          </span>
+        </span>
+      </div>
+    );
+  }
+
+  const isPending = status === "pending";
+
+  async function handleDone() {
+    const w = Number(weight);
+    const r = Number(reps);
+    const rirValue = Number(rir);
+    if (!w || !r || rir === "" || Number.isNaN(rirValue)) {
+      toast.error("Completá kg, reps y RIR");
+      return;
+    }
+    const rpeActual = Math.min(10, Math.max(5, 10 - rirValue));
+    setSubmitting(true);
+    await onSubmit(w, r, rpeActual);
+    setSubmitting(false);
+  }
+
+  return (
+    <div
+      className={cn(
+        ROW_GRID,
+        "border-b border-border/60 px-3 py-1.5",
+        status === "active" && "border-l-2 border-l-primary bg-primary/5",
+        isPending && "opacity-40",
+      )}
+    >
+      <span className="text-center font-mono text-sm text-muted-foreground">{index + 1}</span>
+      <input
+        type="number"
+        step="0.5"
+        inputMode="decimal"
+        value={weight}
+        onChange={(e) => setWeight(e.target.value)}
+        disabled={isPending}
+        placeholder={defaultWeight || "-"}
+        className="h-9 w-full rounded-md border border-border bg-transparent text-center font-mono text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60"
+      />
+      <input
+        type="number"
+        inputMode="numeric"
+        value={reps}
+        onChange={(e) => setReps(e.target.value)}
+        disabled={isPending}
+        placeholder={defaultReps || "-"}
+        className="h-9 w-full rounded-md border border-border bg-transparent text-center font-mono text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60"
+      />
+      <input
+        type="number"
+        min="0"
+        max="5"
+        inputMode="numeric"
+        value={rir}
+        onChange={(e) => setRir(e.target.value)}
+        disabled={isPending}
+        className="h-9 w-full rounded-md border border-secondary/40 bg-secondary/10 text-center font-mono text-sm text-secondary outline-none focus:border-secondary focus:ring-1 focus:ring-secondary disabled:opacity-60"
+      />
+      <span className="flex justify-center">
+        <button
+          type="button"
+          onClick={handleDone}
+          disabled={isPending || submitting}
+          className="flex size-8 items-center justify-center rounded-md border border-border text-transparent hover:border-primary hover:text-primary disabled:pointer-events-none disabled:opacity-40"
+        >
+          <CheckIcon className="size-4" />
+        </button>
+      </span>
+    </div>
   );
 }
