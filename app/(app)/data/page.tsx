@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
+import { estimateOneRepMax, repsInReserve } from "@/lib/autoregulation/rpe-tables";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { WeightChart } from "@/components/data/weight-chart";
 import { ProgressionChart } from "@/components/data/progression-chart";
+import { LoadMatrix, type LoadMatrixSession } from "@/components/data/load-matrix";
 
 export default async function DataPage() {
   const supabase = await createClient();
@@ -9,13 +11,15 @@ export default async function DataPage() {
   const [{ data: bodyMetrics }, { data: history }] = await Promise.all([
     supabase
       .from("body_metrics")
-      .select("log_date, weight_kg")
+      .select("log_date, weight_kg, body_fat_pct")
       .not("weight_kg", "is", null)
       .order("log_date", { ascending: true })
       .limit(90),
     supabase
       .from("workout_exercises")
-      .select("exercise_id, exercises(name), set_logs(weight_kg), workouts!inner(started_at, ended_at)")
+      .select(
+        "exercise_id, exercises(name), set_logs(weight_kg, reps, rpe_actual), workouts!inner(started_at, ended_at)",
+      )
       .not("workouts.ended_at", "is", null)
       .order("started_at", { referencedTable: "workouts", ascending: true })
       .limit(400),
@@ -30,16 +34,37 @@ export default async function DataPage() {
   const weightDelta =
     latestWeight && firstWeight ? Math.round((latestWeight.weightKg - firstWeight.weightKg) * 10) / 10 : null;
 
-  type ExerciseProgress = { name: string; points: { date: string; weightKg: number }[] };
+  const latestBodyMetric = (bodyMetrics ?? []).filter((m) => m.body_fat_pct != null).at(-1) ?? null;
+  const bodyFatPct = latestBodyMetric?.body_fat_pct ?? null;
+  const leanMassKg =
+    latestWeight && bodyFatPct != null ? Math.round(latestWeight.weightKg * (1 - bodyFatPct / 100) * 10) / 10 : null;
+
+  type ExerciseProgress = {
+    name: string;
+    points: { date: string; weightKg: number }[];
+    sessions: LoadMatrixSession[];
+  };
   const progressByExercise = new Map<string, ExerciseProgress>();
   for (const row of history ?? []) {
-    const weights = (row.set_logs ?? []).map((s) => s.weight_kg).filter((w): w is number => w != null);
-    if (weights.length === 0 || !row.workouts) continue;
+    const sets = (row.set_logs ?? []).filter((s): s is { weight_kg: number; reps: number | null; rpe_actual: number | null } => s.weight_kg != null);
+    if (sets.length === 0 || !row.workouts) continue;
+    const best = sets.reduce((a, b) => (b.weight_kg > a.weight_kg ? b : a));
     const entry = progressByExercise.get(row.exercise_id) ?? {
       name: row.exercises?.name ?? "Ejercicio",
       points: [],
+      sessions: [],
     };
-    entry.points.push({ date: row.workouts.started_at, weightKg: Math.max(...weights) });
+    entry.points.push({ date: row.workouts.started_at, weightKg: best.weight_kg });
+    entry.sessions.push({
+      date: row.workouts.started_at,
+      weightKg: best.weight_kg,
+      reps: best.reps,
+      rir: best.rpe_actual != null ? Math.round(repsInReserve(best.rpe_actual)) : null,
+      estimatedOneRepMaxKg:
+        best.reps != null && best.rpe_actual != null
+          ? Math.round(estimateOneRepMax(best.weight_kg, best.reps, best.rpe_actual))
+          : null,
+    });
     progressByExercise.set(row.exercise_id, entry);
   }
 
@@ -72,8 +97,24 @@ export default async function DataPage() {
             </CardDescription>
           )}
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
           <WeightChart points={weightPoints} />
+          {(bodyFatPct != null || leanMassKg != null) && (
+            <div className="grid grid-cols-2 gap-3">
+              {bodyFatPct != null && (
+                <div className="rounded-lg border border-border bg-card p-3">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">% Grasa</p>
+                  <p className="font-mono text-lg text-secondary">{bodyFatPct}%</p>
+                </div>
+              )}
+              {leanMassKg != null && (
+                <div className="rounded-lg border border-border bg-card p-3">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Masa magra</p>
+                  <p className="font-mono text-lg text-primary">{leanMassKg} kg</p>
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -93,6 +134,7 @@ export default async function DataPage() {
             <div key={ex.name} className="flex flex-col gap-2">
               <p className="font-mono text-xs uppercase tracking-widest text-secondary">{ex.name}</p>
               <ProgressionChart points={ex.points} />
+              <LoadMatrix sessions={ex.sessions.slice(-4)} />
             </div>
           ))}
         </CardContent>

@@ -208,17 +208,12 @@ export default async function DashboardPage() {
         </Card>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold uppercase tracking-wide">
-            Volumen semanal (sets por grupo muscular)
-          </CardTitle>
-          <CardDescription>Semana en curso, sets completados.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <WeeklyVolume volumeByMuscle={volumeByMuscle} />
-        </CardContent>
-      </Card>
+      <div className="flex flex-col gap-3">
+        <h2 className="border-b border-border pb-2 font-heading text-base font-bold uppercase tracking-wide text-primary">
+          Volumen semanal
+        </h2>
+        <WeeklyVolume volumeByMuscle={volumeByMuscle} />
+      </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <Card>
