@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-hanken);
+  --font-mono: var(--font-jetbrains-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -48,74 +48,44 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-:root {
-  /* Base: navy marino oscuro + sky blue como acento (fondo de contenido claro/cálido) */
-  --background: oklch(0.975 0.006 95);
-  --foreground: oklch(0.22 0.03 250);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.03 250);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.03 250);
-  --primary: oklch(0.28 0.06 250);
-  --primary-foreground: oklch(0.98 0.005 95);
-  --secondary: oklch(0.58 0.15 235);
-  --secondary-foreground: oklch(0.98 0.005 95);
-  --muted: oklch(0.95 0.008 95);
-  --muted-foreground: oklch(0.48 0.03 250);
-  --accent: oklch(0.92 0.035 235);
-  --accent-foreground: oklch(0.28 0.06 250);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.01 95);
-  --input: oklch(0.9 0.01 95);
-  --ring: oklch(0.65 0.14 235);
-  --chart-1: oklch(0.6 0.15 235);
-  --chart-2: oklch(0.28 0.06 250);
-  --chart-3: oklch(0.75 0.1 235);
-  --chart-4: oklch(0.45 0.05 250);
-  --chart-5: oklch(0.75 0.05 95);
-  --radius: 1rem;
-  --sidebar: oklch(0.2 0.04 250);
-  --sidebar-foreground: oklch(0.92 0.01 95);
-  --sidebar-primary: oklch(0.58 0.15 235);
-  --sidebar-primary-foreground: oklch(0.98 0.005 95);
-  --sidebar-accent: oklch(0.27 0.04 250);
-  --sidebar-accent-foreground: oklch(0.98 0.005 95);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.65 0.14 235);
-}
-
+:root,
 .dark {
-  --background: oklch(0.16 0.025 250);
-  --foreground: oklch(0.94 0.01 95);
-  --card: oklch(0.21 0.03 250);
-  --card-foreground: oklch(0.94 0.01 95);
-  --popover: oklch(0.21 0.03 250);
-  --popover-foreground: oklch(0.94 0.01 95);
-  --primary: oklch(0.7 0.13 235);
-  --primary-foreground: oklch(0.16 0.025 250);
-  --secondary: oklch(0.3 0.04 250);
-  --secondary-foreground: oklch(0.94 0.01 95);
-  --muted: oklch(0.27 0.03 250);
-  --muted-foreground: oklch(0.72 0.02 95);
-  --accent: oklch(0.32 0.08 235);
-  --accent-foreground: oklch(0.96 0.01 95);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.7 0.13 235);
-  --chart-1: oklch(0.7 0.13 235);
-  --chart-2: oklch(0.7 0.05 95);
-  --chart-3: oklch(0.6 0.15 235);
-  --chart-4: oklch(0.45 0.05 250);
-  --chart-5: oklch(0.8 0.03 95);
-  --sidebar: oklch(0.13 0.02 250);
-  --sidebar-foreground: oklch(0.92 0.01 95);
-  --sidebar-primary: oklch(0.7 0.13 235);
-  --sidebar-primary-foreground: oklch(0.16 0.025 250);
-  --sidebar-accent: oklch(0.22 0.03 250);
-  --sidebar-accent-foreground: oklch(0.96 0.01 95);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.7 0.13 235);
+  /* Kinetic Analytics — sistema de diseño Stitch: "Mission Control" para el atleta.
+     Dark-only por diseño (no hay toggle de tema); :root y .dark comparten valores
+     para que no dependa del montaje de next-themes ni produzca flash claro/oscuro. */
+  --background: #131313;
+  --foreground: #e5e2e1;
+  --card: #1e1e1e;
+  --card-foreground: #e5e2e1;
+  --popover: #1e1e1e;
+  --popover-foreground: #e5e2e1;
+  --primary: #ccff00;
+  --primary-foreground: #161e00;
+  --secondary: #00e5ff;
+  --secondary-foreground: #001f24;
+  --muted: #2a2a2a;
+  --muted-foreground: #c4c9ac;
+  --accent: #232a12;
+  --accent-foreground: #ccff00;
+  --destructive: #ff3d00;
+  --destructive-foreground: #ffffff;
+  --border: #333333;
+  --input: #2a2a2a;
+  --ring: #ccff00;
+  --chart-1: #ccff00;
+  --chart-2: #00e5ff;
+  --chart-3: #ff3d00;
+  --chart-4: #8e9379;
+  --chart-5: #ffffff;
+  --radius: 0.5rem;
+  --sidebar: #0e0e0e;
+  --sidebar-foreground: #e5e2e1;
+  --sidebar-primary: #ccff00;
+  --sidebar-primary-foreground: #161e00;
+  --sidebar-accent: #1c1b1b;
+  --sidebar-accent-foreground: #e5e2e1;
+  --sidebar-border: #333333;
+  --sidebar-ring: #ccff00;
 }
 
 @layer base {

@@ -37,8 +37,10 @@ export default async function RoutinesPage() {
         {(routines ?? []).map((routine) => (
           <Card key={routine.id}>
             <CardHeader>
+              <CardDescription className="font-mono text-[10px] uppercase tracking-widest text-secondary">
+                {routine.day_label ?? "Rutina"}
+              </CardDescription>
               <CardTitle>{routine.title}</CardTitle>
-              {routine.day_label && <CardDescription>{routine.day_label}</CardDescription>}
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               {(routine.routine_exercises ?? [])
@@ -50,6 +52,7 @@ export default async function RoutinesPage() {
                     <div key={re.id}>
                       {i > 0 && <Separator className="my-2" />}
                       <div className="flex items-center gap-2.5">
+                        <span className="w-5 font-mono text-xs text-muted-foreground">{i + 1}.</span>
                         <ExerciseThumbnail
                           src={re.exercises?.thumbnail_url}
                           alt={re.exercises?.name ?? ""}
@@ -57,9 +60,9 @@ export default async function RoutinesPage() {
                         />
                         <div>
                           <p className="text-sm font-medium">{re.exercises?.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {sets.length} sets
-                            {first?.target_reps_min && ` · ${first.target_reps_min}-${first.target_reps_max ?? first.target_reps_min} reps`}
+                          <p className="font-mono text-xs text-muted-foreground">
+                            {sets.length}x
+                            {first?.target_reps_min && `${first.target_reps_min}-${first.target_reps_max ?? first.target_reps_min}`}
                             {first?.target_rpe && ` · RPE ${first.target_rpe}`}
                           </p>
                         </div>

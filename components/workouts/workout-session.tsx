@@ -346,13 +346,32 @@ function ExerciseBlockCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {block.loggedSets.length > 0 && (
-          <div className="flex flex-col gap-1">
+          <div className="overflow-hidden rounded-lg border border-border">
+            <div className="grid grid-cols-4 gap-2 border-b border-border bg-muted/40 px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <span>Set</span>
+              <span>Kg</span>
+              <span>Reps</span>
+              <span>RPE</span>
+            </div>
             {block.loggedSets.map((s) => (
-              <div key={s.id} className="flex gap-4 text-sm text-muted-foreground">
-                <span className="w-14">Set {s.set_index + 1}</span>
-                <span>{s.weight_kg} kg</span>
-                <span>{s.reps} reps</span>
-                <span>RPE {s.rpe_actual}</span>
+              <div
+                key={s.id}
+                className="grid grid-cols-4 gap-2 border-b border-border/60 px-3 py-1.5 font-mono text-sm last:border-b-0"
+              >
+                <span className="text-muted-foreground">{s.set_index + 1}</span>
+                <span>{s.weight_kg}</span>
+                <span>{s.reps}</span>
+                <span
+                  className={
+                    s.rpe_actual != null && s.rpe_actual >= 9
+                      ? "text-destructive"
+                      : s.rpe_actual != null && s.rpe_actual >= 7
+                        ? "text-secondary"
+                        : "text-foreground"
+                  }
+                >
+                  {s.rpe_actual}
+                </span>
               </div>
             ))}
           </div>
@@ -366,14 +385,14 @@ function ExerciseBlockCard({
               placeholder="Peso (kg)"
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
-              className="w-24"
+              className="w-24 font-mono"
             />
             <Input
               type="number"
               placeholder="Reps"
               value={reps}
               onChange={(e) => setReps(e.target.value)}
-              className="w-20"
+              className="w-20 font-mono"
             />
             <Input
               type="number"
@@ -383,7 +402,7 @@ function ExerciseBlockCard({
               placeholder="RPE"
               value={rpe}
               onChange={(e) => setRpe(e.target.value)}
-              className="w-20"
+              className="w-20 font-mono"
             />
             <Button type="submit" size="sm" disabled={submitting}>
               {submitting ? "..." : `Registrar set ${nextIndex + 1}`}
