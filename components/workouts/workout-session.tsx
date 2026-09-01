@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -29,10 +30,21 @@ interface ExerciseOption {
 interface TargetSet {
   id: string;
   set_index: number;
+  set_type: string;
   target_reps_min: number | null;
   target_reps_max: number | null;
   target_rpe: number | null;
 }
+
+const LOG_INPUT_CLASS =
+  "bg-foreground dark:bg-foreground text-background placeholder:text-background/50 border-transparent font-mono text-center";
+
+const SET_TYPE_LABELS: Record<string, string> = {
+  myo: "+ Myo-reps",
+  dropset: "Dropset",
+  failure: "Al fallo",
+  warmup: "Calentamiento",
+};
 
 interface SetLog {
   id: string;
@@ -322,7 +334,12 @@ function ExerciseBlockCard({
         <div className="flex items-center gap-3">
           <ExerciseThumbnail src={block.thumbnailUrl} alt={block.exerciseName} className="size-11" />
           <div className="flex-1">
-            <CardTitle>{block.exerciseName}</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle>{block.exerciseName}</CardTitle>
+              {nextTarget?.set_type && nextTarget.set_type !== "normal" && (
+                <Badge className="bg-primary/15 text-primary">{SET_TYPE_LABELS[nextTarget.set_type] ?? nextTarget.set_type}</Badge>
+              )}
+            </div>
             {block.targetSets.length > 0 && (
               <CardDescription>
                 {block.targetSets.length} sets objetivo
@@ -385,14 +402,14 @@ function ExerciseBlockCard({
               placeholder="Peso (kg)"
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
-              className="w-24 font-mono"
+              className={cn(LOG_INPUT_CLASS, "w-24")}
             />
             <Input
               type="number"
               placeholder="Reps"
               value={reps}
               onChange={(e) => setReps(e.target.value)}
-              className="w-20 font-mono"
+              className={cn(LOG_INPUT_CLASS, "w-20")}
             />
             <Input
               type="number"
@@ -402,7 +419,7 @@ function ExerciseBlockCard({
               placeholder="RPE"
               value={rpe}
               onChange={(e) => setRpe(e.target.value)}
-              className="w-20 font-mono"
+              className={cn(LOG_INPUT_CLASS, "w-20")}
             />
             <Button type="submit" size="sm" disabled={submitting}>
               {submitting ? "..." : `Registrar set ${nextIndex + 1}`}
