@@ -57,6 +57,7 @@ interface RoutineExercise {
   id: string;
   exercise_id: string;
   order_index: number;
+  notes: string | null;
   exercises: ExerciseOption | null;
   target_sets: TargetSet[];
 }
@@ -85,6 +86,7 @@ interface Block {
   thumbnailUrl: string | null;
   videoUrl: string | null;
   routineExerciseId: string | null;
+  notes: string | null;
   targetSets: TargetSet[];
   loggedSets: SetLog[];
 }
@@ -106,6 +108,7 @@ function buildInitialBlocks(workout: WorkoutData): Block[] {
       thumbnailUrl: re.exercises.thumbnail_url,
       videoUrl: re.exercises.video_url,
       routineExerciseId: re.id,
+      notes: re.notes,
       targetSets: [...re.target_sets].sort((a, b) => a.set_index - b.set_index),
       loggedSets: [...(matchingWe?.set_logs ?? [])].sort((a, b) => a.set_index - b.set_index),
     });
@@ -122,6 +125,7 @@ function buildInitialBlocks(workout: WorkoutData): Block[] {
       thumbnailUrl: we.exercises.thumbnail_url,
       videoUrl: we.exercises.video_url,
       routineExerciseId: null,
+      notes: null,
       targetSets: [],
       loggedSets: [...we.set_logs].sort((a, b) => a.set_index - b.set_index),
     });
@@ -159,6 +163,7 @@ export function WorkoutSession({
         thumbnailUrl: ex.thumbnail_url,
         videoUrl: ex.video_url,
         routineExerciseId: null,
+        notes: null,
         targetSets: [],
         loggedSets: [],
       },
@@ -385,6 +390,9 @@ function ExerciseBlockCard({
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-0 px-0 pb-0">
+        {block.notes && (
+          <p className="border-b border-border bg-secondary/10 px-3 py-2 text-xs text-secondary">{block.notes}</p>
+        )}
         <div className={cn(ROW_GRID, "border-b border-border px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground")}>
           <span className="text-center">Set</span>
           <span className="text-center">Kg</span>
