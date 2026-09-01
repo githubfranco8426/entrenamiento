@@ -6,6 +6,7 @@ import { ExerciseForm } from "@/components/exercises/exercise-form";
 import { ExerciseMediaDialog } from "@/components/exercises/exercise-media-dialog";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 import { Button } from "@/components/ui/button";
+import { DeleteButton } from "@/components/ui/delete-button";
 import { PlayCircleIcon } from "lucide-react";
 
 export default async function ExercisesPage() {
@@ -67,12 +68,19 @@ export default async function ExercisesPage() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <ExerciseMediaDialog
-                        exerciseId={ex.id}
-                        exerciseName={ex.name}
-                        initialThumbnailUrl={ex.thumbnail_url}
-                        initialVideoUrl={ex.video_url}
-                      />
+                      <div className="flex items-center gap-1">
+                        <ExerciseMediaDialog
+                          exerciseId={ex.id}
+                          exerciseName={ex.name}
+                          initialThumbnailUrl={ex.thumbnail_url}
+                          initialVideoUrl={ex.video_url}
+                        />
+                        <DeleteButton
+                          endpoint={`/api/exercises/${ex.id}`}
+                          confirmMessage={`¿Borrar "${ex.name}"? Esta acción no se puede deshacer.`}
+                          successMessage="Ejercicio borrado"
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

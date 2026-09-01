@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { RoutineForm } from "@/components/routines/routine-form";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
+import { DeleteButton } from "@/components/ui/delete-button";
 
 export default async function RoutinesPage() {
   const supabase = await createClient();
@@ -36,11 +37,18 @@ export default async function RoutinesPage() {
       <div className="grid gap-4 sm:grid-cols-2">
         {(routines ?? []).map((routine) => (
           <Card key={routine.id}>
-            <CardHeader>
-              <CardDescription className="font-mono text-[10px] uppercase tracking-widest text-secondary">
-                {routine.day_label ?? "Rutina"}
-              </CardDescription>
-              <CardTitle>{routine.title}</CardTitle>
+            <CardHeader className="flex-row items-start justify-between gap-2">
+              <div>
+                <CardDescription className="font-mono text-[10px] uppercase tracking-widest text-secondary">
+                  {routine.day_label ?? "Rutina"}
+                </CardDescription>
+                <CardTitle>{routine.title}</CardTitle>
+              </div>
+              <DeleteButton
+                endpoint={`/api/routines/${routine.id}`}
+                confirmMessage={`¿Borrar la rutina "${routine.title}"? Esta acción no se puede deshacer.`}
+                successMessage="Rutina borrada"
+              />
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               {(routine.routine_exercises ?? [])
