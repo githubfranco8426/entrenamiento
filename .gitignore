@@ -40,6 +40,9 @@ yarn-error.log*
 .cache/
 .claude/settings.local.json
 
+# codex cli (contiene claves locales)
+.codex/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
