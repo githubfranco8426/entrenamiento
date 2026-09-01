@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { format, startOfISOWeek, endOfISOWeek } from "date-fns";
+import { format, startOfISOWeek, endOfISOWeek, differenceInCalendarDays } from "date-fns";
+import { SettingsIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { shiftTypeForDate } from "@/lib/utils/shift-pattern";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { ReadinessForm } from "@/components/dashboard/readiness-form";
 import { BodyMetricForm } from "@/components/dashboard/body-metric-form";
 import { StartWorkoutButton } from "@/components/dashboard/start-workout-button";
 import { WeeklyVolume } from "@/components/dashboard/weekly-volume";
+import { StagnationAlert, type StagnantExercise } from "@/components/dashboard/stagnation-alert";
 
 const PHASE_LABELS: Record<string, string> = {
   acumulacion: "Acumulación",
@@ -34,7 +36,10 @@ export default async function DashboardPage() {
     supabase.from("user_settings").select("*").maybeSingle(),
     supabase.from("readiness_logs").select("*").eq("log_date", today).maybeSingle(),
     supabase.from("body_metrics").select("*").eq("log_date", today).maybeSingle(),
-    supabase.from("routines").select("id, title, day_label").order("order_index"),
+    supabase
+      .from("routines")
+      .select("id, title, day_label, routine_exercises(exercise_id, order_index, exercises(name), target_sets(set_index, target_weight_kg))")
+      .order("order_index"),
     supabase
       .from("workouts")
       .select("id, routine_id, started_at, ended_at, routines(title, day_label)")
@@ -69,6 +74,63 @@ export default async function DashboardPage() {
     return da.localeCompare(db);
   })[0];
 
+  const daysSinceLastTrained = nextRoutine
+    ? (() => {
+        const last = lastTrainedByRoutine.get(nextRoutine.id);
+        return last ? differenceInCalendarDays(new Date(), new Date(last)) : null;
+      })()
+    : null;
+
+  const nextExerciseIds = [
+    ...new Set((nextRoutine?.routine_exercises ?? []).map((re) => re.exercise_id)),
+  ];
+
+  const stagnantExercises: StagnantExercise[] = [];
+  if (nextExerciseIds.length > 0) {
+    const { data: history } = await supabase
+      .from("workout_exercises")
+      .select("exercise_id, workout_id, set_logs(weight_kg), workouts!inner(started_at, ended_at)")
+      .in("exercise_id", nextExerciseIds)
+      .not("workouts.ended_at", "is", null)
+      .order("started_at", { referencedTable: "workouts", ascending: false })
+      .limit(60);
+
+    type Session = { startedAt: string; maxWeight: number };
+    const sessionsByExercise = new Map<string, Session[]>();
+    for (const row of history ?? []) {
+      const weights = (row.set_logs ?? [])
+        .map((s) => s.weight_kg)
+        .filter((w): w is number => w != null);
+      if (weights.length === 0 || !row.workouts) continue;
+      const maxWeight = Math.max(...weights);
+      const list = sessionsByExercise.get(row.exercise_id) ?? [];
+      list.push({ startedAt: row.workouts.started_at, maxWeight });
+      sessionsByExercise.set(row.exercise_id, list);
+    }
+
+    for (const re of nextRoutine?.routine_exercises ?? []) {
+      const sessions = (sessionsByExercise.get(re.exercise_id) ?? []).sort((a, b) =>
+        b.startedAt.localeCompare(a.startedAt),
+      );
+      if (sessions.length < 2) continue;
+
+      let streak = 1;
+      for (let i = 0; i < sessions.length - 1; i++) {
+        if (sessions[i].maxWeight <= sessions[i + 1].maxWeight) streak++;
+        else break;
+      }
+      if (streak < 2) continue;
+
+      const targetSets = [...(re.target_sets ?? [])].sort((a, b) => a.set_index - b.set_index);
+      stagnantExercises.push({
+        exerciseName: re.exercises?.name ?? "Ejercicio",
+        sessionsStagnant: streak,
+        lastWeightKg: sessions[0].maxWeight,
+        targetWeightKg: targetSets[0]?.target_weight_kg ?? null,
+      });
+    }
+  }
+
   const volumeMap = new Map<string, number>();
   for (const s of weekSets ?? []) {
     const group = s.workout_exercises?.exercises?.muscle_group ?? "Sin clasificar";
@@ -85,13 +147,24 @@ export default async function DashboardPage() {
           </p>
           <h1 className="font-heading text-xl font-bold">{format(new Date(), "EEEE d MMMM")}</h1>
         </div>
-        {activeMeso && (
-          <Badge variant="outline" className="border-secondary/40 text-secondary">
-            {activeMeso.name}
-            {activeMicro && ` · Semana ${activeMicro.week_number}`}
-          </Badge>
-        )}
+        <div className="flex items-center gap-2">
+          {activeMeso && (
+            <Badge variant="outline" className="border-secondary/40 text-secondary">
+              {activeMeso.name}
+              {activeMicro && ` · Semana ${activeMicro.week_number}`}
+            </Badge>
+          )}
+          <Link
+            href="/settings"
+            className="flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <SettingsIcon className="size-4" />
+            <span className="sr-only">Ajustes</span>
+          </Link>
+        </div>
       </div>
+
+      <StagnationAlert exercises={stagnantExercises} />
 
       {activeMeso ? (
         <Card>
@@ -123,9 +196,14 @@ export default async function DashboardPage() {
             </CardDescription>
             <CardTitle className="text-lg">{nextRoutine.title}</CardTitle>
             {nextRoutine.day_label && <CardDescription>{nextRoutine.day_label}</CardDescription>}
+            {daysSinceLastTrained != null && (
+              <CardDescription className="font-mono text-xs text-destructive">
+                Último hit hace {daysSinceLastTrained} día{daysSinceLastTrained === 1 ? "" : "s"}
+              </CardDescription>
+            )}
           </CardHeader>
           <CardContent>
-            <StartWorkoutButton routineId={nextRoutine.id} />
+            <StartWorkoutButton routineId={nextRoutine.id} className="w-full" size="lg" label="Start Workout" />
           </CardContent>
         </Card>
       )}

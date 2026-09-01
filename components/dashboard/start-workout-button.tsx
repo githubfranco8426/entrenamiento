@@ -5,7 +5,17 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-export function StartWorkoutButton({ routineId }: { routineId?: string }) {
+export function StartWorkoutButton({
+  routineId,
+  className,
+  size = "sm",
+  label = "Iniciar",
+}: {
+  routineId?: string;
+  className?: string;
+  size?: "sm" | "default" | "lg";
+  label?: string;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -28,8 +38,8 @@ export function StartWorkoutButton({ routineId }: { routineId?: string }) {
   }
 
   return (
-    <Button size="sm" onClick={handleClick} disabled={loading}>
-      {loading ? "Iniciando..." : "Iniciar"}
+    <Button size={size} className={className} onClick={handleClick} disabled={loading}>
+      {loading ? "Iniciando..." : label}
     </Button>
   );
 }
