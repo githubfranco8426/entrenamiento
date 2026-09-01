@@ -6,6 +6,7 @@ import {
   CalendarRangeIcon,
   SparklesIcon,
   SettingsIcon,
+  LineChartIcon,
   type LucideIcon,
 } from "lucide-react";
 
@@ -21,6 +22,7 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/routines", label: "Rutinas", icon: ClipboardListIcon },
   { href: "/exercises", label: "Ejercicios", icon: DumbbellIcon },
   { href: "/program", label: "Programa", icon: CalendarRangeIcon },
+  { href: "/data", label: "Data", icon: LineChartIcon },
   { href: "/ai", label: "IA", icon: SparklesIcon },
   { href: "/settings", label: "Ajustes", icon: SettingsIcon },
 ];
