@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
-import { PlayCircleIcon, CheckIcon, PlusIcon } from "lucide-react";
+import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
@@ -149,6 +149,8 @@ export function WorkoutSession({
   const [ended, setEnded] = useState(!!workout.ended_at);
   const [addExerciseId, setAddExerciseId] = useState("");
   const [finishing, setFinishing] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const hasLoggedSets = blocks.some((b) => b.loggedSets.length > 0);
 
   function addFreestyleExercise() {
     const ex = allExercises.find((e) => e.id === addExerciseId);
@@ -174,6 +176,23 @@ export function WorkoutSession({
   async function logSet(block: Block, weightKg: number, reps: number, rpeActual: number) {
     const setIndex = block.loggedSets.length;
     const targetSet = block.targetSets[setIndex] ?? null;
+    const tempId = `temp-${block.key}-${setIndex}-${Date.now()}`;
+
+    // Optimista: el set se muestra como hecho de inmediato; la red corre en segundo plano.
+    // Esto evita que el check se sienta lento esperando la ida y vuelta al servidor.
+    setBlocks((prev) =>
+      prev.map((b) =>
+        b.key === block.key
+          ? {
+              ...b,
+              loggedSets: [
+                ...b.loggedSets,
+                { id: tempId, set_index: setIndex, weight_kg: weightKg, reps, rpe_actual: rpeActual },
+              ],
+            }
+          : b,
+      ),
+    );
 
     const res = await fetch(`/api/workouts/${workout.id}/sets`, {
       method: "POST",
@@ -192,17 +211,27 @@ export function WorkoutSession({
     if (!res.ok) {
       const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
       toast.error(error);
+      setBlocks((prev) =>
+        prev.map((b) =>
+          b.key === block.key ? { ...b, loggedSets: b.loggedSets.filter((s) => s.id !== tempId) } : b,
+        ),
+      );
       return;
     }
 
     const { setLog } = await res.json();
     setBlocks((prev) =>
-      prev.map((b) => (b.key === block.key ? { ...b, loggedSets: [...b.loggedSets, setLog] } : b)),
+      prev.map((b) =>
+        b.key === block.key
+          ? { ...b, loggedSets: b.loggedSets.map((s) => (s.id === tempId ? setLog : s)) }
+          : b,
+      ),
     );
 
     if (targetSet?.target_rpe) {
       const targetReps = targetSet.target_reps_max ?? targetSet.target_reps_min ?? reps;
-      const autoRes = await fetch("/api/autoregulate", {
+      // Fire-and-forget: la sugerencia de autoregulación no debe bloquear el siguiente set.
+      fetch("/api/autoregulate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -214,14 +243,27 @@ export function WorkoutSession({
           actualRpe: rpeActual,
           plateIncrementKg: block.plateIncrementKg,
         }),
-      });
-      if (autoRes.ok) {
-        const suggestion = await autoRes.json();
-        toast.info(suggestion.rationale);
-      }
+      })
+        .then((autoRes) => (autoRes.ok ? autoRes.json() : null))
+        .then((suggestion) => suggestion && toast.info(suggestion.rationale))
+        .catch(() => {});
     } else {
       toast.success("Set registrado");
     }
+  }
+
+  async function cancelWorkout() {
+    if (!window.confirm("¿Anular este entrenamiento? Se borrará junto con las series ya registradas.")) return;
+    setCancelling(true);
+    const res = await fetch(`/api/workouts/${workout.id}`, { method: "DELETE" });
+    setCancelling(false);
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
+      toast.error(error);
+      return;
+    }
+    toast.success("Entrenamiento anulado");
+    router.push("/dashboard");
   }
 
   async function finishWorkout() {
@@ -261,9 +303,21 @@ export function WorkoutSession({
         {ended ? (
           <Badge variant="secondary">Finalizado</Badge>
         ) : (
-          <Button onClick={finishWorkout} disabled={finishing} className="font-semibold uppercase tracking-wide">
-            {finishing ? "Finalizando..." : "Finalizar"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={cancelWorkout}
+              disabled={cancelling || finishing}
+              aria-label="Cancelar entrenamiento"
+              title={hasLoggedSets ? "Anula el entrenamiento y borra las series ya registradas" : "Anula el entrenamiento"}
+            >
+              <XIcon className="size-4" />
+              {cancelling ? "Anulando..." : "Cancelar"}
+            </Button>
+            <Button onClick={finishWorkout} disabled={finishing || cancelling} className="font-semibold uppercase tracking-wide">
+              {finishing ? "Finalizando..." : "Finalizar"}
+            </Button>
+          </div>
         )}
       </div>
 

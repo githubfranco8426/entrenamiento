@@ -10,6 +10,7 @@ import { BodyMetricForm } from "@/components/dashboard/body-metric-form";
 import { StartWorkoutButton } from "@/components/dashboard/start-workout-button";
 import { WeeklyVolume } from "@/components/dashboard/weekly-volume";
 import { StagnationAlert, type StagnantExercise } from "@/components/dashboard/stagnation-alert";
+import { DeleteButton } from "@/components/ui/delete-button";
 
 const PHASE_LABELS: Record<string, string> = {
   acumulacion: "Acumulación",
@@ -277,17 +278,23 @@ export default async function DashboardPage() {
             <p className="text-sm text-muted-foreground">Todavía no registraste ningún entrenamiento.</p>
           )}
           {(workouts ?? []).map((w) => (
-            <Link
-              key={w.id}
-              href={`/workouts/${w.id}`}
-              className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm hover:bg-muted"
-            >
-              <span>{w.routines?.title ?? "Entreno libre"}</span>
-              <span className="font-mono text-muted-foreground">
-                {format(new Date(w.started_at), "dd/MM/yyyy HH:mm")}
-                {!w.ended_at && " · en curso"}
-              </span>
-            </Link>
+            <div key={w.id} className="flex items-center gap-2">
+              <Link
+                href={`/workouts/${w.id}`}
+                className="flex flex-1 items-center justify-between rounded-lg border px-3 py-2 text-sm hover:bg-muted"
+              >
+                <span>{w.routines?.title ?? "Entreno libre"}</span>
+                <span className="font-mono text-muted-foreground">
+                  {format(new Date(w.started_at), "dd/MM/yyyy HH:mm")}
+                  {!w.ended_at && " · en curso"}
+                </span>
+              </Link>
+              <DeleteButton
+                endpoint={`/api/workouts/${w.id}`}
+                confirmMessage={`¿Borrar el entrenamiento "${w.routines?.title ?? "Entreno libre"}" del ${format(new Date(w.started_at), "dd/MM/yyyy")}? Esta acción no se puede deshacer.`}
+                successMessage="Entrenamiento borrado"
+              />
+            </div>
           ))}
         </CardContent>
       </Card>
