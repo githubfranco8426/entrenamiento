@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 import { WorkoutSummary } from "@/components/workouts/workout-summary";
-import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon } from "lucide-react";
+import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, TimerIcon, SkipForwardIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
@@ -410,6 +410,72 @@ function formatRest(seconds: number | null): string | null {
   return rem === 0 ? `${min} min` : `${min}:${String(rem).padStart(2, "0")} min`;
 }
 
+/** Rest timer por defecto cuando el set objetivo no define rest_seconds. */
+const DEFAULT_REST_SECONDS = 90;
+const REST_STEP_SECONDS = 15;
+
+function formatClock(seconds: number): string {
+  const min = Math.floor(seconds / 60);
+  const sec = seconds % 60;
+  return `${min}:${String(sec).padStart(2, "0")}`;
+}
+
+function RestTimer({
+  secondsLeft,
+  onAdjust,
+  onSkip,
+}: {
+  secondsLeft: number;
+  onAdjust: (delta: number) => void;
+  onSkip: () => void;
+}) {
+  const done = secondsLeft <= 0;
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-between gap-3 border-b border-border px-3 py-2.5",
+        done ? "bg-primary/10" : "bg-secondary/10",
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <TimerIcon className={cn("size-4", done ? "text-primary" : "text-secondary")} />
+        <span className={cn("font-mono text-lg font-bold tabular-nums", done ? "text-primary" : "text-secondary")}>
+          {done ? "¡Listo!" : formatClock(secondsLeft)}
+        </span>
+        <span className="text-xs text-muted-foreground">{done ? "descanso terminado" : "descanso"}</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        {!done && (
+          <>
+            <button
+              type="button"
+              onClick={() => onAdjust(-REST_STEP_SECONDS)}
+              className="flex h-7 items-center rounded-md bg-card px-2 font-mono text-xs text-foreground hover:bg-muted"
+            >
+              -15s
+            </button>
+            <button
+              type="button"
+              onClick={() => onAdjust(REST_STEP_SECONDS)}
+              className="flex h-7 items-center rounded-md bg-card px-2 font-mono text-xs text-foreground hover:bg-muted"
+            >
+              +15s
+            </button>
+          </>
+        )}
+        <button
+          type="button"
+          onClick={onSkip}
+          className="flex h-7 items-center gap-1 rounded-md bg-card px-2 font-mono text-xs text-muted-foreground hover:text-foreground"
+        >
+          <SkipForwardIcon className="size-3.5" />
+          {done ? "Cerrar" : "Saltar"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ExerciseBlockCard({
   block,
   ended,
@@ -433,6 +499,25 @@ function ExerciseBlockCard({
   const headerTarget = nextTarget ?? block.targetSets[0] ?? null;
   const targetRir = headerTarget?.target_rpe != null ? Math.round(repsInReserve(headerTarget.target_rpe)) : null;
   const restLabel = formatRest(headerTarget?.rest_seconds ?? null);
+
+  const prevLoggedCountRef = useRef(block.loggedSets.length);
+  const [restSecondsLeft, setRestSecondsLeft] = useState<number | null>(null);
+
+  useEffect(() => {
+    const prevCount = prevLoggedCountRef.current;
+    const newCount = block.loggedSets.length;
+    if (newCount > prevCount && !ended) {
+      const justCompletedTarget = block.targetSets[newCount - 1] ?? null;
+      setRestSecondsLeft(justCompletedTarget?.rest_seconds ?? DEFAULT_REST_SECONDS);
+    }
+    prevLoggedCountRef.current = newCount;
+  }, [block.loggedSets.length, block.targetSets, ended]);
+
+  useEffect(() => {
+    if (restSecondsLeft == null || restSecondsLeft <= 0) return;
+    const t = setTimeout(() => setRestSecondsLeft((s) => (s != null ? s - 1 : null)), 1000);
+    return () => clearTimeout(t);
+  }, [restSecondsLeft]);
 
   return (
     <Card className="overflow-hidden py-0 gap-0">
@@ -474,6 +559,13 @@ function ExerciseBlockCard({
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-0 px-0 pb-0">
+        {restSecondsLeft != null && (
+          <RestTimer
+            secondsLeft={restSecondsLeft}
+            onAdjust={(delta) => setRestSecondsLeft((s) => (s != null ? Math.max(0, s + delta) : s))}
+            onSkip={() => setRestSecondsLeft(null)}
+          />
+        )}
         {block.notes && (
           <p className="border-b border-border bg-secondary/10 px-3 py-2 text-xs text-secondary">{block.notes}</p>
         )}
