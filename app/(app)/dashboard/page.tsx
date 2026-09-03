@@ -1,13 +1,21 @@
 import Link from "next/link";
-import { format, startOfISOWeek, endOfISOWeek, differenceInCalendarDays } from "date-fns";
-import { SettingsIcon } from "lucide-react";
+import {
+  format,
+  startOfISOWeek,
+  endOfISOWeek,
+  eachDayOfInterval,
+  differenceInCalendarDays,
+} from "date-fns";
+import { es } from "date-fns/locale";
+import { SettingsIcon, SparklesIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { shiftTypeForDate } from "@/lib/utils/shift-pattern";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ReadinessForm } from "@/components/dashboard/readiness-form";
+import { ReadinessQuickCheckin } from "@/components/dashboard/readiness-quick-checkin";
 import { BodyMetricForm } from "@/components/dashboard/body-metric-form";
 import { StartWorkoutButton } from "@/components/dashboard/start-workout-button";
+import { TodaysRoutineHero } from "@/components/dashboard/todays-routine-hero";
+import { WeeklyActivity } from "@/components/dashboard/weekly-activity";
 import { WeeklyVolume } from "@/components/dashboard/weekly-volume";
 import { StagnationAlert, type StagnantExercise } from "@/components/dashboard/stagnation-alert";
 import { DeleteButton } from "@/components/ui/delete-button";
@@ -39,7 +47,9 @@ export default async function DashboardPage() {
     supabase.from("body_metrics").select("*").eq("log_date", today).maybeSingle(),
     supabase
       .from("routines")
-      .select("id, title, day_label, routine_exercises(exercise_id, order_index, exercises(name), target_sets(set_index, target_weight_kg))")
+      .select(
+        "id, title, day_label, routine_exercises(exercise_id, order_index, notes, exercises(name, thumbnail_url), target_sets(set_index, target_reps_min, target_reps_max, target_rpe, target_weight_kg))",
+      )
       .order("order_index"),
     supabase
       .from("workouts")
@@ -53,6 +63,15 @@ export default async function DashboardPage() {
       .gte("completed_at", weekStart)
       .lte("completed_at", weekEnd),
   ]);
+
+  const { data: weekWorkouts } = await supabase
+    .from("workouts")
+    .select("started_at")
+    .gte("started_at", weekStart)
+    .lte("started_at", weekEnd);
+
+  const weekDays = eachDayOfInterval({ start: startOfISOWeek(new Date()), end: endOfISOWeek(new Date()) });
+  const trainedDates = (weekWorkouts ?? []).map((w) => new Date(w.started_at));
 
   const defaultShiftType = settings?.shift_anchor_date
     ? shiftTypeForDate(new Date(today), new Date(settings.shift_anchor_date))
@@ -139,21 +158,22 @@ export default async function DashboardPage() {
   }
   const volumeByMuscle = [...volumeMap.entries()].sort((a, b) => b[1] - a[1]);
 
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches";
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-            Mission Control
-          </p>
-          <h1 className="font-heading text-xl font-bold">{format(new Date(), "EEEE d MMMM")}</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          {activeMeso && (
-            <Badge variant="outline" className="border-secondary/40 text-secondary">
-              {activeMeso.name}
-              {activeMicro && ` · Semana ${activeMicro.week_number}`}
-            </Badge>
+    <div className="flex flex-col gap-gutter-lg">
+      <div className="flex flex-col gap-gutter-sm pt-2">
+        <div className="flex items-center justify-between">
+          {activeMeso ? (
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-primary">
+              <SparklesIcon className="size-4" />
+              <span className="font-mono text-[11px] font-bold uppercase tracking-wider">
+                Adaptación inteligente activa
+              </span>
+            </div>
+          ) : (
+            <span />
           )}
           <Link
             href="/settings"
@@ -163,23 +183,48 @@ export default async function DashboardPage() {
             <span className="sr-only">Ajustes</span>
           </Link>
         </div>
+        <div className="flex flex-col">
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight">{greeting} 👋</h1>
+          <p className="text-headline-sm text-muted-foreground">
+            {format(new Date(), "EEEE d 'de' MMMM", { locale: es })}
+            {activeMeso &&
+              ` · ${PHASE_LABELS[activeMeso.phase] ?? activeMeso.phase}${activeMicro?.is_deload ? " (Descarga)" : ""}${activeMicro ? ` · Semana ${activeMicro.week_number}` : ""}`}
+          </p>
+        </div>
       </div>
 
       <StagnationAlert exercises={stagnantExercises} />
 
-      {activeMeso ? (
-        <Card>
-          <CardHeader>
-            <CardDescription className="font-mono text-[10px] uppercase tracking-widest text-secondary">
-              Fase actual
-            </CardDescription>
-            <CardTitle className="text-base">
-              {PHASE_LABELS[activeMeso.phase] ?? activeMeso.phase}
-              {activeMicro?.is_deload && " · Descarga"}
-            </CardTitle>
-          </CardHeader>
-        </Card>
+      <ReadinessQuickCheckin
+        today={today}
+        defaultShiftType={defaultShiftType}
+        initial={readiness ?? null}
+        aiNote={
+          nextRoutine
+            ? `Basado en tu readiness: seguimos con "${nextRoutine.title}" tal como está planificada.`
+            : null
+        }
+      />
+
+      {nextRoutine ? (
+        <TodaysRoutineHero
+          routine={nextRoutine}
+          daysSinceLastTrained={daysSinceLastTrained}
+          hasActiveMeso={!!activeMeso}
+        />
       ) : (
+        <p className="text-sm text-muted-foreground">
+          Todavía no hay rutinas. Creá una en{" "}
+          <Link href="/routines" className="text-primary underline underline-offset-2">
+            Rutinas
+          </Link>
+          .
+        </p>
+      )}
+
+      <WeeklyActivity weekDays={weekDays} trainedDates={trainedDates} />
+
+      {!activeMeso && (
         <p className="text-sm text-muted-foreground">
           No hay un mesociclo activo. Activá uno en{" "}
           <Link href="/program" className="text-primary underline underline-offset-2">
@@ -187,26 +232,6 @@ export default async function DashboardPage() {
           </Link>
           .
         </p>
-      )}
-
-      {nextRoutine && (
-        <Card className="ring-primary/30">
-          <CardHeader>
-            <CardDescription className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              Próximo
-            </CardDescription>
-            <CardTitle className="text-lg">{nextRoutine.title}</CardTitle>
-            {nextRoutine.day_label && <CardDescription>{nextRoutine.day_label}</CardDescription>}
-            {daysSinceLastTrained != null && (
-              <CardDescription className="font-mono text-xs text-destructive">
-                Último hit hace {daysSinceLastTrained} día{daysSinceLastTrained === 1 ? "" : "s"}
-              </CardDescription>
-            )}
-          </CardHeader>
-          <CardContent>
-            <StartWorkoutButton routineId={nextRoutine.id} className="w-full" size="lg" label="Start Workout" />
-          </CardContent>
-        </Card>
       )}
 
       <div className="flex flex-col gap-3">
@@ -219,54 +244,42 @@ export default async function DashboardPage() {
       <div className="grid gap-6 sm:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Readiness de hoy</CardTitle>
-            <CardDescription>{today}</CardDescription>
+            <CardTitle>Peso corporal</CardTitle>
           </CardHeader>
           <CardContent>
-            <ReadinessForm today={today} defaultShiftType={defaultShiftType} initial={readiness ?? null} />
+            <BodyMetricForm today={today} initial={bodyMetric ?? null} />
           </CardContent>
         </Card>
 
-        <div className="flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Peso corporal</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BodyMetricForm today={today} initial={bodyMetric ?? null} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Rutinas</CardTitle>
-              <CardDescription>Iniciá un entrenamiento desde una rutina, o uno libre.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              {(routines ?? []).length === 0 && (
-                <p className="text-sm text-muted-foreground">
-                  Todavía no hay rutinas. Creá una en{" "}
-                  <Link href="/routines" className="underline">
-                    Rutinas
-                  </Link>
-                  .
-                </p>
-              )}
-              {(routines ?? []).map((r) => (
-                <div key={r.id} className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2">
-                  <div>
-                    <p className="text-sm font-medium">{r.title}</p>
-                    {r.day_label && <p className="text-xs text-muted-foreground">{r.day_label}</p>}
-                  </div>
-                  <StartWorkoutButton routineId={r.id} />
+        <Card>
+          <CardHeader>
+            <CardTitle>Todas las rutinas</CardTitle>
+            <CardDescription>Iniciá un entrenamiento desde cualquier rutina, o uno libre.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            {(routines ?? []).length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                Todavía no hay rutinas. Creá una en{" "}
+                <Link href="/routines" className="underline">
+                  Rutinas
+                </Link>
+                .
+              </p>
+            )}
+            {(routines ?? []).map((r) => (
+              <div key={r.id} className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2">
+                <div>
+                  <p className="text-sm font-medium">{r.title}</p>
+                  {r.day_label && <p className="text-xs text-muted-foreground">{r.day_label}</p>}
                 </div>
-              ))}
-              <div className="flex justify-end pt-1">
-                <StartWorkoutButton />
+                <StartWorkoutButton routineId={r.id} />
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            ))}
+            <div className="flex justify-end pt-1">
+              <StartWorkoutButton />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>

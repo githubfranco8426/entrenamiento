@@ -1,14 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import { estimateOneRepMax, repsInReserve } from "@/lib/autoregulation/rpe-tables";
+import { computeAcwr, type DailyLoad } from "@/lib/analytics/acwr";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { WeightChart } from "@/components/data/weight-chart";
 import { ProgressionChart } from "@/components/data/progression-chart";
 import { LoadMatrix, type LoadMatrixSession } from "@/components/data/load-matrix";
+import { AcwrCard } from "@/components/data/acwr-card";
 
 export default async function DataPage() {
   const supabase = await createClient();
+  const twentyEightDaysAgo = new Date();
+  twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
+  twentyEightDaysAgo.setHours(0, 0, 0, 0);
 
-  const [{ data: bodyMetrics }, { data: history }] = await Promise.all([
+  const [{ data: bodyMetrics }, { data: history }, { data: recentSets }] = await Promise.all([
     supabase
       .from("body_metrics")
       .select("log_date, weight_kg, body_fat_pct")
@@ -23,7 +28,28 @@ export default async function DataPage() {
       .not("workouts.ended_at", "is", null)
       .order("started_at", { referencedTable: "workouts", ascending: true })
       .limit(400),
+    supabase
+      .from("set_logs")
+      .select("weight_kg, reps, completed_at")
+      .not("weight_kg", "is", null)
+      .not("reps", "is", null)
+      .gte("completed_at", twentyEightDaysAgo.toISOString())
+      .limit(2000),
   ]);
+
+  const loadByDay = new Map<string, number>();
+  for (const s of recentSets ?? []) {
+    const day = s.completed_at.slice(0, 10);
+    const load = (s.weight_kg ?? 0) * (s.reps ?? 0);
+    loadByDay.set(day, (loadByDay.get(day) ?? 0) + load);
+  }
+  const dailyLoads: DailyLoad[] = Array.from({ length: 28 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (27 - i));
+    const key = d.toISOString().slice(0, 10);
+    return { date: key, load: loadByDay.get(key) ?? 0 };
+  });
+  const acwr = computeAcwr(dailyLoads);
 
   const weightPoints = (bodyMetrics ?? [])
     .filter((m) => m.weight_kg != null)
@@ -115,6 +141,22 @@ export default async function DataPage() {
               )}
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold uppercase tracking-wide">Carga de entrenamiento (ACWR)</CardTitle>
+          <CardDescription>Relación entre tu carga reciente (7 días) y tu carga habitual (4 semanas).</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AcwrCard
+            acuteLoad={acwr.acuteLoad}
+            chronicLoad={acwr.chronicLoad}
+            ratio={acwr.ratio}
+            zone={acwr.zone}
+            dailyLoads={dailyLoads}
+          />
         </CardContent>
       </Card>
 

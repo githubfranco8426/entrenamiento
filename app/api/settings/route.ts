@@ -6,6 +6,8 @@ interface SettingsBody {
   experienceYears?: number | null;
   shiftAnchorDate?: string | null;
   defaultPlateIncrementKg?: number;
+  injuryHistory?: string | null;
+  medicalNotes?: string | null;
 }
 
 export async function GET() {
@@ -33,6 +35,8 @@ export async function POST(request: Request) {
         experience_years: body.experienceYears ?? null,
         shift_anchor_date: body.shiftAnchorDate ?? null,
         default_plate_increment_kg: body.defaultPlateIncrementKg ?? 2.5,
+        injury_history: body.injuryHistory ?? null,
+        medical_notes: body.medicalNotes ?? null,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" },

@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { SparklesIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,9 +30,12 @@ export default async function AiPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-lg font-semibold">Periodización con IA</h1>
+          <div className="flex items-center gap-2">
+            <SparklesIcon className="size-4 text-secondary" />
+            <h1 className="font-heading text-lg font-semibold">Prescripción Clínica & Periodización IA</h1>
+          </div>
           <p className="text-sm text-muted-foreground">
-            Genera una propuesta para el próximo microciclo a partir de tu readiness y desempeño real.
+            Genera una propuesta para el próximo microciclo a partir de tu readiness, ficha clínica y desempeño real.
           </p>
         </div>
         <GenerateButton />

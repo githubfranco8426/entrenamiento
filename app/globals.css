@@ -7,9 +7,13 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-hanken);
+  --font-sans: var(--font-plus-jakarta);
   --font-mono: var(--font-jetbrains-mono);
   --font-heading: var(--font-sans);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-warning: var(--tertiary);
+  --color-warning-foreground: var(--tertiary-foreground);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,41 +54,43 @@
 
 :root,
 .dark {
-  /* Kinetic Analytics — sistema de diseño Stitch: "Mission Control" para el atleta.
+  /* Apex AutoReg Performance — sistema de diseño Stitch (design/stitch-redesign/04-design-system).
      Dark-only por diseño (no hay toggle de tema); :root y .dark comparten valores
      para que no dependa del montaje de next-themes ni produzca flash claro/oscuro. */
-  --background: #131313;
-  --foreground: #e5e2e1;
-  --card: #1e1e1e;
-  --card-foreground: #e5e2e1;
-  --popover: #1e1e1e;
-  --popover-foreground: #e5e2e1;
+  --background: #0b0f12;
+  --foreground: #f4f7f9;
+  --card: #13191f;
+  --card-foreground: #f4f7f9;
+  --popover: #13191f;
+  --popover-foreground: #f4f7f9;
   --primary: #ccff00;
-  --primary-foreground: #161e00;
-  --secondary: #00e5ff;
-  --secondary-foreground: #001f24;
-  --muted: #2a2a2a;
-  --muted-foreground: #c4c9ac;
-  --accent: #232a12;
+  --primary-foreground: #0b0f12;
+  --secondary: #00f0ff;
+  --secondary-foreground: #00363a;
+  --tertiary: #ff3355;
+  --tertiary-foreground: #ffffff;
+  --muted: #181c1f;
+  --muted-foreground: #7e8b9b;
+  --accent: #1c2023;
   --accent-foreground: #ccff00;
-  --destructive: #ff3d00;
+  --destructive: #ff3355;
   --destructive-foreground: #ffffff;
-  --border: #333333;
-  --input: #2a2a2a;
+  --border: #262a2e;
+  --input: #0f151b;
   --ring: #ccff00;
   --chart-1: #ccff00;
-  --chart-2: #00e5ff;
-  --chart-3: #ff3d00;
+  --chart-2: #00f0ff;
+  --chart-3: #ff3355;
   --chart-4: #8e9379;
   --chart-5: #ffffff;
-  --radius: 0.375rem;
-  --sidebar: #0e0e0e;
-  --sidebar-foreground: #e5e2e1;
+  --radius: 0.5rem;
+  --sidebar: #0b0f12;
+  --sidebar-foreground: #f4f7f9;
   --sidebar-primary: #ccff00;
-  --sidebar-primary-foreground: #161e00;
-  --sidebar-accent: #1c1b1b;
-  --sidebar-accent-foreground: #e5e2e1;
-  --sidebar-border: #333333;
+  --sidebar-primary-foreground: #0b0f12;
+  --sidebar-accent: #181c1f;
+  --sidebar-accent-foreground: #f4f7f9;
+  --sidebar-border: #262a2e;
   --sidebar-ring: #ccff00;
 }
 

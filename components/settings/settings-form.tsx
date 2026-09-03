@@ -6,12 +6,15 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 interface SettingsData {
   goal: string | null;
   experience_years: number | null;
   shift_anchor_date: string | null;
   default_plate_increment_kg: number;
+  injury_history: string | null;
+  medical_notes: string | null;
 }
 
 export function SettingsForm({ initial }: { initial: SettingsData | null }) {
@@ -25,6 +28,8 @@ export function SettingsForm({ initial }: { initial: SettingsData | null }) {
   const [plateIncrement, setPlateIncrement] = useState(
     initial?.default_plate_increment_kg?.toString() ?? "2.5",
   );
+  const [injuryHistory, setInjuryHistory] = useState(initial?.injury_history ?? "");
+  const [medicalNotes, setMedicalNotes] = useState(initial?.medical_notes ?? "");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,6 +43,8 @@ export function SettingsForm({ initial }: { initial: SettingsData | null }) {
         experienceYears: experienceYears ? Number(experienceYears) : null,
         shiftAnchorDate: shiftAnchorDate || null,
         defaultPlateIncrementKg: plateIncrement ? Number(plateIncrement) : 2.5,
+        injuryHistory: injuryHistory || null,
+        medicalNotes: medicalNotes || null,
       }),
     });
 
@@ -97,6 +104,31 @@ export function SettingsForm({ initial }: { initial: SettingsData | null }) {
           type="date"
           value={shiftAnchorDate}
           onChange={(e) => setShiftAnchorDate(e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5 border-t border-border pt-4">
+        <p className="font-mono text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Ficha clínica
+        </p>
+        <Label htmlFor="injury-history">Historial de lesiones</Label>
+        <Textarea
+          id="injury-history"
+          rows={3}
+          placeholder="Lesiones previas, cirugías, zonas a cuidar..."
+          value={injuryHistory}
+          onChange={(e) => setInjuryHistory(e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="medical-notes">Notas médicas</Label>
+        <Textarea
+          id="medical-notes"
+          rows={3}
+          placeholder="Condiciones a tener en cuenta, restricciones, indicaciones de kinesiología..."
+          value={medicalNotes}
+          onChange={(e) => setMedicalNotes(e.target.value)}
         />
       </div>
 

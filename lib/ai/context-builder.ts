@@ -99,6 +99,8 @@ export async function buildPeriodizationContext(
       bodyWeightKg: latestWeight,
       bodyWeightTrend7d: trend7d,
       bodyWeightTrend28d: trend28d,
+      injuryHistory: settings?.injury_history ?? null,
+      medicalNotes: settings?.medical_notes ?? null,
     },
     mesocycle: {
       name: mesocycle.name,

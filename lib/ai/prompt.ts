@@ -6,6 +6,10 @@ export interface AthleteProfile {
   bodyWeightKg: number | null;
   bodyWeightTrend7d: number | null;
   bodyWeightTrend28d: number | null;
+  /** Ficha clínica (Ajustes) — lesiones/cirugías previas a respetar al elegir ejercicios y progresión. */
+  injuryHistory: string | null;
+  /** Ficha clínica (Ajustes) — condiciones o indicaciones médicas/kinesiológicas vigentes. */
+  medicalNotes: string | null;
 }
 
 export interface MesocycleState {
@@ -75,6 +79,7 @@ Reglas:
 - Sé conservador ante la duda: preferir mantener carga o subirla en incrementos pequeños antes que un salto agresivo.
 - Si detectas fatiga acumulada (RPE subiendo mientras el rendimiento se estanca o cae, sueño insuficiente reiterado en el patrón de turno), recomienda una semana de deload explícitamente.
 - Nunca prescribas un aumento de carga mayor al que el desempeño real (RPE logueado) justifica.
+- Si el atleta tiene historial de lesiones o notas médicas cargadas (athlete.injuryHistory / athlete.medicalNotes), tenelas en cuenta explícitamente: evitá o modificá ejercicios contraindicados para esa lesión, y si algo del plan actual podría ser riesgoso dado ese historial, marcalo como warning con severidad "atencion" o "alerta" en vez de ignorarlo.
 - El resultado se aplicará solo si el atleta lo revisa y aprueba manualmente — nunca asumas aplicación automática, pero sí debes ser claro y accionable en tu propuesta.
 - Responde siempre en español.`;
 

@@ -8,7 +8,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Dumbbell, Fingerprint, Gauge, Waves, HeartPulse, PlayIcon } from "lucide-react";
+
+const CAPABILITIES = [
+  {
+    icon: Gauge,
+    title: "RPE & RIR Adaptativo",
+    description: "Ajuste dinámico de sobrecarga entre-serie según tu esfuerzo real.",
+    tag: "+0.25 RIR",
+  },
+  {
+    icon: Waves,
+    title: "Periodización Ondulante IA",
+    description: "Macrociclos y microciclos ajustados por fatiga, no solo por fecha.",
+    tag: "DUP/AUTO",
+  },
+  {
+    icon: HeartPulse,
+    title: "Readiness & Fatiga en Vivo",
+    description: "Monitoreo del sistema nervioso central antes de cada sesión.",
+    tag: "VFC · RIR",
+  },
+];
 
 export default function LoginPage() {
   const router = useRouter();
@@ -56,12 +78,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-muted/30 p-4">
+    <div className="flex flex-1 flex-col items-center justify-center gap-gutter-lg bg-background px-container-padding py-gutter-xl">
+      <div className="relative flex flex-col items-center gap-2 text-center">
+        <div className="pointer-events-none absolute -top-6 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex size-20 items-center justify-center rounded-2xl bg-card shadow-xl shadow-background/60 ring-1 ring-border">
+          <Dumbbell className="size-10 text-primary" />
+          <span className="absolute -bottom-1 -right-1 flex size-3.5">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-secondary opacity-75" />
+            <span className="relative inline-flex size-3.5 rounded-full bg-secondary" />
+          </span>
+        </div>
+        <h1 className="font-heading text-2xl font-extrabold uppercase tracking-tight">Entrenamiento</h1>
+        <p className="text-sm text-muted-foreground">Periodización y autoregulación con IA</p>
+        <span className="mt-1 rounded-full bg-primary/15 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
+          Motor neuronal v2.4 · Listo
+        </span>
+      </div>
+
       <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Entrenamiento</CardTitle>
-          <CardDescription>Periodización y autoregulación con IA</CardDescription>
-        </CardHeader>
         <CardContent>
           {forgotPassword ? (
             resetSent ? (
@@ -136,9 +170,20 @@ export default function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
-                  <Button type="submit" disabled={loading} className="mt-2">
+                  <Button type="submit" disabled={loading} className="mt-2 gap-1.5 font-semibold uppercase tracking-wide">
+                    {mode === "login" && <PlayIcon className="size-4" />}
                     {loading ? "Cargando..." : mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
                   </Button>
+                  {mode === "login" && (
+                    <button
+                      type="button"
+                      onClick={() => toast.info("Acceso biométrico: todavía no disponible")}
+                      className="flex items-center justify-center gap-1.5 py-1 text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      <Fingerprint className="size-3.5" />
+                      Acceso biométrico rápido con FaceID
+                    </button>
+                  )}
                   {mode === "login" && (
                     <Button
                       type="button"
@@ -156,6 +201,28 @@ export default function LoginPage() {
           )}
         </CardContent>
       </Card>
+
+      <div className="flex w-full max-w-sm flex-col gap-3">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          Capacidades de alto rendimiento
+        </p>
+        {CAPABILITIES.map((cap) => (
+          <div
+            key={cap.title}
+            className="flex items-start gap-3 rounded-xl bg-card px-3.5 py-3 ring-1 ring-border"
+          >
+            <cap.icon className="mt-0.5 size-4 shrink-0 text-secondary" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold">{cap.title}</p>
+              <p className="text-xs text-muted-foreground">{cap.description}</p>
+            </div>
+            <span className="whitespace-nowrap font-mono text-[10px] text-secondary">{cap.tag}</span>
+          </div>
+        ))}
+        <p className="pt-2 text-center text-xs italic text-muted-foreground">
+          &ldquo;La fuerza no es contentar; es ciencia y precisión algorítmica.&rdquo;
+        </p>
+      </div>
     </div>
   );
 }

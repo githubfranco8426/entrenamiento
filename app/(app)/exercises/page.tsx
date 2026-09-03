@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -50,7 +51,11 @@ export default async function ExercisesPage() {
                     <TableCell>
                       <ExerciseThumbnail src={ex.thumbnail_url} alt={ex.name} />
                     </TableCell>
-                    <TableCell className="font-medium">{ex.name}</TableCell>
+                    <TableCell className="font-medium">
+                      <Link href={`/exercises/${ex.id}`} className="hover:text-primary hover:underline">
+                        {ex.name}
+                      </Link>
+                    </TableCell>
                     <TableCell>{ex.muscle_group ?? "—"}</TableCell>
                     <TableCell>{ex.equipment ?? "—"}</TableCell>
                     <TableCell>

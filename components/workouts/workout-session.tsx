@@ -18,7 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
-import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon } from "lucide-react";
+import { WorkoutSummary } from "@/components/workouts/workout-summary";
+import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
@@ -148,6 +149,7 @@ export function WorkoutSession({
   const [blocks, setBlocks] = useState<Block[]>(() => buildInitialBlocks(workout));
   const [extraRowsByBlock, setExtraRowsByBlock] = useState<Record<string, number>>({});
   const [ended, setEnded] = useState(!!workout.ended_at);
+  const [endedAt, setEndedAt] = useState(workout.ended_at);
   const [addExerciseId, setAddExerciseId] = useState("");
   const [finishing, setFinishing] = useState(false);
   const [cancelling, setCancelling] = useState(false);
@@ -279,9 +281,10 @@ export function WorkoutSession({
       toast.error("No se pudo finalizar el entrenamiento");
       return;
     }
+    const { workout: updated } = await res.json();
     setEnded(true);
-    toast.success("Entrenamiento finalizado");
-    router.push("/dashboard");
+    setEndedAt(updated.ended_at);
+    toast.success("¡Entrenamiento finalizado! Acá tenés tu informe.");
   }
 
   const availableExercises = allExercises.filter((e) => !blocks.some((b) => b.exerciseId === e.id));
@@ -321,6 +324,18 @@ export function WorkoutSession({
           </div>
         )}
       </div>
+
+      {ended && endedAt && (
+        <WorkoutSummary
+          startedAt={workout.started_at}
+          endedAt={endedAt}
+          blocks={blocks.map((b) => ({
+            exerciseName: b.exerciseName,
+            loggedSets: b.loggedSets,
+            estimatedOneRepMaxKg: estimatedOneRepMaxByExercise[b.exerciseId] ?? null,
+          }))}
+        />
+      )}
 
       {blocks.map((block) => (
         <ExerciseBlockCard
@@ -370,6 +385,20 @@ export function WorkoutSession({
 
 /** RIR por defecto cuando el set objetivo no define target_rpe (p. ej. ejercicios libres). */
 const DEFAULT_TARGET_RIR = 2;
+
+const RIR_OPTIONS = [
+  { label: "RIR 0-1", sub: "RPE 9-10", value: 1 },
+  { label: "RIR 2-3", sub: "RPE 7-8", value: 2 },
+  { label: "RIR 4+", sub: "RPE ≤6", value: 4 },
+] as const;
+
+function closestRirOption(rir: number): (typeof RIR_OPTIONS)[number]["value"] {
+  let closest: (typeof RIR_OPTIONS)[number]["value"] = RIR_OPTIONS[0].value;
+  for (const opt of RIR_OPTIONS) {
+    if (Math.abs(opt.value - rir) < Math.abs(closest - rir)) closest = opt.value;
+  }
+  return closest;
+}
 
 const ROW_GRID = "grid grid-cols-[2.5rem_1fr_1fr_3.5rem_2.75rem] items-center gap-2";
 
@@ -531,7 +560,23 @@ function SetRow({
     );
   }
 
-  const isPending = status === "pending";
+  if (status === "pending") {
+    return (
+      <div className={cn(ROW_GRID, "border-b border-border/60 px-3 py-1.5 opacity-40")}>
+        <span className="text-center font-mono text-sm text-muted-foreground">{index + 1}</span>
+        <span className="text-center font-mono text-sm text-muted-foreground">{weight || "-"}</span>
+        <span className="text-center font-mono text-sm text-muted-foreground">{reps || "-"}</span>
+        <span className="text-center font-mono text-sm text-muted-foreground">{rir}</span>
+        <span />
+      </div>
+    );
+  }
+
+  const repsValue = Number(reps) || 0;
+
+  function stepReps(delta: number) {
+    setReps(String(Math.max(1, repsValue + delta)));
+  }
 
   async function handleDone() {
     const w = Number(weight);
@@ -547,55 +592,75 @@ function SetRow({
     setSubmitting(false);
   }
 
+  const selectedRirOption = rir !== "" ? closestRirOption(Number(rir)) : null;
+
   return (
-    <div
-      className={cn(
-        ROW_GRID,
-        "border-b border-border/60 px-3 py-1.5",
-        status === "active" && "border-l-2 border-l-primary bg-primary/5",
-        isPending && "opacity-40",
-      )}
-    >
-      <span className="text-center font-mono text-sm text-muted-foreground">{index + 1}</span>
-      <input
-        type="number"
-        step="0.5"
-        inputMode="decimal"
-        value={weight}
-        onChange={(e) => setWeight(e.target.value)}
-        disabled={isPending}
-        placeholder={defaultWeight || "-"}
-        className="h-9 w-full rounded-md border border-border bg-transparent text-center font-mono text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60"
-      />
-      <input
-        type="number"
-        inputMode="numeric"
-        value={reps}
-        onChange={(e) => setReps(e.target.value)}
-        disabled={isPending}
-        placeholder={defaultReps || "-"}
-        className="h-9 w-full rounded-md border border-border bg-transparent text-center font-mono text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60"
-      />
-      <input
-        type="number"
-        min="0"
-        max="5"
-        inputMode="numeric"
-        value={rir}
-        onChange={(e) => setRir(e.target.value)}
-        disabled={isPending}
-        className="h-9 w-full rounded-md border border-secondary/40 bg-secondary/10 text-center font-mono text-sm text-secondary outline-none focus:border-secondary focus:ring-1 focus:ring-secondary disabled:opacity-60"
-      />
-      <span className="flex justify-center">
+    <div className="flex flex-col gap-3 border-b border-border/60 bg-primary/5 p-3">
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-xs uppercase tracking-wide text-muted-foreground">Set {index + 1}</span>
+        <div className="flex items-center gap-1.5">
+          <input
+            type="number"
+            step="0.5"
+            inputMode="decimal"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            placeholder={defaultWeight || "-"}
+            className="h-9 w-20 rounded-md border border-border bg-card text-center font-mono text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+          <span className="font-mono text-xs text-muted-foreground">kg</span>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-5">
         <button
           type="button"
-          onClick={handleDone}
-          disabled={isPending || submitting}
-          className="flex size-8 items-center justify-center rounded-md border border-border text-transparent hover:border-primary hover:text-primary disabled:pointer-events-none disabled:opacity-40"
+          onClick={() => stepReps(-1)}
+          className="flex size-10 items-center justify-center rounded-full bg-card text-foreground hover:bg-muted active:scale-90"
         >
-          <CheckIcon className="size-4" />
+          <MinusIcon className="size-5" />
         </button>
-      </span>
+        <div className="flex flex-col items-center">
+          <span className="font-mono text-3xl font-bold tracking-tight text-primary">{reps || "-"}</span>
+          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">reps</span>
+        </div>
+        <button
+          type="button"
+          onClick={() => stepReps(1)}
+          className="flex size-10 items-center justify-center rounded-full bg-card text-primary hover:bg-muted active:scale-90"
+        >
+          <PlusIcon className="size-5" />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        {RIR_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => setRir(String(opt.value))}
+            className={cn(
+              "flex flex-col items-center gap-0.5 rounded-lg p-2 text-center transition-colors",
+              selectedRirOption === opt.value ? "bg-primary/15" : "bg-card hover:bg-muted",
+            )}
+          >
+            <span className={cn("font-mono text-sm font-bold", selectedRirOption === opt.value ? "text-primary" : "text-secondary")}>
+              {opt.label}
+            </span>
+            <span className="font-mono text-[10px] text-muted-foreground">{opt.sub}</span>
+          </button>
+        ))}
+      </div>
+
+      <Button
+        type="button"
+        onClick={handleDone}
+        disabled={submitting}
+        className="w-full gap-2 font-semibold"
+      >
+        <CheckIcon className="size-4" />
+        Registrar set {index + 1} ({reps || "-"} reps @ {weight || "-"}kg)
+      </Button>
     </div>
   );
 }

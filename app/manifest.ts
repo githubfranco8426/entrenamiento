@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Periodización y autoregulación de entrenamiento con IA.",
     start_url: "/dashboard",
     display: "standalone",
-    background_color: "#131313",
-    theme_color: "#131313",
+    background_color: "#0b0f12",
+    theme_color: "#0b0f12",
     orientation: "portrait",
     icons: [
       {

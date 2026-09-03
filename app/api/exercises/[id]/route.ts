@@ -5,11 +5,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const supabase = await createClient();
   const body = await request.json();
-  const { muscleGroup, equipment, thumbnailUrl, videoUrl } = body as {
+  const { muscleGroup, equipment, thumbnailUrl, videoUrl, cues, biomechanicsNotes } = body as {
     muscleGroup?: string | null;
     equipment?: string | null;
     thumbnailUrl?: string | null;
     videoUrl?: string | null;
+    cues?: string[] | null;
+    biomechanicsNotes?: string | null;
   };
 
   const { data, error } = await supabase
@@ -19,6 +21,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       ...(equipment !== undefined ? { equipment } : {}),
       ...(thumbnailUrl !== undefined ? { thumbnail_url: thumbnailUrl } : {}),
       ...(videoUrl !== undefined ? { video_url: videoUrl } : {}),
+      ...(cues !== undefined ? { cues } : {}),
+      ...(biomechanicsNotes !== undefined ? { biomechanics_notes: biomechanicsNotes } : {}),
     })
     .eq("id", id)
     .select()

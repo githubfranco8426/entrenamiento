@@ -34,6 +34,8 @@ export interface Database {
           plate_increment_kg: number;
           thumbnail_url: string | null;
           video_url: string | null;
+          cues: string[] | null;
+          biomechanics_notes: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["exercises"]["Row"]> & { name: string };
@@ -47,6 +49,8 @@ export interface Database {
           experience_years: number | null;
           shift_anchor_date: string | null;
           default_plate_increment_kg: number;
+          injury_history: string | null;
+          medical_notes: string | null;
           updated_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["user_settings"]["Row"]> & {
