@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { fetchWithAuthRetry } from "@/lib/supabase/fetch-with-auth-retry";
 
 export function DeleteButton({
   endpoint,
@@ -23,7 +24,7 @@ export function DeleteButton({
   async function handleDelete() {
     if (!window.confirm(confirmMessage)) return;
     setLoading(true);
-    const res = await fetch(endpoint, { method: "DELETE" });
+    const res = await fetchWithAuthRetry(endpoint, { method: "DELETE" });
     setLoading(false);
     if (!res.ok) {
       const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));

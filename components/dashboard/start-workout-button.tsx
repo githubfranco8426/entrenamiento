@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { fetchWithAuthRetry } from "@/lib/supabase/fetch-with-auth-retry";
 
 export function StartWorkoutButton({
   routineId,
@@ -21,7 +22,7 @@ export function StartWorkoutButton({
 
   async function handleClick() {
     setLoading(true);
-    const res = await fetch("/api/workouts", {
+    const res = await fetchWithAuthRetry("/api/workouts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ routineId: routineId ?? null }),

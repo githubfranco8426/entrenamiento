@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { repsInReserve } from "@/lib/autoregulation/rpe-tables";
+import { fetchWithAuthRetry } from "@/lib/supabase/fetch-with-auth-retry";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -194,7 +195,7 @@ export function WorkoutSession({
       ),
     );
 
-    const res = await fetch(`/api/workouts/${workout.id}/sets`, {
+    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}/sets`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -231,7 +232,7 @@ export function WorkoutSession({
     if (targetSet?.target_rpe) {
       const targetReps = targetSet.target_reps_max ?? targetSet.target_reps_min ?? reps;
       // Fire-and-forget: la sugerencia de autoregulación no debe bloquear el siguiente set.
-      fetch("/api/autoregulate", {
+      fetchWithAuthRetry("/api/autoregulate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -255,7 +256,7 @@ export function WorkoutSession({
   async function cancelWorkout() {
     if (!window.confirm("¿Anular este entrenamiento? Se borrará junto con las series ya registradas.")) return;
     setCancelling(true);
-    const res = await fetch(`/api/workouts/${workout.id}`, { method: "DELETE" });
+    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}`, { method: "DELETE" });
     setCancelling(false);
     if (!res.ok) {
       const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
@@ -268,7 +269,7 @@ export function WorkoutSession({
 
   async function finishWorkout() {
     setFinishing(true);
-    const res = await fetch(`/api/workouts/${workout.id}`, {
+    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ended: true }),
