@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/select";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 import { WorkoutSummary } from "@/components/workouts/workout-summary";
-import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, TimerIcon, SkipForwardIcon } from "lucide-react";
+import { useRestTimer } from "@/components/workouts/rest-timer-context";
+import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
@@ -255,6 +256,55 @@ export function WorkoutSession({
     }
   }
 
+  async function updateSet(block: Block, setLogId: string, weightKg: number, reps: number, rpeActual: number) {
+    const prevSets = block.loggedSets;
+    setBlocks((prev) =>
+      prev.map((b) =>
+        b.key === block.key
+          ? {
+              ...b,
+              loggedSets: b.loggedSets.map((s) =>
+                s.id === setLogId ? { ...s, weight_kg: weightKg, reps, rpe_actual: rpeActual } : s,
+              ),
+            }
+          : b,
+      ),
+    );
+
+    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}/sets/${setLogId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ weightKg, reps, rpeActual }),
+    });
+
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
+      toast.error(error);
+      setBlocks((prev) => prev.map((b) => (b.key === block.key ? { ...b, loggedSets: prevSets } : b)));
+      return;
+    }
+    toast.success("Set actualizado");
+  }
+
+  async function deleteSet(block: Block, setLogId: string) {
+    if (!window.confirm("¿Borrar este set?")) return;
+    const prevSets = block.loggedSets;
+    setBlocks((prev) =>
+      prev.map((b) =>
+        b.key === block.key ? { ...b, loggedSets: b.loggedSets.filter((s) => s.id !== setLogId) } : b,
+      ),
+    );
+
+    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}/sets/${setLogId}`, { method: "DELETE" });
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
+      toast.error(error);
+      setBlocks((prev) => prev.map((b) => (b.key === block.key ? { ...b, loggedSets: prevSets } : b)));
+      return;
+    }
+    toast.success("Set borrado");
+  }
+
   async function cancelWorkout() {
     if (!window.confirm("¿Anular este entrenamiento? Se borrará junto con las series ya registradas.")) return;
     setCancelling(true);
@@ -303,6 +353,7 @@ export function WorkoutSession({
           <p className="font-mono text-xs text-muted-foreground">
             {format(new Date(workout.started_at), "dd/MM/yyyy HH:mm")}
           </p>
+          {!ended && <WorkoutStopwatch startedAt={workout.started_at} />}
         </div>
         {ended ? (
           <Badge variant="secondary">Finalizado</Badge>
@@ -343,6 +394,8 @@ export function WorkoutSession({
           block={block}
           ended={ended}
           onLogSet={logSet}
+          onUpdateSet={updateSet}
+          onDeleteSet={deleteSet}
           estimatedOneRepMaxKg={estimatedOneRepMaxByExercise[block.exerciseId] ?? null}
           extraRows={extraRowsByBlock[block.key] ?? 0}
           onAddRow={() =>
@@ -412,67 +465,34 @@ function formatRest(seconds: number | null): string | null {
 
 /** Rest timer por defecto cuando el set objetivo no define rest_seconds. */
 const DEFAULT_REST_SECONDS = 90;
-const REST_STEP_SECONDS = 15;
 
-function formatClock(seconds: number): string {
-  const min = Math.floor(seconds / 60);
-  const sec = seconds % 60;
-  return `${min}:${String(sec).padStart(2, "0")}`;
+function formatElapsed(totalSeconds: number): string {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  const mm = String(m).padStart(h > 0 ? 2 : 1, "0");
+  const ss = String(s).padStart(2, "0");
+  return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${mm}:${ss}`;
 }
 
-function RestTimer({
-  secondsLeft,
-  onAdjust,
-  onSkip,
-}: {
-  secondsLeft: number;
-  onAdjust: (delta: number) => void;
-  onSkip: () => void;
-}) {
-  const done = secondsLeft <= 0;
+/** Cronómetro en vivo del entrenamiento completo — recalcula desde workout.started_at,
+ * así que sobrevive a navegar a otra pantalla y volver (no depende de estado en memoria). */
+function WorkoutStopwatch({ startedAt }: { startedAt: string }) {
+  const startedAtMs = new Date(startedAt).getTime();
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const elapsedSeconds = Math.max(0, Math.floor((now - startedAtMs) / 1000));
+
   return (
-    <div
-      className={cn(
-        "flex items-center justify-between gap-3 border-b border-border px-3 py-2.5",
-        done ? "bg-primary/10" : "bg-secondary/10",
-      )}
-    >
-      <div className="flex items-center gap-2">
-        <TimerIcon className={cn("size-4", done ? "text-primary" : "text-secondary")} />
-        <span className={cn("font-mono text-lg font-bold tabular-nums", done ? "text-primary" : "text-secondary")}>
-          {done ? "¡Listo!" : formatClock(secondsLeft)}
-        </span>
-        <span className="text-xs text-muted-foreground">{done ? "descanso terminado" : "descanso"}</span>
-      </div>
-      <div className="flex items-center gap-1.5">
-        {!done && (
-          <>
-            <button
-              type="button"
-              onClick={() => onAdjust(-REST_STEP_SECONDS)}
-              className="flex h-7 items-center rounded-md bg-card px-2 font-mono text-xs text-foreground hover:bg-muted"
-            >
-              -15s
-            </button>
-            <button
-              type="button"
-              onClick={() => onAdjust(REST_STEP_SECONDS)}
-              className="flex h-7 items-center rounded-md bg-card px-2 font-mono text-xs text-foreground hover:bg-muted"
-            >
-              +15s
-            </button>
-          </>
-        )}
-        <button
-          type="button"
-          onClick={onSkip}
-          className="flex h-7 items-center gap-1 rounded-md bg-card px-2 font-mono text-xs text-muted-foreground hover:text-foreground"
-        >
-          <SkipForwardIcon className="size-3.5" />
-          {done ? "Cerrar" : "Saltar"}
-        </button>
-      </div>
-    </div>
+    <span className="mt-0.5 flex items-center gap-1 font-mono text-sm font-semibold text-secondary">
+      <ClockIcon className="size-3.5" />
+      {formatElapsed(elapsedSeconds)}
+    </span>
   );
 }
 
@@ -480,6 +500,8 @@ function ExerciseBlockCard({
   block,
   ended,
   onLogSet,
+  onUpdateSet,
+  onDeleteSet,
   estimatedOneRepMaxKg,
   extraRows,
   onAddRow,
@@ -487,6 +509,8 @@ function ExerciseBlockCard({
   block: Block;
   ended: boolean;
   onLogSet: (block: Block, weightKg: number, reps: number, rpeActual: number) => Promise<void>;
+  onUpdateSet: (block: Block, setLogId: string, weightKg: number, reps: number, rpeActual: number) => Promise<void>;
+  onDeleteSet: (block: Block, setLogId: string) => Promise<void>;
   estimatedOneRepMaxKg: number | null;
   extraRows: number;
   onAddRow: () => void;
@@ -501,23 +525,19 @@ function ExerciseBlockCard({
   const restLabel = formatRest(headerTarget?.rest_seconds ?? null);
 
   const prevLoggedCountRef = useRef(block.loggedSets.length);
-  const [restSecondsLeft, setRestSecondsLeft] = useState<number | null>(null);
+  const restTimer = useRestTimer();
 
   useEffect(() => {
     const prevCount = prevLoggedCountRef.current;
     const newCount = block.loggedSets.length;
     if (newCount > prevCount && !ended) {
       const justCompletedTarget = block.targetSets[newCount - 1] ?? null;
-      setRestSecondsLeft(justCompletedTarget?.rest_seconds ?? DEFAULT_REST_SECONDS);
+      restTimer.start(justCompletedTarget?.rest_seconds ?? DEFAULT_REST_SECONDS, block.exerciseName);
     }
     prevLoggedCountRef.current = newCount;
-  }, [block.loggedSets.length, block.targetSets, ended]);
-
-  useEffect(() => {
-    if (restSecondsLeft == null || restSecondsLeft <= 0) return;
-    const t = setTimeout(() => setRestSecondsLeft((s) => (s != null ? s - 1 : null)), 1000);
-    return () => clearTimeout(t);
-  }, [restSecondsLeft]);
+    // restTimer.start es estable (useCallback), no hace falta en deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [block.loggedSets.length, block.targetSets, block.exerciseName, ended]);
 
   return (
     <Card className="overflow-hidden py-0 gap-0">
@@ -559,13 +579,6 @@ function ExerciseBlockCard({
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-0 px-0 pb-0">
-        {restSecondsLeft != null && (
-          <RestTimer
-            secondsLeft={restSecondsLeft}
-            onAdjust={(delta) => setRestSecondsLeft((s) => (s != null ? Math.max(0, s + delta) : s))}
-            onSkip={() => setRestSecondsLeft(null)}
-          />
-        )}
         {block.notes && (
           <p className="border-b border-border bg-secondary/10 px-3 py-2 text-xs text-secondary">{block.notes}</p>
         )}
@@ -583,12 +596,17 @@ function ExerciseBlockCard({
           const status: "done" | "active" | "pending" = loggedSet ? "done" : i === nextIndex ? "active" : "pending";
           return (
             <SetRow
-              key={i}
+              key={loggedSet?.id ?? i}
               index={i}
               status={ended && status === "active" ? "pending" : status}
               loggedSet={loggedSet}
               targetSet={targetSet}
+              editable={!ended}
               onSubmit={(weightKg, reps, rpeActual) => onLogSet(block, weightKg, reps, rpeActual)}
+              onUpdate={(weightKg, reps, rpeActual) =>
+                loggedSet ? onUpdateSet(block, loggedSet.id, weightKg, reps, rpeActual) : Promise.resolve()
+              }
+              onDelete={() => (loggedSet ? onDeleteSet(block, loggedSet.id) : Promise.resolve())}
             />
           );
         })}
@@ -613,13 +631,19 @@ function SetRow({
   status,
   loggedSet,
   targetSet,
+  editable,
   onSubmit,
+  onUpdate,
+  onDelete,
 }: {
   index: number;
   status: "done" | "active" | "pending";
   loggedSet: SetLog | null;
   targetSet: TargetSet | null;
+  editable: boolean;
   onSubmit: (weightKg: number, reps: number, rpeActual: number) => Promise<void>;
+  onUpdate: (weightKg: number, reps: number, rpeActual: number) => Promise<void>;
+  onDelete: () => Promise<void>;
 }) {
   const defaultWeight = targetSet?.target_weight_kg != null ? String(targetSet.target_weight_kg) : "";
   const defaultReps =
@@ -636,19 +660,14 @@ function SetRow({
   const [submitting, setSubmitting] = useState(false);
 
   if (status === "done" && loggedSet) {
-    const doneRir = loggedSet.rpe_actual != null ? Math.round(repsInReserve(loggedSet.rpe_actual)) : null;
     return (
-      <div className={cn(ROW_GRID, "border-b border-border/60 px-3 py-1.5 font-mono text-sm text-muted-foreground")}>
-        <span className="text-center">{index + 1}</span>
-        <span className="text-center text-foreground">{loggedSet.weight_kg ?? "—"}</span>
-        <span className="text-center text-foreground">{loggedSet.reps ?? "—"}</span>
-        <span className="text-center">{doneRir ?? "—"}</span>
-        <span className="flex justify-center">
-          <span className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <CheckIcon className="size-3.5" />
-          </span>
-        </span>
-      </div>
+      <DoneSetRow
+        index={index}
+        loggedSet={loggedSet}
+        editable={editable}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+      />
     );
   }
 
@@ -753,6 +772,141 @@ function SetRow({
         <CheckIcon className="size-4" />
         Registrar set {index + 1} ({reps || "-"} reps @ {weight || "-"}kg)
       </Button>
+    </div>
+  );
+}
+
+function DoneSetRow({
+  index,
+  loggedSet,
+  editable,
+  onUpdate,
+  onDelete,
+}: {
+  index: number;
+  loggedSet: SetLog;
+  editable: boolean;
+  onUpdate: (weightKg: number, reps: number, rpeActual: number) => Promise<void>;
+  onDelete: () => Promise<void>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [weight, setWeight] = useState(String(loggedSet.weight_kg ?? ""));
+  const [reps, setReps] = useState(String(loggedSet.reps ?? ""));
+  const doneRir = loggedSet.rpe_actual != null ? Math.round(repsInReserve(loggedSet.rpe_actual)) : null;
+  const [rir, setRir] = useState(String(doneRir ?? DEFAULT_TARGET_RIR));
+  const [saving, setSaving] = useState(false);
+
+  if (!editing) {
+    return (
+      <div className={cn(ROW_GRID, "border-b border-border/60 px-3 py-1.5 font-mono text-sm text-muted-foreground")}>
+        <span className="text-center">{index + 1}</span>
+        <span className="text-center text-foreground">{loggedSet.weight_kg ?? "—"}</span>
+        <span className="text-center text-foreground">{loggedSet.reps ?? "—"}</span>
+        <span className="text-center">{doneRir ?? "—"}</span>
+        {editable ? (
+          <button
+            type="button"
+            onClick={() => {
+              setWeight(String(loggedSet.weight_kg ?? ""));
+              setReps(String(loggedSet.reps ?? ""));
+              setRir(String(doneRir ?? DEFAULT_TARGET_RIR));
+              setEditing(true);
+            }}
+            aria-label="Editar set"
+            className="flex size-6 items-center justify-center justify-self-center rounded-md bg-primary text-primary-foreground hover:bg-primary/80"
+          >
+            <PencilIcon className="size-3.5" />
+          </button>
+        ) : (
+          <span className="flex justify-center">
+            <span className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <CheckIcon className="size-3.5" />
+            </span>
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  async function handleSave() {
+    const w = Number(weight);
+    const r = Number(reps);
+    const rirValue = Number(rir);
+    if (!w || !r || rir === "" || Number.isNaN(rirValue)) {
+      toast.error("Completá kg, reps y RIR");
+      return;
+    }
+    const rpeActual = Math.min(10, Math.max(5, 10 - rirValue));
+    setSaving(true);
+    await onUpdate(w, r, rpeActual);
+    setSaving(false);
+    setEditing(false);
+  }
+
+  async function handleDelete() {
+    setSaving(true);
+    await onDelete();
+    setSaving(false);
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 border-b border-border/60 bg-secondary/5 px-3 py-2">
+      <span className="w-6 text-center font-mono text-sm text-muted-foreground">{index + 1}</span>
+      <input
+        type="number"
+        step="0.5"
+        inputMode="decimal"
+        value={weight}
+        onChange={(e) => setWeight(e.target.value)}
+        className="h-8 w-16 rounded-md border border-border bg-card text-center font-mono text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+      />
+      <span className="font-mono text-xs text-muted-foreground">kg ×</span>
+      <input
+        type="number"
+        inputMode="numeric"
+        value={reps}
+        onChange={(e) => setReps(e.target.value)}
+        className="h-8 w-14 rounded-md border border-border bg-card text-center font-mono text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+      />
+      <span className="font-mono text-xs text-muted-foreground">reps · RIR</span>
+      <input
+        type="number"
+        min="0"
+        max="5"
+        inputMode="numeric"
+        value={rir}
+        onChange={(e) => setRir(e.target.value)}
+        className="h-8 w-12 rounded-md border border-secondary/40 bg-secondary/10 text-center font-mono text-sm text-secondary outline-none focus:border-secondary focus:ring-1 focus:ring-secondary"
+      />
+      <div className="ml-auto flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={saving}
+          aria-label="Borrar set"
+          className="flex size-8 items-center justify-center rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10 disabled:opacity-40"
+        >
+          <TrashIcon className="size-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setEditing(false)}
+          disabled={saving}
+          aria-label="Cancelar"
+          className="flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted disabled:opacity-40"
+        >
+          <XIcon className="size-4" />
+        </button>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving}
+          aria-label="Guardar"
+          className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/80 disabled:opacity-40"
+        >
+          <CheckIcon className="size-4" />
+        </button>
+      </div>
     </div>
   );
 }
