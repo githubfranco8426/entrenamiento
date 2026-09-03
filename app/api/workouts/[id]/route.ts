@@ -26,7 +26,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { data, error } = await supabase
     .from("workouts")
     .update({
-      ...(ended ? { ended_at: new Date().toISOString() } : {}),
+      ...(ended === true ? { ended_at: new Date().toISOString() } : {}),
+      ...(ended === false ? { ended_at: null } : {}),
       ...(notes !== undefined ? { notes } : {}),
     })
     .eq("id", id)

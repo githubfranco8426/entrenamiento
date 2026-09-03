@@ -20,7 +20,7 @@ import {
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 import { WorkoutSummary } from "@/components/workouts/workout-summary";
 import { useRestTimer } from "@/components/workouts/rest-timer-context";
-import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon } from "lucide-react";
+import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon, RotateCcwIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
@@ -154,6 +154,7 @@ export function WorkoutSession({
   const [addExerciseId, setAddExerciseId] = useState("");
   const [finishing, setFinishing] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [reopening, setReopening] = useState(false);
   const hasLoggedSets = blocks.some((b) => b.loggedSets.length > 0);
 
   function addFreestyleExercise() {
@@ -337,6 +338,23 @@ export function WorkoutSession({
     toast.success("¡Entrenamiento finalizado! Acá tenés tu informe.");
   }
 
+  async function reopenWorkout() {
+    setReopening(true);
+    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ended: false }),
+    });
+    setReopening(false);
+    if (!res.ok) {
+      toast.error("No se pudo reabrir el entrenamiento");
+      return;
+    }
+    setEnded(false);
+    setEndedAt(null);
+    toast.success("Entrenamiento reabierto — ya podés editarlo");
+  }
+
   const availableExercises = allExercises.filter((e) => !blocks.some((b) => b.exerciseId === e.id));
   const availableExerciseItems = Object.fromEntries(availableExercises.map((e) => [e.id, e.name]));
 
@@ -356,7 +374,13 @@ export function WorkoutSession({
           {!ended && <WorkoutStopwatch startedAt={workout.started_at} />}
         </div>
         {ended ? (
-          <Badge variant="secondary">Finalizado</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary">Finalizado</Badge>
+            <Button variant="outline" size="sm" onClick={reopenWorkout} disabled={reopening} className="gap-1.5">
+              <RotateCcwIcon className="size-3.5" />
+              {reopening ? "Reabriendo..." : "Reabrir"}
+            </Button>
+          </div>
         ) : (
           <div className="flex items-center gap-2">
             <Button
