@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { CameraIcon } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,12 +14,46 @@ export function BodyMetricForm({
   initial,
 }: {
   today: string;
-  initial: { weight_kg: number | null; body_fat_pct: number | null } | null;
+  initial: { weight_kg: number | null; body_fat_pct: number | null; photo_path: string | null } | null;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [weightKg, setWeightKg] = useState(initial?.weight_kg?.toString() ?? "");
   const [bodyFatPct, setBodyFatPct] = useState(initial?.body_fat_pct?.toString() ?? "");
+  const [photoPath, setPhotoPath] = useState<string | null>(initial?.photo_path ?? null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setUploadingPhoto(false);
+      toast.error("No autenticado");
+      return;
+    }
+
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const path = `${user.id}/${today}.${ext}`;
+    const { error } = await supabase.storage
+      .from("progress-photos")
+      .upload(path, file, { upsert: true, contentType: file.type });
+
+    setUploadingPhoto(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setPhotoPath(path);
+    toast.success("Foto subida");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,6 +66,7 @@ export function BodyMetricForm({
         logDate: today,
         weightKg: weightKg ? Number(weightKg) : null,
         bodyFatPct: bodyFatPct ? Number(bodyFatPct) : null,
+        photoPath,
       }),
     });
 
@@ -65,7 +102,27 @@ export function BodyMetricForm({
           onChange={(e) => setBodyFatPct(e.target.value)}
         />
       </div>
-      <Button type="submit" disabled={loading}>
+      <div className="flex flex-col gap-1.5">
+        <Label>Foto</Label>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handlePhotoChange}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          disabled={uploadingPhoto}
+          onClick={() => fileInputRef.current?.click()}
+          aria-label={photoPath ? "Cambiar foto" : "Subir foto"}
+        >
+          <CameraIcon className={photoPath ? "text-primary" : undefined} />
+        </Button>
+      </div>
+      <Button type="submit" disabled={loading || uploadingPhoto}>
         {loading ? "Guardando..." : "Guardar"}
       </Button>
     </form>

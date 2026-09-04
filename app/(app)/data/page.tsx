@@ -6,6 +6,7 @@ import { WeightChart } from "@/components/data/weight-chart";
 import { ProgressionChart } from "@/components/data/progression-chart";
 import { LoadMatrix, type LoadMatrixSession } from "@/components/data/load-matrix";
 import { AcwrCard } from "@/components/data/acwr-card";
+import { ProgressPhotoGallery } from "@/components/data/progress-photo-gallery";
 
 export default async function DataPage() {
   const supabase = await createClient();
@@ -13,7 +14,7 @@ export default async function DataPage() {
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
   twentyEightDaysAgo.setHours(0, 0, 0, 0);
 
-  const [{ data: bodyMetrics }, { data: history }, { data: recentSets }] = await Promise.all([
+  const [{ data: bodyMetrics }, { data: history }, { data: recentSets }, { data: photoRows }] = await Promise.all([
     supabase
       .from("body_metrics")
       .select("log_date, weight_kg, body_fat_pct")
@@ -35,7 +36,27 @@ export default async function DataPage() {
       .not("reps", "is", null)
       .gte("completed_at", twentyEightDaysAgo.toISOString())
       .limit(2000),
+    supabase
+      .from("body_metrics")
+      .select("log_date, photo_path, weight_kg, body_fat_pct")
+      .not("photo_path", "is", null)
+      .order("log_date", { ascending: false })
+      .limit(60),
   ]);
+
+  const photos = await Promise.all(
+    (photoRows ?? []).map(async (row) => {
+      const { data: signed } = await supabase.storage
+        .from("progress-photos")
+        .createSignedUrl(row.photo_path!, 60 * 60);
+      return {
+        date: row.log_date,
+        weightKg: row.weight_kg,
+        bodyFatPct: row.body_fat_pct,
+        url: signed?.signedUrl ?? null,
+      };
+    }),
+  );
 
   const loadByDay = new Map<string, number>();
   for (const s of recentSets ?? []) {
@@ -179,6 +200,16 @@ export default async function DataPage() {
               <LoadMatrix sessions={ex.sessions.slice(-4)} />
             </div>
           ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold uppercase tracking-wide">Progreso visual</CardTitle>
+          <CardDescription>Fotos de progreso — subílas desde el panel junto con tu peso del día.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ProgressPhotoGallery photos={photos} />
         </CardContent>
       </Card>
     </div>

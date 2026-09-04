@@ -19,9 +19,9 @@ export function LoadMatrix({ sessions }: { sessions: LoadMatrixSession[] }) {
         <span className="text-right">Reps · RIR</span>
         <span className="text-right">e1RM</span>
       </div>
-      {sessions.map((s) => (
+      {sessions.map((s, i) => (
         <div
-          key={s.date}
+          key={`${s.date}-${i}`}
           className="grid grid-cols-4 gap-2 border-b border-border/60 px-3 py-1.5 font-mono text-sm last:border-b-0"
         >
           <span className="text-muted-foreground">{format(new Date(s.date), "dd MMM")}</span>

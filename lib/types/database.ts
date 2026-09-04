@@ -15,6 +15,7 @@ export type ShiftType =
   | "dia3_post_nocturno_descanso"
   | "dia4_libre";
 export type AiTriggerType = "end_of_microcycle" | "end_of_mesocycle" | "manual";
+export type CoachLinkStatus = "pending" | "active" | "revoked";
 export type AiRunStatus = "pending_review" | "approved" | "rejected" | "applied" | "error";
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
@@ -360,6 +361,7 @@ export interface Database {
           weight_kg: number | null;
           body_fat_pct: number | null;
           notes: string | null;
+          photo_path: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["body_metrics"]["Row"]> & { log_date: string };
@@ -426,9 +428,37 @@ export interface Database {
           },
         ];
       };
+      coach_athlete_links: {
+        Row: {
+          id: string;
+          coach_id: string;
+          athlete_id: string;
+          status: CoachLinkStatus;
+          invited_at: string;
+          accepted_at: string | null;
+          created_at: string;
+          athlete_email: string | null;
+          coach_email: string | null;
+        };
+        Insert: Partial<Database["public"]["Tables"]["coach_athlete_links"]["Row"]> & {
+          coach_id: string;
+          athlete_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["coach_athlete_links"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      is_active_coach_of: {
+        Args: { target_user_id: string };
+        Returns: boolean;
+      };
+      get_athlete_summary: {
+        Args: { target_athlete_id: string };
+        Returns: Json;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

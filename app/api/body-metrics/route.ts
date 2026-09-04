@@ -6,6 +6,7 @@ interface BodyMetricBody {
   weightKg?: number | null;
   bodyFatPct?: number | null;
   notes?: string | null;
+  photoPath?: string | null;
 }
 
 export async function GET(request: Request) {
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
         weight_kg: body.weightKg ?? null,
         body_fat_pct: body.bodyFatPct ?? null,
         notes: body.notes ?? null,
+        ...(body.photoPath !== undefined ? { photo_path: body.photoPath } : {}),
       },
       { onConflict: "user_id,log_date" },
     )
