@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#101417;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#e0e3e7', 'on-surface-variant': '#c4c9ac', 'surface-container': '#1c2023', 'on-secondary-fixed-variant': '#004f54', 'surface-dim': '#101417', 'on-tertiary-container': '#ca0037', 'surface-container-lowest': '#0b0f12', 'secondary': '#d3fbff', 'on-error-container': '#ffdad6', 'secondary-container': '#00eefc', 'surface-variant': '#313539', 'surface-container-highest': '#313539', 'inverse-on-surface': '#2d3134', 'primary-container': '#c3f400', 'on-primary-container': '#556d00', 'tertiary': '#ffffff', 'outline': '#8e9379', 'secondary-fixed': '#7df4ff', 'tertiary-container': '#ffdada', 'surface-container-high': '#262a2e', 'on-secondary-container': '#00686f', 'surface': '#101417', 'primary-fixed-dim': '#abd600', 'primary': '#ffffff', 'on-tertiary-fixed': '#40000b', 'on-tertiary-fixed-variant': '#920025', 'on-background': '#e0e3e7', 'primary-fixed': '#c3f400', 'on-surface': '#e0e3e7', 'on-primary-fixed': '#161e00', 'outline-variant': '#444933', 'on-error': '#690005', 'inverse-primary': '#506600', 'error-container': '#93000a', 'on-primary-fixed-variant': '#3c4d00', 'on-tertiary': '#680018', 'on-primary': '#283500', 'tertiary-fixed-dim': '#ffb3b5', 'background': '#101417', 'tertiary-fixed': '#ffdada', 'on-secondary': '#00363a', 'surface-bright': '#363a3d', 'error': '#ffb4ab', 'on-secondary-fixed': '#002022', 'secondary-fixed-dim': '#00dbe9', 'surface-container-low': '#181c1f', 'surface-tint': '#abd600' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter-xl': '2rem', 'margin-mobile': '1.25rem', 'margin-tablet': '2rem', 'gutter-sm': '0.5rem', 'gutter-lg': '1.5rem', 'gutter-md': '1rem', 'gutter-xs': '0.25rem', 'container-padding': '1.25rem', 'field-height-touch': '3.25rem' }, fontFamily: { 'display-hero': ['plusJakartaSans'], 'label-caps': ['plusJakartaSans'], 'headline-md': ['plusJakartaSans'], 'body-md': ['plusJakartaSans'], 'body-lg': ['plusJakartaSans'], 'label-numeric': ['jetbrainsMono'], 'body-sm': ['plusJakartaSans'], 'headline-sm': ['plusJakartaSans'], 'headline-lg': ['plusJakartaSans'], 'display-hero-mobile': ['plusJakartaSans'] }, fontSize: { 'display-hero': ['40px', { lineHeight: '46px', fontWeight: '800' }], 'label-caps': ['11px', { lineHeight: '14px', fontWeight: '700' }], 'headline-md': ['20px', { lineHeight: '26px', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'label-numeric': ['16px', { lineHeight: '20px', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'headline-lg': ['24px', { lineHeight: '30px', fontWeight: '700' }], 'display-hero-mobile': ['32px', { lineHeight: '38px', fontWeight: '800' }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter-md flex items-center justify-between"><div class="flex items-center gap-gutter-sm"><img alt="Entrenamiento AI Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWpHZP_FDQsTiBRwtr4Vt-GPjY5t_sIkdo2sLY1nICdJp1XRr_0shxdAhY9HqYozLja-WAwJ7moUpHxTeqms9Y9z3o6SbXx2fhacMbnJBOeBQ1OiqRyTphXG27uTYXEZOYYtY4mpA7xCeP6viOB2bQsbKydi_Mp1BtDYrBUunx8i88ZnkXBq1i9lssbieETwy6ni-_uVCPaYAJrcvHvVXHkIPIQh5C60MhCvnWMMWoGshq-4SdVaRrgw"/><div class="flex flex-col"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface">Entrenamiento</span><span class="px-1.5 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed text-[10px] font-bold tracking-widest uppercase">IA v2.4 Activa</span></div><span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-widest">Rutina Hoy</span></div></div><div class="flex items-center gap-gutter-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Telemetry Header Section -->
+<section class="flex flex-col px-container-padding pt-margin-mobile pb-gutter-md">
+<div class="flex items-center justify-between mb-gutter-xs">
+<div class="flex items-center gap-gutter-xs">
+<span class="inline-flex w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>
+<span class="font-label-caps text-label-caps uppercase text-secondary-container tracking-widest">Telemetría Biomecánica v2.4</span>
+</div>
+<span class="font-label-numeric text-body-sm text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded">RND-9042</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Analítica Clínica &amp; Rendimiento</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Monitorización Longitudinal • Microciclo 4 (Semana 12)</p>
+<!-- Range Selector -->
+<div class="grid grid-cols-4 gap-1 p-1 bg-surface-container-lowest rounded-lg mt-margin-mobile">
+<button class="h-9 flex items-center justify-center font-label-caps text-label-caps uppercase rounded text-on-surface-variant transition-colors hover:text-on-surface" type="button">7D</button>
+<button class="h-9 flex items-center justify-center font-label-caps text-label-caps uppercase rounded bg-surface-container-high text-primary-fixed shadow-sm font-bold" type="button">30D</button>
+<button class="h-9 flex items-center justify-center font-label-caps text-label-caps uppercase rounded text-on-surface-variant transition-colors hover:text-on-surface" type="button">3M</button>
+<button class="h-9 flex items-center justify-center font-label-caps text-label-caps uppercase rounded text-on-surface-variant transition-colors hover:text-on-surface" type="button">Temporada</button>
+</div>
+</section>
+<!-- Readiness & Global Vitals Mini-Grid -->
+<section class="px-container-padding grid grid-cols-3 gap-2">
+<div class="flex flex-col p-3 rounded-lg bg-surface-container-low shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">HRV / VFC</span>
+<span class="material-symbols-outlined text-secondary-container text-[16px]">ecg_heart</span>
+</div>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="font-label-numeric text-headline-md text-on-surface">68</span>
+<span class="font-label-caps text-body-sm text-secondary-container">ms</span>
+</div>
+<span class="font-label-caps text-[10px] text-primary-fixed mt-1">Línea base óptima</span>
+</div>
+<div class="flex flex-col p-3 rounded-lg bg-surface-container-low shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">RPE Prom.</span>
+<span class="material-symbols-outlined text-primary-fixed text-[16px]">speed</span>
+</div>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="font-label-numeric text-headline-md text-on-surface">7.4</span>
+<span class="font-label-caps text-body-sm text-on-surface-variant">/ 10</span>
+</div>
+<span class="font-label-caps text-[10px] text-secondary mt-1">Zona segura RIR 2</span>
+</div>
+<div class="flex flex-col p-3 rounded-lg bg-surface-container-low shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Tonelaje</span>
+<span class="material-symbols-outlined text-primary-fixed-dim text-[16px]">weight</span>
+</div>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="font-label-numeric text-headline-md text-on-surface">24.6</span>
+<span class="font-label-caps text-body-sm text-primary-fixed-dim">t</span>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant mt-1">24,680 kg sem.</span>
+</div>
+</section>
+<!-- Main Analytics Cards Container -->
+<section class="flex flex-col px-container-padding gap-margin-mobile mt-margin-mobile">
+<!-- Card 1: Perfil Fuerza-Velocidad (F-V Profiling) -->
+<div class="flex flex-col rounded-xl bg-surface-container-low p-margin-mobile shadow-md">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-fixed text-[18px]">trending_down</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Perfil Fuerza - Velocidad</h2>
+</div>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider mt-0.5">Vector Dinámico Lineal (F-V)</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary-fixed font-label-caps text-label-caps uppercase">Samozino Fit</span>
+</div>
+<!-- Key Derived Metrics -->
+<div class="grid grid-cols-2 gap-2 mt-gutter-md">
+<div class="flex flex-col p-2.5 rounded bg-surface-container-lowest">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">V0 Teórica</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-label-numeric text-headline-sm text-secondary-container">1.42</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant">m/s</span>
+</div>
+<span class="font-body-sm text-[11px] text-on-surface-variant mt-0.5">Perfil veloz normal</span>
+</div>
+<div class="flex flex-col p-2.5 rounded bg-surface-container-lowest">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">F0 / 1RM Proy.</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-label-numeric text-headline-sm text-primary-fixed">145.0</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant">kg</span>
+</div>
+<span class="font-body-sm text-[11px] text-on-surface-variant mt-0.5">Proyección dinámica</span>
+</div>
+</div>
+<!-- Vectorial F-V Graph -->
+<div class="flex flex-col mt-gutter-md p-3 rounded-lg bg-surface-container-lowest">
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-[10px] uppercase mb-1">
+<span>Velocidad (m/s)</span>
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1"><span class="w-2.5 h-0.5 bg-secondary-container inline-block"></span> Óptimo</span>
+<span class="flex items-center gap-1"><span class="w-2.5 h-0.5 bg-primary-fixed inline-block"></span> Real atleta</span>
+</div>
+</div>
+<svg aria-label="Gráfica Perfil Fuerza Velocidad" class="w-full h-36 overflow-visible" viewbox="0 0 320 140">
+<!-- Grid Lines -->
+<line stroke="#313539" stroke-dasharray="3 3" stroke-width="0.75" x1="30" x2="310" y1="10" y2="10"></line>
+<line stroke="#313539" stroke-dasharray="3 3" stroke-width="0.75" x1="30" x2="310" y1="45" y2="45"></line>
+<line stroke="#313539" stroke-dasharray="3 3" stroke-width="0.75" x1="30" x2="310" y1="80" y2="80"></line>
+<line stroke="#444933" stroke-width="1" x1="30" x2="310" y1="115" y2="115"></line>
+<!-- Axis Labels -->
+<text fill="#8e9379" font-family="jetbrainsMono" font-size="9" text-anchor="end" x="22" y="15">1.5</text>
+<text fill="#8e9379" font-family="jetbrainsMono" font-size="9" text-anchor="end" x="22" y="50">1.0</text>
+<text fill="#8e9379" font-family="jetbrainsMono" font-size="9" text-anchor="end" x="22" y="85">0.5</text>
+<text fill="#8e9379" font-family="jetbrainsMono" font-size="9" text-anchor="end" x="22" y="118">0.0</text>
+<text fill="#8e9379" font-family="jetbrainsMono" font-size="9" x="35" y="132">40kg</text>
+<text fill="#8e9379" font-family="jetbrainsMono" font-size="9" x="120" y="132">75kg</text>
+<text fill="#8e9379" font-family="jetbrainsMono" font-size="9" x="210" y="132">115kg</text>
+<text fill="#8e9379" font-family="jetbrainsMono" font-size="9" x="290" y="132">145kg</text>
+<!-- Theoretical Optimal Curve (Cyan) -->
+<line opacity="0.85" stroke="#00eefc" stroke-dasharray="4 3" stroke-width="2" x1="38" x2="295" y1="18" y2="115"></line>
+<!-- Actual Current Curve (Neon Volt) -->
+<path d="M 38 19 L 105 44 L 180 78 L 255 106 L 295 115" fill="none" stroke="#c3f400" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Telemetry Scatter Nodes -->
+<circle cx="38" cy="19" fill="#c3f400" r="4"></circle>
+<circle cx="105" cy="44" fill="#c3f400" r="4"></circle>
+<circle cx="180" cy="78" fill="#c3f400" r="4"></circle>
+<circle cx="255" cy="106" fill="#ffdada" r="4" stroke="#ca0037" stroke-width="1.5"></circle>
+<!-- High Load Force Deficit Callout Area -->
+<rect fill="#93000a" fill-opacity="0.35" height="28" rx="4" width="75" x="225" y="86"></rect>
+<text fill="#ffb4ab" font-family="plusJakartaSans" font-size="8" font-weight="700" text-anchor="middle" x="262" y="103">Déficit Fuerza</text>
+</svg>
+</div>
+<!-- AI Clinical Diagnosis Box -->
+<div class="flex items-start gap-2.5 p-3 rounded-lg bg-surface-container mt-gutter-md">
+<span class="material-symbols-outlined text-primary-fixed text-[20px] shrink-0 mt-0.5">neurology</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps uppercase text-primary-fixed tracking-wider">Prescripción de la IA</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-[10px] text-on-surface-variant font-label-numeric">Confianza 94%</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mt-1">
+            Déficit de Fuerza a altas cargas (&gt;80% 1RM). Pérdida de aceleración en zona de estancamiento.
+          </p>
+<span class="font-body-sm text-body-sm text-secondary-container mt-1 font-semibold">
+            Recomendación: Bloque de 3 semanas de sobrecarga excéntrica y fuerza neural pura (RPE 8.5-9.0).
+          </span>
+</div>
+</div>
+</div>
+<!-- Card 2: Fatiga Neuromuscular & Pérdida de Velocidad Intra-serie -->
+<div class="flex flex-col rounded-xl bg-surface-container-low p-margin-mobile shadow-md">
+<div class="flex items-start justify-between">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Pérdida de Velocidad &amp; Fatiga</h2>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Control de fatiga mecánica intra-serie</span>
+</div>
+<div class="flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-primary-fixed">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span class="font-label-numeric text-[12px]">12.8%</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded bg-surface-container-lowest mt-gutter-md">
+<div>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Caída Promedio MPV</span>
+<div class="font-label-numeric text-headline-md text-on-surface mt-0.5">12.8% <span class="text-body-sm text-primary-fixed">(±1.4%)</span></div>
+</div>
+<div class="text-right">
+<span class="font-label-caps text-label-caps uppercase text-secondary-container">Estado Fisiológico</span>
+<div class="font-body-sm text-body-sm text-on-surface font-semibold mt-0.5">Metabolismo Óptimo</div>
+</div>
+</div>
+<!-- Weekly Drop-off Trend Bars -->
+<div class="flex flex-col mt-gutter-md">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant mb-2">Histórico Últimas 6 Sesiones (Umbral de parada: 20%)</span>
+<div class="flex items-end justify-between h-24 pt-2 px-1 bg-surface-container-lowest rounded-lg">
+<!-- S1 -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="font-label-numeric text-[10px] text-on-surface-variant">14%</span>
+<div class="w-5 rounded-t bg-secondary-container/70" style="height: 52px;"></div>
+<span class="font-label-caps text-[9px] text-on-surface-variant">S1</span>
+</div>
+<!-- S2 -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="font-label-numeric text-[10px] text-on-surface-variant">16%</span>
+<div class="w-5 rounded-t bg-secondary-container/70" style="height: 60px;"></div>
+<span class="font-label-caps text-[9px] text-on-surface-variant">S2</span>
+</div>
+<!-- S3 -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="font-label-numeric text-[10px] text-on-surface-variant">15%</span>
+<div class="w-5 rounded-t bg-secondary-container/70" style="height: 56px;"></div>
+<span class="font-label-caps text-[9px] text-on-surface-variant">S3</span>
+</div>
+<!-- S4 -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="font-label-numeric text-[10px] text-primary-fixed">11%</span>
+<div class="w-5 rounded-t bg-primary-fixed" style="height: 42px;"></div>
+<span class="font-label-caps text-[9px] text-on-surface-variant">S4</span>
+</div>
+<!-- S5 -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="font-label-numeric text-[10px] text-primary-fixed">13%</span>
+<div class="w-5 rounded-t bg-primary-fixed" style="height: 49px;"></div>
+<span class="font-label-caps text-[9px] text-on-surface-variant">S5</span>
+</div>
+<!-- S6 Actual -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="font-label-numeric text-[10px] text-primary-fixed font-bold">12.8%</span>
+<div class="w-5 rounded-t bg-primary-fixed shadow-[0_0_12px_rgba(195,244,0,0.45)]" style="height: 48px;"></div>
+<span class="font-label-caps text-[9px] text-primary-fixed font-bold">Hoy</span>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2.5">
+        Se mantiene un margen &lt;15% que minimiza la fatiga periférica y acelera la recuperación de la placa motora neuromuscular.
+      </p>
+</div>
+<!-- Card 3: Monitor Longitudinal de Dolor Articular (Escala EVA) -->
+<div class="flex flex-col rounded-xl bg-surface-container-low p-margin-mobile shadow-md">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-fixed text-[18px]">healing</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Monitor Clínico de Dolor (EVA)</h2>
+</div>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Tendón Rotuliano Derecho</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary-fixed font-label-numeric text-body-sm font-bold">0.5 / 10</span>
+</div>
+<!-- EVA Evolution Sparkline Chart -->
+<div class="mt-gutter-md p-3 rounded-lg bg-surface-container-lowest flex flex-col">
+<div class="flex justify-between items-center text-on-surface-variant font-label-caps text-[10px] uppercase">
+<span>Evolución 4 Semanas</span>
+<span class="text-primary-fixed">-87.5% Reducción EVA</span>
+</div>
+<svg aria-label="Curva descendente de dolor EVA" class="w-full h-24 mt-2 overflow-visible" viewbox="0 0 300 90">
+<!-- Threshold reference line -->
+<line opacity="0.6" stroke="#ca0037" stroke-dasharray="3 3" stroke-width="0.8" x1="10" x2="290" y1="20" y2="20"></line>
+<text fill="#ffb4ab" font-family="plusJakartaSans" font-size="8" text-anchor="end" x="290" y="16">Límite Aceptable (3.0)</text>
+<!-- Pain gradient area -->
+<defs>
+<lineargradient id="painGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#00eefc" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#00eefc" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Area -->
+<polygon fill="url(#painGradient)" points="20,25 90,38 160,54 230,70 280,78 280,85 20,85"></polygon>
+<!-- Descent Line -->
+<polyline fill="none" points="20,25 90,38 160,54 230,70 280,78" stroke="#00eefc" stroke-linecap="round" stroke-width="2.5"></polyline>
+<!-- Plot points with EVA score -->
+<circle cx="20" cy="25" fill="#ca0037" r="3.5"></circle>
+<text fill="#ffdada" font-family="jetbrainsMono" font-size="9" text-anchor="middle" x="20" y="18">4.0</text>
+<circle cx="90" cy="38" fill="#e0e3e7" r="3.5"></circle>
+<text fill="#e0e3e7" font-family="jetbrainsMono" font-size="9" text-anchor="middle" x="90" y="32">2.5</text>
+<circle cx="160" cy="54" fill="#e0e3e7" r="3.5"></circle>
+<text fill="#e0e3e7" font-family="jetbrainsMono" font-size="9" text-anchor="middle" x="160" y="48">1.5</text>
+<circle cx="230" cy="70" fill="#e0e3e7" r="3.5"></circle>
+<text fill="#e0e3e7" font-family="jetbrainsMono" font-size="9" text-anchor="middle" x="230" y="64">1.0</text>
+<circle cx="280" cy="78" fill="#c3f400" r="4.5"></circle>
+<text fill="#c3f400" font-family="jetbrainsMono" font-size="9" font-weight="700" text-anchor="middle" x="280" y="72">0.5</text>
+<!-- X axis timeline -->
+<text fill="#8e9379" font-family="plusJakartaSans" font-size="8" x="20" y="88">Sem -4</text>
+<text fill="#8e9379" font-family="plusJakartaSans" font-size="8" x="150" y="88">Sem -2</text>
+<text fill="#8e9379" font-family="plusJakartaSans" font-size="8" text-anchor="end" x="280" y="88">Actual</text>
+</svg>
+</div>
+<!-- Clinical Tag Banner -->
+<div class="flex items-center gap-2 p-2.5 rounded bg-surface-container-high mt-gutter-sm">
+<span class="material-symbols-outlined text-primary-fixed text-[18px]">verified</span>
+<span class="font-body-sm text-body-sm text-on-surface">
+          Protocolo de Carga Isométrica e Hipertrofia Excéntrica con <span class="text-primary-fixed font-bold">éxito resolutivo</span>.
+        </span>
+</div>
+</div>
+<!-- Card 4: Asimetrías & Control Biomecánico -->
+<div class="flex flex-col rounded-xl bg-surface-container-low p-margin-mobile shadow-md">
+<div class="flex items-start justify-between">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Simetría &amp; Control Articular</h2>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Cinemática en Sentadilla Frontal / Trasera</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary-container font-label-caps text-label-caps uppercase">Óptimo &lt;1%</span>
+</div>
+<!-- Bilateral Symmetry Gauge -->
+<div class="flex flex-col mt-gutter-md p-3 rounded-lg bg-surface-container-lowest">
+<div class="flex items-center justify-between font-label-caps text-label-caps uppercase mb-1.5">
+<span class="text-on-surface">Pierna Izq. (49.5%)</span>
+<span class="text-primary-fixed font-label-numeric">Déficit 1.0%</span>
+<span class="text-on-surface">Pierna Der. (50.5%)</span>
+</div>
+<div class="w-full h-3 rounded-full bg-surface-container-high flex overflow-hidden p-0.5">
+<div class="h-full bg-secondary-container rounded-l-full" style="width: 49.5%;"></div>
+<div class="w-0.5 h-full bg-surface-container-lowest"></div>
+<div class="h-full bg-primary-fixed rounded-r-full" style="width: 50.5%;"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant mt-2 font-body-sm">
+<span>Descarga equitativa</span>
+<span class="text-primary-fixed font-semibold">Simetría bilateral de élite</span>
+<span>Sin compensación pelviana</span>
+</div>
+</div>
+<!-- Dynamic Valgus Stability Tracker -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container mt-gutter-sm">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-container text-[20px]">straighten</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Valgo Dinámico de Rodilla</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Desviación en sentadilla profunda</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-numeric text-headline-sm text-primary-fixed">&lt; 2.5°</span>
+<span class="font-label-caps text-[10px] text-secondary-container uppercase">Estabilidad Alta</span>
+</div>
+</div>
+</div>
+<!-- Clinical Action Shortcuts -->
+<div class="flex flex-col gap-2.5 mt-gutter-xs pb-gutter-lg">
+<button class="w-full h-[52px] rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-md transition-transform active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+<span>Generar Reporte Biomecánico en PDF</span>
+</button>
+<button class="w-full h-[52px] rounded-lg bg-surface-container-high text-on-surface font-headline-sm text-headline-sm flex items-center justify-center gap-2 transition-transform active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-secondary-container text-[20px]">tune</span>
+<span>Reajustar 1RM Teórico por V0</span>
+</button>
+</div>
+</section>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary-fixed"><div class="flex justify-around items-center h-20 px-gutter-sm"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 transition-colors text-primary-fixed" data-path="rutina-hoy" href="#"><span class="material-symbols-outlined text-[24px]">fitness_center</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Rutina</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="autoregulacion-ia" href="#"><span class="material-symbols-outlined text-[24px]">psychology</span><span class="font-label-caps text-label-caps uppercase tracking-wider">IA Auto</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="metricas-progreso" href="#"><span class="material-symbols-outlined text-[24px]">insights</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Métricas</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="perfil-atleta" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Perfil</span></a></div></nav></body></html>

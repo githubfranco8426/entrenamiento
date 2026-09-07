@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#101417;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#e0e3e7', 'on-surface-variant': '#c4c9ac', 'surface-container': '#1c2023', 'on-secondary-fixed-variant': '#004f54', 'surface-dim': '#101417', 'on-tertiary-container': '#ca0037', 'surface-container-lowest': '#0b0f12', 'secondary': '#d3fbff', 'on-error-container': '#ffdad6', 'secondary-container': '#00eefc', 'surface-variant': '#313539', 'surface-container-highest': '#313539', 'inverse-on-surface': '#2d3134', 'primary-container': '#c3f400', 'on-primary-container': '#556d00', 'tertiary': '#ffffff', 'outline': '#8e9379', 'secondary-fixed': '#7df4ff', 'tertiary-container': '#ffdada', 'surface-container-high': '#262a2e', 'on-secondary-container': '#00686f', 'surface': '#101417', 'primary-fixed-dim': '#abd600', 'primary': '#ffffff', 'on-tertiary-fixed': '#40000b', 'on-tertiary-fixed-variant': '#920025', 'on-background': '#e0e3e7', 'primary-fixed': '#c3f400', 'on-surface': '#e0e3e7', 'on-primary-fixed': '#161e00', 'outline-variant': '#444933', 'on-error': '#690005', 'inverse-primary': '#506600', 'error-container': '#93000a', 'on-primary-fixed-variant': '#3c4d00', 'on-tertiary': '#680018', 'on-primary': '#283500', 'tertiary-fixed-dim': '#ffb3b5', 'background': '#101417', 'tertiary-fixed': '#ffdada', 'on-secondary': '#00363a', 'surface-bright': '#363a3d', 'error': '#ffb4ab', 'on-secondary-fixed': '#002022', 'secondary-fixed-dim': '#00dbe9', 'surface-container-low': '#181c1f', 'surface-tint': '#abd600' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter-xl': '2rem', 'margin-mobile': '1.25rem', 'margin-tablet': '2rem', 'gutter-sm': '0.5rem', 'gutter-lg': '1.5rem', 'gutter-md': '1rem', 'gutter-xs': '0.25rem', 'container-padding': '1.25rem', 'field-height-touch': '3.25rem' }, fontFamily: { 'display-hero': ['plusJakartaSans'], 'label-caps': ['plusJakartaSans'], 'headline-md': ['plusJakartaSans'], 'body-md': ['plusJakartaSans'], 'body-lg': ['plusJakartaSans'], 'label-numeric': ['jetbrainsMono'], 'body-sm': ['plusJakartaSans'], 'headline-sm': ['plusJakartaSans'], 'headline-lg': ['plusJakartaSans'], 'display-hero-mobile': ['plusJakartaSans'] }, fontSize: { 'display-hero': ['40px', { lineHeight: '46px', fontWeight: '800' }], 'label-caps': ['11px', { lineHeight: '14px', fontWeight: '700' }], 'headline-md': ['20px', { lineHeight: '26px', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'label-numeric': ['16px', { lineHeight: '20px', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'headline-lg': ['24px', { lineHeight: '30px', fontWeight: '700' }], 'display-hero-mobile': ['32px', { lineHeight: '38px', fontWeight: '800' }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter-md flex items-center justify-between"><div class="flex items-center gap-gutter-sm"><img alt="Entrenamiento AI Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWpHZP_FDQsTiBRwtr4Vt-GPjY5t_sIkdo2sLY1nICdJp1XRr_0shxdAhY9HqYozLja-WAwJ7moUpHxTeqms9Y9z3o6SbXx2fhacMbnJBOeBQ1OiqRyTphXG27uTYXEZOYYtY4mpA7xCeP6viOB2bQsbKydi_Mp1BtDYrBUunx8i88ZnkXBq1i9lssbieETwy6ni-_uVCPaYAJrcvHvVXHkIPIQh5C60MhCvnWMMWoGshq-4SdVaRrgw"/><div class="flex flex-col"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface">Entrenamiento</span><span class="px-1.5 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed text-[10px] font-bold tracking-widest uppercase">IA v2.4 Activa</span></div><span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-widest">Rutina Hoy</span></div></div><div class="flex items-center gap-gutter-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin-mobile pb-gutter-xl gap-gutter-md">
+<!-- 1. LIVE HUD & ACTIVE REST CONSOLE -->
+<section class="flex flex-col w-full bg-surface-container-low rounded-xl p-gutter-md shadow-md">
+<!-- Live Status Pill & Exercise -->
+<div class="flex items-center justify-between gap-gutter-xs">
+<div class="flex items-center gap-1.5">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-fixed opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-fixed"></span>
+</span>
+<span class="font-label-caps text-label-caps tracking-widest text-primary-fixed uppercase">Sesión en Vivo</span>
+</div>
+<span class="font-label-caps text-label-caps tracking-wider text-on-surface-variant bg-surface-container-highest px-2 py-0.5 rounded-full uppercase">Serie 2 de 4 Completa</span>
+</div>
+<div class="mt-2">
+<h1 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight">Sentadilla Trasera con Barra Alta</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">High-Bar Olympic Squat • Perfil VBT Fuerza-Hipertrofia</p>
+</div>
+<!-- Active Rest Circular/Linear Timer & Vagal Tone HUD -->
+<div class="mt-4 p-gutter-md bg-surface-container-lowest rounded-xl flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">Descanso Activo</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-display-hero-mobile text-display-hero-mobile text-primary-fixed font-label-numeric tracking-tight" id="restTimerDisplay">01:18</span>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant">/ 02:00</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center gap-1 bg-surface-container px-2.5 py-1 rounded-full">
+<span class="material-symbols-outlined text-secondary-fixed text-[18px] animate-pulse" style="font-variation-settings: 'FILL' 1;">ecg_heart</span>
+<span class="font-label-numeric text-label-numeric text-secondary-fixed">132 bpm</span>
+</div>
+<span class="font-label-caps text-label-caps text-secondary-fixed-dim mt-1 text-right tracking-tight">-24 bpm tono vagal</span>
+</div>
+</div>
+<!-- Rest Progress Bar -->
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed rounded-full transition-all duration-300" id="restProgressBar" style="width: 65%;"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant pt-1">
+<span class="font-label-caps text-label-caps uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary-fixed">battery_charging_full</span>
+          Resíntesis PCr: ~78%
+        </span>
+<button class="font-label-caps text-label-caps uppercase text-primary-fixed hover:text-primary transition-colors flex items-center gap-0.5 active:scale-95" id="addRestBtn">
+<span class="material-symbols-outlined text-[14px]">more_time</span> +30s
+        </button>
+</div>
+</div>
+</section>
+<!-- 2. SERIE 2 TELEMETRY (VBT ACTUAL VS TARGET) -->
+<section class="flex flex-col w-full bg-surface-container-low rounded-xl p-gutter-md shadow-md gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">speed</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-wide uppercase">Telemetría Serie 2</h2>
+</div>
+<span class="font-label-numeric text-label-numeric text-on-surface-variant font-semibold">120.0 kg × 5 reps</span>
+</div>
+<div class="grid grid-cols-2 gap-gutter-sm">
+<!-- MPV Metric -->
+<div class="flex flex-col p-gutter-sm bg-surface-container rounded-lg">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Vel. Media Propulsiva</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-headline-md text-headline-md font-label-numeric text-primary-fixed">0.58</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">m/s</span>
+</div>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-primary-fixed">check_circle</span>
+<span class="font-label-caps text-label-caps text-primary-fixed uppercase">Target 0.55-0.62 • Óptimo</span>
+</div>
+</div>
+<!-- Velocity Loss Metric -->
+<div class="flex flex-col p-gutter-sm bg-surface-container rounded-lg">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Pérdida de Velocidad</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-headline-md text-headline-md font-label-numeric text-secondary-fixed">11.4%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Δ intra-serie</span>
+</div>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-secondary-fixed">verified_user</span>
+<span class="font-label-caps text-label-caps text-secondary-fixed uppercase">Zona Segura &lt;15%</span>
+</div>
+</div>
+</div>
+<!-- Micro-sparkline of the 5 reps -->
+<div class="bg-surface-container-lowest p-gutter-sm rounded-lg flex flex-col gap-1.5">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase">Cinemática Rep x Rep (m/s)</span>
+<span class="font-label-caps text-label-caps text-secondary-fixed font-label-numeric">Rep 5: 0.54 m/s (RIR 2.5)</span>
+</div>
+<div class="flex items-end gap-1.5 h-8 w-full pt-1">
+<div class="flex-1 bg-primary-fixed-dim/40 rounded-t h-full flex items-center justify-center text-[9px] font-label-numeric text-on-surface">.61</div>
+<div class="flex-1 bg-primary-fixed-dim/40 rounded-t h-[95%] flex items-center justify-center text-[9px] font-label-numeric text-on-surface">.59</div>
+<div class="flex-1 bg-primary-fixed-dim/40 rounded-t h-[92%] flex items-center justify-center text-[9px] font-label-numeric text-on-surface">.58</div>
+<div class="flex-1 bg-primary-fixed-dim/40 rounded-t h-[89%] flex items-center justify-center text-[9px] font-label-numeric text-on-surface">.56</div>
+<div class="flex-1 bg-primary-fixed rounded-t h-[85%] flex items-center justify-center text-[9px] font-label-numeric text-on-primary-fixed font-bold">.54</div>
+</div>
+</div>
+</section>
+<!-- 3. AI AUTOREGULATION & PRESCRIPTION -->
+<section class="flex flex-col w-full bg-surface-container rounded-xl p-gutter-md shadow-md gap-gutter-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-fixed text-[20px]">psychology</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-wide uppercase">Prescripción Serie 3</h2>
+</div>
+<span class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps px-2 py-0.5 rounded-full font-bold uppercase">Algoritmo VBT Activo</span>
+</div>
+<div class="bg-surface-container-low p-gutter-md rounded-lg flex flex-col gap-2">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary-fixed text-[22px] mt-0.5">auto_awesome</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary-fixed font-bold">Mantener 120.0 kg o ajustar a 122.5 kg (+2%)</span>
+<p class="font-body-md text-body-md text-on-surface mt-1 leading-relaxed">
+            Tu pérdida de velocidad fue solo del 11.4% y la última repetición se movió a 0.54 m/s. Tienes un RIR estimado de 2.5 reps. La estabilidad lumbopélvica se mantuvo intacta en el punto de máxima flexión.
+          </p>
+</div>
+</div>
+</div>
+<!-- Quick Load Adjusters for Set 3 -->
+<div class="flex flex-col gap-1.5 mt-1">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Ajustar Carga de Trabajo</span>
+<div class="grid grid-cols-3 gap-gutter-sm" id="loadButtonsGroup">
+<button class="load-btn h-field-touch flex flex-col items-center justify-center bg-surface-container-high rounded-lg text-on-surface hover:bg-surface-variant transition-colors active:scale-95" onclick="selectLoad(this, '117.5')">
+<span class="font-label-numeric text-label-numeric font-bold">-2.5 kg</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">117.5 kg</span>
+</button>
+<button class="load-btn active h-field-touch flex flex-col items-center justify-center bg-primary-fixed rounded-lg text-on-primary-fixed transition-all active:scale-95 shadow-md" onclick="selectLoad(this, '120.0')">
+<span class="font-label-numeric text-label-numeric font-bold">120.0 kg</span>
+<span class="font-label-caps text-label-caps uppercase font-bold tracking-tight">Recomendado</span>
+</button>
+<button class="load-btn h-field-touch flex flex-col items-center justify-center bg-surface-container-high rounded-lg text-on-surface hover:bg-surface-variant transition-colors active:scale-95" onclick="selectLoad(this, '122.5')">
+<span class="font-label-numeric text-label-numeric font-bold">+2.5 kg</span>
+<span class="font-label-caps text-label-caps text-secondary-fixed">122.5 kg (+2%)</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 4. BIOMECHANICS & NEURAL CUES -->
+<section class="flex flex-col w-full bg-surface-container-low rounded-xl p-gutter-md shadow-md gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">accessibility_new</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-wide uppercase">Biomecánica &amp; Cues Técnicos</h2>
+</div>
+<span class="font-label-caps text-label-caps text-secondary-fixed uppercase tracking-wider">Alta Precisión</span>
+</div>
+<!-- Visual Biomechanical Focus Cards -->
+<div class="flex flex-col gap-gutter-sm">
+<!-- Cadera / Pelvis -->
+<div class="flex gap-3 bg-surface-container p-gutter-sm rounded-lg items-start">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-fixed shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">adjust</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Cadera &amp; Pelvis</span>
+<span class="font-label-caps text-label-caps text-primary-fixed uppercase font-semibold">Lumbopélvico</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Retroversión neutra, evitar guiño de glúteo (<span class="text-on-surface font-medium">butt-wink</span>) en el punto de inversión profunda. Mantener tensión en flexores.
+          </p>
+</div>
+</div>
+<!-- Rodilla -->
+<div class="flex gap-3 bg-surface-container p-gutter-sm rounded-lg items-start">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-secondary-fixed shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">airline_stops</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Rodilla &amp; Vector Anterior</span>
+<span class="font-label-caps text-label-caps text-secondary-fixed uppercase font-semibold">Brazo de Momento</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Vector anterior controlado, empuje de fémur hacia afuera alineado con el 2º-3º dedo del pie para optimizar momento extensor del cuádriceps.
+          </p>
+</div>
+</div>
+<!-- Tobillo y Pie -->
+<div class="flex gap-3 bg-surface-container p-gutter-sm rounded-lg items-start">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">footprint</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Tobillo &amp; Trípode Plantar</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase font-semibold">&gt;35º Dorsiflexión</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Dorsiflexión activa sostenida. Presión simétrica en trípode plantar (1er meta, 5to meta y calcáneo firmes contra la tarima).
+          </p>
+</div>
+</div>
+</div>
+<!-- Tactical Neural Cues -->
+<div class="flex flex-col gap-2 mt-1 bg-surface-container-lowest p-gutter-md rounded-lg">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-fixed text-[18px]">bolt</span>
+<span class="font-label-caps text-label-caps uppercase text-primary-fixed tracking-widest font-bold">Cues Neurales Clave para Serie 3</span>
+</div>
+<div class="flex flex-col gap-2 mt-1">
+<div class="flex items-start gap-2">
+<span class="font-label-numeric text-label-numeric text-primary-fixed font-bold">01</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+<strong class="text-primary-fixed">"Rompe el suelo hacia afuera"</strong> con los pies para reclutar glúteo medio y estabilizar caderas antes de descender.
+          </p>
+</div>
+<div class="flex items-start gap-2">
+<span class="font-label-numeric text-label-numeric text-primary-fixed font-bold">02</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+<strong class="text-primary-fixed">"Tracción de barra a trapecios"</strong> para maximizar rigidez torácica y maniobra de Valsalva completa (100% intraabdominal).
+          </p>
+</div>
+<div class="flex items-start gap-2">
+<span class="font-label-numeric text-label-numeric text-primary-fixed font-bold">03</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+<strong class="text-primary-fixed">"Rebote elástico sin vacilación"</strong> en la transición concéntrica: explota verticalmente empujando la tarima.
+          </p>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. RAPID SENSATIONS & EVA PAIN LOG -->
+<section class="flex flex-col w-full bg-surface-container-low rounded-xl p-gutter-md shadow-md gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">monitor_heart</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-wide uppercase">Check Intersesión Rápido</h2>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Autoevaluación</span>
+</div>
+<!-- EVA Scale -->
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Escala Analógica de Dolor / Molestia (EVA)</span>
+<span class="font-label-caps text-label-caps text-primary-fixed uppercase font-bold" id="evaLabel">0: Sin Molestias</span>
+</div>
+<div class="grid grid-cols-3 gap-gutter-sm">
+<button class="eva-btn active h-12 rounded-lg bg-surface-container-highest text-on-surface font-label-caps text-label-caps uppercase font-bold flex items-center justify-center gap-1 transition-all active:scale-95" onclick="selectEva(this, '0: Sin Molestias')">
+<span class="w-2 h-2 rounded-full bg-primary-fixed"></span> 0 Sin Dolor
+        </button>
+<button class="eva-btn h-12 rounded-lg bg-surface-container text-on-surface-variant font-label-caps text-label-caps uppercase font-bold flex items-center justify-center gap-1 transition-all active:scale-95" onclick="selectEva(this, '1: Molestia Leve')">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span> 1 Leve
+        </button>
+<button class="eva-btn h-12 rounded-lg bg-surface-container text-on-surface-variant font-label-caps text-label-caps uppercase font-bold flex items-center justify-center gap-1 transition-all active:scale-95" onclick="selectEva(this, '2: Umbral Límite')">
+<span class="w-2 h-2 rounded-full bg-error"></span> 2 Umbral Máx
+        </button>
+</div>
+</div>
+<!-- Perceived RIR Selector -->
+<div class="flex flex-col gap-1.5 mt-1">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Reps en Reserva Percibidas (RIR Serie 2)</span>
+<span class="font-label-caps text-label-caps text-secondary-fixed uppercase font-semibold">IA Estimó: ~2.5 RIR</span>
+</div>
+<div class="grid grid-cols-4 gap-gutter-xs">
+<button class="rir-btn h-11 rounded-lg bg-surface-container text-on-surface font-label-numeric text-label-numeric font-bold active:scale-95" onclick="selectRir(this)">RIR 3</button>
+<button class="rir-btn active h-11 rounded-lg bg-secondary-container text-on-secondary-container font-label-numeric text-label-numeric font-bold active:scale-95" onclick="selectRir(this)">RIR 2</button>
+<button class="rir-btn h-11 rounded-lg bg-surface-container text-on-surface font-label-numeric text-label-numeric font-bold active:scale-95" onclick="selectRir(this)">RIR 1</button>
+<button class="rir-btn h-11 rounded-lg bg-surface-container text-on-surface font-label-numeric text-label-numeric font-bold active:scale-95" onclick="selectRir(this)">RIR 0</button>
+</div>
+</div>
+</section>
+<!-- 6. HIGH-IMPACT THUMB ACTIONS -->
+<section class="flex flex-col w-full gap-gutter-sm mt-2">
+<!-- Primary CTA: Go to Set 3 -->
+<button class="w-full h-field-touch bg-primary-fixed text-on-primary-fixed rounded-lg font-headline-sm text-headline-sm uppercase font-extrabold flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-[0.98]" id="readyButton" onclick="triggerStartSet()">
+<span class="material-symbols-outlined text-[24px]">play_circle</span>
+<span id="ctaText">LISTO PARA LA SERIE 3 (120.0 KG)</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<!-- Secondary Utilities -->
+<div class="grid grid-cols-2 gap-gutter-sm">
+<button class="h-field-touch bg-surface-container-high text-on-surface rounded-lg font-label-caps text-label-caps uppercase font-bold flex items-center justify-center gap-1.5 transition-colors active:scale-95" onclick="toggleTelemetryModal()">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed">view_in_ar</span>
+        Vector 3D Articular
+      </button>
+<button class="h-field-touch bg-surface-container-high text-on-surface rounded-lg font-label-caps text-label-caps uppercase font-bold flex items-center justify-center gap-1.5 transition-colors active:scale-95" id="pauseRestToggle" onclick="togglePauseRest()">
+<span class="material-symbols-outlined text-[18px] text-primary-fixed" id="pauseIcon">pause</span>
+<span id="pauseLabel">Pausar Descanso</span>
+</button>
+</div>
+</section>
+<!-- Contextual Biomechanical Telemetry Modal (Drawer Overlay Simulation) -->
+<div class="hidden fixed inset-0 z-40 bg-surface-container-lowest/80 backdrop-blur-md p-gutter-md flex items-center justify-center" id="vectorModal">
+<div class="bg-surface-container-low w-full max-w-sm rounded-xl p-gutter-md flex flex-col gap-3 shadow-2xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-fixed">timeline</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Vectores &amp; Ángulos Serie 2</h3>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface" onclick="toggleTelemetryModal()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-2 bg-surface-container-lowest p-gutter-sm rounded-lg text-body-sm font-label-numeric">
+<div class="flex justify-between py-1 border-none">
+<span class="text-on-surface-variant">Ángulo Cadera Profunda:</span>
+<span class="text-primary-fixed font-bold">48.2º (Sin colapso)</span>
+</div>
+<div class="flex justify-between py-1 border-none">
+<span class="text-on-surface-variant">Dorsiflexión Tobillo D/I:</span>
+<span class="text-secondary-fixed font-bold">37.1º / 36.8º</span>
+</div>
+<div class="flex justify-between py-1 border-none">
+<span class="text-on-surface-variant">Desvío de Barra Vertical:</span>
+<span class="text-on-surface font-bold">± 1.4 cm (Excelente)</span>
+</div>
+<div class="flex justify-between py-1 border-none">
+<span class="text-on-surface-variant">Simetría Concéntrica D/I:</span>
+<span class="text-primary-fixed font-bold">50.8% / 49.2%</span>
+</div>
+</div>
+<button class="w-full h-11 bg-surface-container-highest text-on-surface rounded-lg font-label-caps text-label-caps uppercase font-bold mt-1" onclick="toggleTelemetryModal()">
+        Cerrar Telemetría
+      </button>
+</div>
+</div>
+</div>
+<script>
+  // Countdown Timer Logic
+  let totalRestSecs = 78; // 01:18 remaining out of 120s
+  const maxRestSecs = 120;
+  let isTimerPaused = false;
+  let timerInterval = null;
+
+  function updateTimerUI() {
+    const minutes = Math.floor(totalRestSecs / 60);
+    const seconds = totalRestSecs % 60;
+    const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const displayEl = document.getElementById('restTimerDisplay');
+    const barEl = document.getElementById('restProgressBar');
+
+    if (displayEl) displayEl.innerText = formatted;
+    if (barEl) {
+      const percentage = Math.max(0, Math.min(100, (totalRestSecs / maxRestSecs) * 100));
+      barEl.style.width = percentage + '%';
+    }
+  }
+
+  function startRestTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      if (!isTimerPaused && totalRestSecs > 0) {
+        totalRestSecs--;
+        updateTimerUI();
+      } else if (totalRestSecs <= 0) {
+        clearInterval(timerInterval);
+        const displayEl = document.getElementById('restTimerDisplay');
+        if (displayEl) {
+          displayEl.innerText = "00:00";
+          displayEl.classList.add('animate-pulse');
+        }
+      }
+    }, 1000);
+  }
+
+  startRestTimer();
+
+  // Add 30 seconds
+  const addBtn = document.getElementById('addRestBtn');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      totalRestSecs += 30;
+      updateTimerUI();
+    });
+  }
+
+  // Toggle Pause
+  function togglePauseRest() {
+    isTimerPaused = !isTimerPaused;
+    const label = document.getElementById('pauseLabel');
+    const icon = document.getElementById('pauseIcon');
+    if (isTimerPaused) {
+      label.innerText = 'Reanudar';
+      icon.innerText = 'play_arrow';
+    } else {
+      label.innerText = 'Pausar Descanso';
+      icon.innerText = 'pause';
+    }
+  }
+
+  // Load selection micro-interaction
+  let currentChosenLoad = "120.0";
+  function selectLoad(buttonElement, loadValue) {
+    currentChosenLoad = loadValue;
+    const buttons = document.querySelectorAll('.load-btn');
+    buttons.forEach(btn => {
+      btn.className = 'load-btn h-field-touch flex flex-col items-center justify-center bg-surface-container-high rounded-lg text-on-surface hover:bg-surface-variant transition-colors active:scale-95';
+    });
+
+    buttonElement.className = 'load-btn active h-field-touch flex flex-col items-center justify-center bg-primary-fixed rounded-lg text-on-primary-fixed transition-all active:scale-95 shadow-md';
+    
+    // Update main CTA button text
+    const ctaText = document.getElementById('ctaText');
+    if (ctaText) {
+      ctaText.innerText = `LISTO PARA LA SERIE 3 (${loadValue} KG)`;
+    }
+  }
+
+  // EVA selection
+  function selectEva(button, text) {
+    document.querySelectorAll('.eva-btn').forEach(btn => {
+      btn.classList.remove('bg-surface-container-highest', 'text-on-surface');
+      btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+    });
+    button.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    button.classList.add('bg-surface-container-highest', 'text-on-surface');
+    
+    const label = document.getElementById('evaLabel');
+    if (label) label.innerText = text;
+  }
+
+  // RIR selection
+  function selectRir(button) {
+    document.querySelectorAll('.rir-btn').forEach(btn => {
+      btn.classList.remove('bg-secondary-container', 'text-on-secondary-container');
+      btn.classList.add('bg-surface-container', 'text-on-surface');
+    });
+    button.classList.remove('bg-surface-container', 'text-on-surface');
+    button.classList.add('bg-secondary-container', 'text-on-secondary-container');
+  }
+
+  // Telemetry Vector Modal
+  function toggleTelemetryModal() {
+    const modal = document.getElementById('vectorModal');
+    if (modal) {
+      modal.classList.toggle('hidden');
+    }
+  }
+
+  // CTA trigger
+  function triggerStartSet() {
+    const btn = document.getElementById('readyButton');
+    if (btn) {
+      btn.classList.add('opacity-80', 'scale-95');
+      setTimeout(() => {
+        btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-[24px]">sync</span><span>CALIBRANDO VBT ACELERÓMETRO...</span>`;
+      }, 150);
+    }
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary-fixed"><div class="flex justify-around items-center h-20 px-gutter-sm"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 transition-colors text-primary-fixed" data-path="rutina-hoy" href="#"><span class="material-symbols-outlined text-[24px]">fitness_center</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Rutina</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="autoregulacion-ia" href="#"><span class="material-symbols-outlined text-[24px]">psychology</span><span class="font-label-caps text-label-caps uppercase tracking-wider">IA Auto</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="metricas-progreso" href="#"><span class="material-symbols-outlined text-[24px]">insights</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Métricas</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="perfil-atleta" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Perfil</span></a></div></nav></body></html>

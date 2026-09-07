@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#101417;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#e0e3e7', 'on-surface-variant': '#c4c9ac', 'surface-container': '#1c2023', 'on-secondary-fixed-variant': '#004f54', 'surface-dim': '#101417', 'on-tertiary-container': '#ca0037', 'surface-container-lowest': '#0b0f12', 'secondary': '#d3fbff', 'on-error-container': '#ffdad6', 'secondary-container': '#00eefc', 'surface-variant': '#313539', 'surface-container-highest': '#313539', 'inverse-on-surface': '#2d3134', 'primary-container': '#c3f400', 'on-primary-container': '#556d00', 'tertiary': '#ffffff', 'outline': '#8e9379', 'secondary-fixed': '#7df4ff', 'tertiary-container': '#ffdada', 'surface-container-high': '#262a2e', 'on-secondary-container': '#00686f', 'surface': '#101417', 'primary-fixed-dim': '#abd600', 'primary': '#ffffff', 'on-tertiary-fixed': '#40000b', 'on-tertiary-fixed-variant': '#920025', 'on-background': '#e0e3e7', 'primary-fixed': '#c3f400', 'on-surface': '#e0e3e7', 'on-primary-fixed': '#161e00', 'outline-variant': '#444933', 'on-error': '#690005', 'inverse-primary': '#506600', 'error-container': '#93000a', 'on-primary-fixed-variant': '#3c4d00', 'on-tertiary': '#680018', 'on-primary': '#283500', 'tertiary-fixed-dim': '#ffb3b5', 'background': '#101417', 'tertiary-fixed': '#ffdada', 'on-secondary': '#00363a', 'surface-bright': '#363a3d', 'error': '#ffb4ab', 'on-secondary-fixed': '#002022', 'secondary-fixed-dim': '#00dbe9', 'surface-container-low': '#181c1f', 'surface-tint': '#abd600' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter-xl': '2rem', 'margin-mobile': '1.25rem', 'margin-tablet': '2rem', 'gutter-sm': '0.5rem', 'gutter-lg': '1.5rem', 'gutter-md': '1rem', 'gutter-xs': '0.25rem', 'container-padding': '1.25rem', 'field-height-touch': '3.25rem' }, fontFamily: { 'display-hero': ['plusJakartaSans'], 'label-caps': ['plusJakartaSans'], 'headline-md': ['plusJakartaSans'], 'body-md': ['plusJakartaSans'], 'body-lg': ['plusJakartaSans'], 'label-numeric': ['jetbrainsMono'], 'body-sm': ['plusJakartaSans'], 'headline-sm': ['plusJakartaSans'], 'headline-lg': ['plusJakartaSans'], 'display-hero-mobile': ['plusJakartaSans'] }, fontSize: { 'display-hero': ['40px', { lineHeight: '46px', fontWeight: '800' }], 'label-caps': ['11px', { lineHeight: '14px', fontWeight: '700' }], 'headline-md': ['20px', { lineHeight: '26px', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'label-numeric': ['16px', { lineHeight: '20px', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'headline-lg': ['24px', { lineHeight: '30px', fontWeight: '700' }], 'display-hero-mobile': ['32px', { lineHeight: '38px', fontWeight: '800' }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter-md flex items-center justify-between"><div class="flex items-center gap-gutter-sm"><img alt="Entrenamiento AI Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWpHZP_FDQsTiBRwtr4Vt-GPjY5t_sIkdo2sLY1nICdJp1XRr_0shxdAhY9HqYozLja-WAwJ7moUpHxTeqms9Y9z3o6SbXx2fhacMbnJBOeBQ1OiqRyTphXG27uTYXEZOYYtY4mpA7xCeP6viOB2bQsbKydi_Mp1BtDYrBUunx8i88ZnkXBq1i9lssbieETwy6ni-_uVCPaYAJrcvHvVXHkIPIQh5C60MhCvnWMMWoGshq-4SdVaRrgw"/><div class="flex flex-col"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface">Entrenamiento</span><span class="px-1.5 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed text-[10px] font-bold tracking-widest uppercase">IA v2.4 Activa</span></div><span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-widest">Rutina Hoy</span></div></div><div class="flex items-center gap-gutter-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Dynamic Styles for Tactical Glow & HUD Animations -->
+<style>
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 8px rgba(195, 244, 0, 0.45)); }
+      50% { opacity: 0.4; filter: drop-shadow(0 0 2px rgba(195, 244, 0, 0.15)); }
+    }
+    @keyframes sweep-laser {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(1000%); }
+    }
+    .hud-glow {
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+    .laser-line {
+      animation: sweep-laser 4s infinite linear;
+    }
+  </style>
+<!-- Top Context Sticky Bar / HUD Modal Navigation -->
+<div class="w-full bg-surface-container-lowest px-gutter-md pt-3 pb-4 shadow-md">
+<div class="flex items-center justify-between gap-gutter-sm mb-3">
+<div class="flex items-center gap-2">
+<button aria-label="Volver a la consola de descanso" class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface hover:text-primary-fixed transition-colors active:scale-95" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Análisis Biomecánico 3D</span>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-secondary-container/15 text-secondary-container font-label-caps text-[9px] uppercase tracking-widest font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-ping"></span>
+              IA v2.4 Kinematic
+            </span>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mt-0.5">High-Bar Back Squat • Telemetría Articular</p>
+</div>
+</div>
+<button class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary-fixed" title="Calibrar sensores">
+<span class="material-symbols-outlined text-[18px]">view_in_ar</span>
+</button>
+</div>
+<!-- Segmented Interactive Switcher -->
+<div class="w-full p-1 bg-surface-container-low rounded-xl flex items-center gap-1" id="nav-segmented">
+<button class="flex-1 py-2 px-2 text-center rounded-lg bg-surface-container-high text-on-surface font-label-caps text-label-caps uppercase tracking-wider transition-all duration-200 active:scale-98 shadow-sm" onclick="switchSection('modelo')" type="button">
+        Modelo 3D HUD
+      </button>
+<button class="flex-1 py-2 px-2 text-center rounded-lg text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps uppercase tracking-wider transition-all duration-200" onclick="switchSection('momentos')" type="button">
+        Brazos Momento
+      </button>
+<button class="flex-1 py-2 px-2 text-center rounded-lg text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps uppercase tracking-wider transition-all duration-200" onclick="switchSection('cues')" type="button">
+        Cues &amp; Setup
+      </button>
+</div>
+</div>
+<div class="flex flex-col w-full px-gutter-md pt-gutter-md pb-gutter-xl gap-gutter-lg">
+<!-- SECCIÓN 1: Visor Cinemático Interactivo con Overlay SVG de Laboratorio -->
+<div class="relative w-full rounded-2xl bg-surface-container-low overflow-hidden shadow-xl">
+<!-- Background Grid Pattern for Technical Visual Depth -->
+<div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(#c3f400 1px, transparent 1px); background-size: 16px 16px;"></div>
+<!-- Top HUD Telemetry Pill -->
+<div class="relative z-10 flex items-center justify-between p-3 bg-surface-container-high/60 backdrop-blur-md">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>
+<span class="font-label-numeric text-body-sm text-primary-fixed font-bold">STICKING POINT [BOTTOM 118°]</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Desviación Centro:</span>
+<span class="font-label-numeric text-body-sm text-secondary-container font-semibold">±0.8 cm (Óptimo)</span>
+</div>
+</div>
+<!-- Canvas / SVG Kinetic Silhouette & Joint Vectors -->
+<div class="relative w-full h-[320px] flex items-center justify-center overflow-hidden">
+<!-- Laser Sweep Effect -->
+<div class="laser-line absolute left-0 right-0 h-0.5 bg-secondary-container/40 pointer-events-none"></div>
+<svg class="w-full h-full max-w-sm" viewbox="0 0 380 320" xmlns="http://www.w3.org/2000/svg">
+<!-- Floor plane & Foot base line -->
+<line stroke="#313539" stroke-dasharray="4 4" stroke-width="2" x1="30" x2="350" y1="280" y2="280"></line>
+<polygon fill="#1c2023" points="120,280 200,280 190,286 110,286"></polygon>
+<text fill="#8e9379" font-family="monospace" font-size="9" letter-spacing="1" x="122" y="302">TRÍPODE PLANTAR 50/50</text>
+<!-- Ground Force Center of Pressure (Vertical Plumb Line) -->
+<line class="hud-glow" opacity="0.9" stroke="#c3f400" stroke-dasharray="3 3" stroke-width="2.2" x1="160" x2="160" y1="40" y2="280"></line>
+<circle cx="160" cy="280" fill="#c3f400" r="4"></circle>
+<text fill="#c3f400" font-family="monospace" font-size="9" font-weight="bold" x="166" y="274">COP MEDIOPIÉ</text>
+<!-- Kinematic Skeleton: High Bar Squat Bottom Inflexion -->
+<!-- Trunk Line (Bar at Neck C7/T1 to Hip) -->
+<!-- Bar Point (160, 80) -->
+<!-- Hip Point (222, 168) -->
+<!-- Knee Point (114, 218) -->
+<!-- Ankle Point (148, 275) -->
+<!-- Bar Bell on C7/T1 -->
+<line stroke="#e0e3e7" stroke-linecap="round" stroke-width="5" x1="130" x2="190" y1="78" y2="78"></line>
+<circle cx="160" cy="78" fill="#101417" r="8" stroke="#c3f400" stroke-width="2.5"></circle>
+<circle cx="160" cy="78" fill="#c3f400" r="3"></circle>
+<!-- Moment Arm: Hip to Plumb Line (Cyan) -->
+<line stroke="#00eefc" stroke-dasharray="2 2" stroke-width="2" x1="160" x2="222" y1="168" y2="168"></line>
+<text fill="#00eefc" font-family="monospace" font-size="10" font-weight="bold" x="168" y="162">MA-CADERA 28cm</text>
+<!-- Moment Arm: Knee to Plumb Line (Neon Volt) -->
+<line stroke="#c3f400" stroke-dasharray="2 2" stroke-width="2" x1="114" x2="160" y1="218" y2="218"></line>
+<text fill="#c3f400" font-family="monospace" font-size="10" font-weight="bold" x="76" y="235">MA-ROD 22cm</text>
+<!-- Femur (Hip to Knee) -->
+<line stroke="#e0e3e7" stroke-linecap="round" stroke-width="4.5" x1="222" x2="114" y1="168" y2="218"></line>
+<!-- Tibia (Knee to Ankle) -->
+<line stroke="#e0e3e7" stroke-linecap="round" stroke-width="4.5" x1="114" x2="148" y1="218" y2="275"></line>
+<!-- Foot segment -->
+<line stroke="#e0e3e7" stroke-linecap="round" stroke-width="4" x1="148" x2="110" y1="275" y2="280"></line>
+<line stroke="#e0e3e7" stroke-linecap="round" stroke-width="4" x1="148" x2="185" y1="275" y2="280"></line>
+<!-- Torso (Hip to Bar C7) -->
+<line stroke="#e0e3e7" stroke-linecap="round" stroke-width="4.5" x1="222" x2="160" y1="168" y2="80"></line>
+<!-- Joint Circles with Data rings -->
+<!-- Hip Joint -->
+<circle cx="222" cy="168" fill="#181c1f" r="7" stroke="#00eefc" stroke-width="2"></circle>
+<circle cx="222" cy="168" fill="#00eefc" r="2.5"></circle>
+<!-- Knee Joint -->
+<circle cx="114" cy="218" fill="#181c1f" r="7" stroke="#c3f400" stroke-width="2"></circle>
+<circle cx="114" cy="218" fill="#c3f400" r="2.5"></circle>
+<!-- Ankle Joint -->
+<circle cx="148" cy="275" fill="#181c1f" r="5" stroke="#8e9379" stroke-width="2"></circle>
+<!-- Interactive Angle Arcs & Callouts -->
+<!-- Torso Angle Callout -->
+<path d="M 185,115 A 25 25 0 0 1 200,135" fill="none" stroke="#d3fbff" stroke-width="1.5"></path>
+<rect fill="#1c2023" height="20" rx="4" width="62" x="206" y="96"></rect>
+<text fill="#e0e3e7" font-family="monospace" font-size="10" x="212" y="110">TORSO 48°</text>
+<!-- Hip Angle Callout -->
+<rect fill="#1c2023" height="20" rx="4" width="70" x="238" y="160"></rect>
+<text fill="#00eefc" font-family="monospace" font-size="10" x="244" y="174">CADERA 96°</text>
+<!-- Knee Angle Callout -->
+<path d="M 112,198 A 20 20 0 0 0 126,240" fill="none" stroke="#c3f400" stroke-width="1.5"></path>
+<rect fill="#1c2023" height="20" rx="4" width="82" x="18" y="198"></rect>
+<text fill="#c3f400" font-family="monospace" font-size="10" x="24" y="212">RODILLA 118°</text>
+</svg>
+<!-- Quick 3D Rotation Floating Cue -->
+<div class="absolute bottom-2.5 right-3 flex items-center gap-1.5 px-2 py-1 rounded-md bg-surface-container-high/80 backdrop-blur-sm">
+<span class="material-symbols-outlined text-[14px] text-primary-fixed">3d_rotation</span>
+<span class="font-label-caps text-[9px] text-on-surface uppercase tracking-wider">Perspectiva Sagital IA</span>
+</div>
+</div>
+<!-- Kinematic Phase Switcher / Slider Selector -->
+<div class="p-3 bg-surface-container">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Fase del Levantamiento:</span>
+<span class="font-label-numeric text-body-sm text-primary-fixed" id="phase-label">Sticking Point (Bottom)</span>
+</div>
+<div class="grid grid-cols-3 gap-1.5">
+<button class="py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-caps text-[10px] uppercase font-bold tracking-tight text-center transition-colors" onclick="setPhase(1, 'Desencadenamiento', this)" type="button">
+            1. Descenso
+          </button>
+<button class="py-2 rounded-lg bg-primary-container text-on-primary-container font-label-caps text-[10px] uppercase font-bold tracking-tight text-center shadow-sm" onclick="setPhase(2, 'Sticking Point (Bottom)', this)" type="button">
+            2. Inflexión
+          </button>
+<button class="py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-caps text-[10px] uppercase font-bold tracking-tight text-center transition-colors" onclick="setPhase(3, 'Bloqueo Concéntrico', this)" type="button">
+            3. Bloqueo
+          </button>
+</div>
+</div>
+</div>
+<!-- SECCIÓN 2: Métricas Biomecánicas Principales en Bento -->
+<div class="grid grid-cols-2 gap-gutter-sm">
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Brazo Momento Rodilla</span>
+<span class="material-symbols-outlined text-primary-fixed text-[18px]">straighten</span>
+</div>
+<div class="mt-2 flex items-baseline gap-1.5">
+<span class="font-label-numeric text-headline-md text-on-surface font-bold">22.0</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">cm</span>
+</div>
+<div class="mt-1 flex items-center gap-1 text-primary-fixed font-label-caps text-[10px]">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+<span>Alto estímulo cuádriceps</span>
+</div>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Brazo Momento Cadera</span>
+<span class="material-symbols-outlined text-secondary-container text-[18px]">hdr_strong</span>
+</div>
+<div class="mt-2 flex items-baseline gap-1.5">
+<span class="font-label-numeric text-headline-md text-on-surface font-bold">28.0</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">cm</span>
+</div>
+<div class="mt-1 flex items-center gap-1 text-secondary-container font-label-caps text-[10px]">
+<span class="material-symbols-outlined text-[13px]">tune</span>
+<span>Carga lumbar balanceada</span>
+</div>
+</div>
+</div>
+<!-- SECCIÓN 3: Adaptador y Perfil Antropométrico Detectado por IA -->
+<div class="p-4 rounded-2xl bg-surface-container-low flex flex-col gap-3 shadow-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[20px]">accessibility_new</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Morfología Detectada</h2>
+<p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Escaneo Dinámico de Segmentos</p>
+</div>
+</div>
+<span class="px-2 py-1 rounded-md bg-surface-container-high text-primary-fixed font-label-numeric text-[11px] font-semibold">
+          FÉMUR +4.2%
+        </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+        Tu ratio fémur-torso inclina levemente la palanca hacia un momento de flexión de cadera pronunciado. Para maximizar profundidad sin choque femoroacetabular, implementa este setup:
+      </p>
+<!-- Prescription List Cards -->
+<div class="grid grid-cols-1 gap-2 pt-1">
+<div class="p-2.5 rounded-xl bg-surface-container flex items-start gap-3">
+<div class="w-7 h-7 rounded-md bg-surface-container-high flex items-center justify-center text-secondary-container shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">arrows_outward</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold">Ancho de Stance</span>
+<span class="font-label-numeric text-[11px] text-primary-fixed font-bold">110% Biacromial</span>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-0.5 leading-snug">
+              Separa los talones ligeramente más allá del ancho de tus hombros para acomodar la pelvis.
+            </p>
+</div>
+</div>
+<div class="p-2.5 rounded-xl bg-surface-container flex items-start gap-3">
+<div class="w-7 h-7 rounded-md bg-surface-container-high flex items-center justify-center text-secondary-container shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">rotate_right</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold">Rotación Externa de Pies</span>
+<span class="font-label-numeric text-[11px] text-primary-fixed font-bold">22° a 25°</span>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-0.5 leading-snug">
+              Despeja el acetábulo femoral; previene pinzamiento anterior (FAI) en la fosa profunda.
+            </p>
+</div>
+</div>
+<div class="p-2.5 rounded-xl bg-surface-container flex items-start gap-3">
+<div class="w-7 h-7 rounded-md bg-surface-container-high flex items-center justify-center text-secondary-container shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">expand_circle_up</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold">Anclaje de Barra en Espalda</span>
+<span class="font-label-numeric text-[11px] text-on-surface font-bold">C7 / T1 (Alta)</span>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-0.5 leading-snug">
+              Retracción y depresión forzada de omóplatos para sostener un ángulo de torso compacto a 48°.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- SECCIÓN 4: Detección de Errores Críticos (Semáforo de Patomecánica) -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container text-[20px]">health_and_safety</span>
+          Semáforo de Patomecánica
+        </h2>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">En Vivo</span>
+</div>
+<div class="flex flex-col gap-2.5">
+<!-- Error Item 1: Valgo Dinámico -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary-fixed shadow-[0_0_8px_#c3f400]"></span>
+<span class="font-headline-sm text-body-sm font-semibold text-on-surface">Valgo Dinámico de Rodilla</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed font-label-caps text-[10px] font-bold">
+              ÓPTIMO (&lt; 3 mm)
+            </span>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant">
+            Rodillas siguen la línea del segundo dedo del pie en ascenso. Tensión sostenida de glúteo medio y rotadores externos femorales.
+          </p>
+</div>
+<!-- Error Item 2: Butt Wink / Basculación -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary-container shadow-[0_0_8px_#00eefc]"></span>
+<span class="font-headline-sm text-body-sm font-semibold text-on-surface">Retroversion Pélvica (Butt-Wink)</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary-container font-label-caps text-[10px] font-bold">
+              LÍMITE EN 115°
+            </span>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant">
+            Pelvis permanece neutra hasta 115° de flexión de rodilla. Si buscas mayor profundidad, se detecta ligera flexión lumbar. Mantén rango de seguridad sacroilíaca.
+          </p>
+</div>
+<!-- Error Item 3: Heel Lift -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary-fixed shadow-[0_0_8px_#c3f400]"></span>
+<span class="font-headline-sm text-body-sm font-semibold text-on-surface">Elevación de Talón (Heel Lift)</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed font-label-caps text-[10px] font-bold">
+              0% LEVANTAMIENTO
+            </span>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant">
+            Distribución de presión balanceada sobre calcáneo y cabeza del primer y quinto metatarsiano durante la reversión concéntrica.
+          </p>
+</div>
+</div>
+</div>
+<!-- SECCIÓN 5: Árbol de Corrección Técnica Inmediata & Ejercicio Accesorio -->
+<div class="p-4 rounded-2xl bg-surface-container-low flex flex-col gap-3 shadow-lg">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Cue Neuromuscular &amp; Calentamiento</h2>
+<p class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Ajuste de Alto Rendimiento</p>
+</div>
+</div>
+<!-- Verbal Cue Callout -->
+<div class="p-3 rounded-xl bg-surface-container flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-fixed text-[22px] mt-0.5 shrink-0">record_voice_over</span>
+<div>
+<span class="font-label-caps text-[10px] text-primary-fixed uppercase tracking-wider font-bold">Cue Auditivo Recomendado</span>
+<p class="font-body-md text-body-md text-on-surface italic font-medium mt-0.5">
+            “Atornilla los pies y abre el suelo como si quisieras rasgar una hoja de papel colocada bajo tus zapatillas.”
+          </p>
+</div>
+</div>
+<!-- Quick Accessory Fix -->
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary-container shrink-0">
+<span class="material-symbols-outlined text-[22px]">fitness_center</span>
+</div>
+<div>
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider">Potenciación Rápida</span>
+<h3 class="font-headline-sm text-body-sm text-on-surface font-semibold">Spanish Squat Isométrico</h3>
+<p class="font-body-sm text-[12px] text-on-surface-variant">2 series × 30s con banda elastómera gruesa</p>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface hover:text-primary-fixed font-label-caps text-[10px] uppercase font-bold tracking-wider transition-colors active:scale-95" onclick="alert('Ejercicio cargado en la cola de calentamiento!')" type="button">
+          Ver Demo
+        </button>
+</div>
+<!-- Heel wedge recommendation conditional note -->
+<div class="p-3 rounded-xl bg-surface-container-high/40 flex items-center gap-2.5">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">info</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-snug">
+          Si notas fatiga de erectores espinales prematura frente a cuádriceps, aplica una cuña de 2.0 cm en talón para verticalizar el torso.
+        </p>
+</div>
+</div>
+<!-- SECCIÓN 6: Acciones de Cierre y Aplicación -->
+<div class="flex flex-col gap-2.5 pt-2">
+<button class="w-full h-field-height-touch rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-headline-sm uppercase tracking-wider font-bold flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-98" onclick="applyAndClose()" type="button">
+<span class="material-symbols-outlined text-[22px]">check_circle</span>
+<span>APLICAR CUES Y VOLVER (120.0 KG)</span>
+</button>
+<button class="w-full h-11 rounded-lg bg-surface-container-high text-on-surface hover:text-primary-fixed font-headline-sm text-body-md uppercase tracking-wider font-semibold flex items-center justify-center gap-2 transition-colors active:scale-98" onclick="saveSettings()" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+<span>Guardar Ajustes Biomecánicos en Perfil</span>
+</button>
+</div>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+    function setPhase(phaseId, name, buttonEl) {
+      document.getElementById('phase-label').innerText = name;
+      const buttons = buttonEl.parentElement.querySelectorAll('button');
+      buttons.forEach(btn => {
+        btn.className = 'py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-caps text-[10px] uppercase font-bold tracking-tight text-center transition-colors';
+      });
+      buttonEl.className = 'py-2 rounded-lg bg-primary-container text-on-primary-container font-label-caps text-[10px] uppercase font-bold tracking-tight text-center shadow-sm';
+    }
+
+    function switchSection(view) {
+      const container = document.getElementById('nav-segmented');
+      const buttons = container.querySelectorAll('button');
+      buttons.forEach(btn => {
+        btn.className = 'flex-1 py-2 px-2 text-center rounded-lg text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps uppercase tracking-wider transition-all duration-200';
+      });
+      event.target.className = 'flex-1 py-2 px-2 text-center rounded-lg bg-surface-container-high text-on-surface font-label-caps text-label-caps uppercase tracking-wider transition-all duration-200 shadow-sm';
+    }
+
+    function applyAndClose() {
+      // Haptic imitation / micro alert
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-24 left-4 right-4 z-50 p-3 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-body-md text-center shadow-2xl transition-all duration-300 transform translate-y-0';
+      toast.innerText = 'Cues cargados en el visor de serie 3. ¡A por los 120 kg!';
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 2500);
+    }
+
+    function saveSettings() {
+      alert('Parámetros biomecánicos (Stance 110%, Pies 24°, C7/T1) sincronizados con tu ficha técnica.');
+    }
+  </script>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary-fixed"><div class="flex justify-around items-center h-20 px-gutter-sm"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 transition-colors text-primary-fixed" data-path="rutina-hoy" href="#"><span class="material-symbols-outlined text-[24px]">fitness_center</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Rutina</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="autoregulacion-ia" href="#"><span class="material-symbols-outlined text-[24px]">psychology</span><span class="font-label-caps text-label-caps uppercase tracking-wider">IA Auto</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="metricas-progreso" href="#"><span class="material-symbols-outlined text-[24px]">insights</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Métricas</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="perfil-atleta" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Perfil</span></a></div></nav></body></html>

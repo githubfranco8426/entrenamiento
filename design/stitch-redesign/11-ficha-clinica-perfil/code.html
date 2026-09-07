@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#101417;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#e0e3e7', 'on-surface-variant': '#c4c9ac', 'surface-container': '#1c2023', 'on-secondary-fixed-variant': '#004f54', 'surface-dim': '#101417', 'on-tertiary-container': '#ca0037', 'surface-container-lowest': '#0b0f12', 'secondary': '#d3fbff', 'on-error-container': '#ffdad6', 'secondary-container': '#00eefc', 'surface-variant': '#313539', 'surface-container-highest': '#313539', 'inverse-on-surface': '#2d3134', 'primary-container': '#c3f400', 'on-primary-container': '#556d00', 'tertiary': '#ffffff', 'outline': '#8e9379', 'secondary-fixed': '#7df4ff', 'tertiary-container': '#ffdada', 'surface-container-high': '#262a2e', 'on-secondary-container': '#00686f', 'surface': '#101417', 'primary-fixed-dim': '#abd600', 'primary': '#ffffff', 'on-tertiary-fixed': '#40000b', 'on-tertiary-fixed-variant': '#920025', 'on-background': '#e0e3e7', 'primary-fixed': '#c3f400', 'on-surface': '#e0e3e7', 'on-primary-fixed': '#161e00', 'outline-variant': '#444933', 'on-error': '#690005', 'inverse-primary': '#506600', 'error-container': '#93000a', 'on-primary-fixed-variant': '#3c4d00', 'on-tertiary': '#680018', 'on-primary': '#283500', 'tertiary-fixed-dim': '#ffb3b5', 'background': '#101417', 'tertiary-fixed': '#ffdada', 'on-secondary': '#00363a', 'surface-bright': '#363a3d', 'error': '#ffb4ab', 'on-secondary-fixed': '#002022', 'secondary-fixed-dim': '#00dbe9', 'surface-container-low': '#181c1f', 'surface-tint': '#abd600' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter-xl': '2rem', 'margin-mobile': '1.25rem', 'margin-tablet': '2rem', 'gutter-sm': '0.5rem', 'gutter-lg': '1.5rem', 'gutter-md': '1rem', 'gutter-xs': '0.25rem', 'container-padding': '1.25rem', 'field-height-touch': '3.25rem' }, fontFamily: { 'display-hero': ['plusJakartaSans'], 'label-caps': ['plusJakartaSans'], 'headline-md': ['plusJakartaSans'], 'body-md': ['plusJakartaSans'], 'body-lg': ['plusJakartaSans'], 'label-numeric': ['jetbrainsMono'], 'body-sm': ['plusJakartaSans'], 'headline-sm': ['plusJakartaSans'], 'headline-lg': ['plusJakartaSans'], 'display-hero-mobile': ['plusJakartaSans'] }, fontSize: { 'display-hero': ['40px', { lineHeight: '46px', fontWeight: '800' }], 'label-caps': ['11px', { lineHeight: '14px', fontWeight: '700' }], 'headline-md': ['20px', { lineHeight: '26px', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'label-numeric': ['16px', { lineHeight: '20px', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'headline-lg': ['24px', { lineHeight: '30px', fontWeight: '700' }], 'display-hero-mobile': ['32px', { lineHeight: '38px', fontWeight: '800' }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter-md flex items-center justify-between"><div class="flex items-center gap-gutter-sm"><img alt="Entrenamiento AI Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWpHZP_FDQsTiBRwtr4Vt-GPjY5t_sIkdo2sLY1nICdJp1XRr_0shxdAhY9HqYozLja-WAwJ7moUpHxTeqms9Y9z3o6SbXx2fhacMbnJBOeBQ1OiqRyTphXG27uTYXEZOYYtY4mpA7xCeP6viOB2bQsbKydi_Mp1BtDYrBUunx8i88ZnkXBq1i9lssbieETwy6ni-_uVCPaYAJrcvHvVXHkIPIQh5C60MhCvnWMMWoGshq-4SdVaRrgw"/><div class="flex flex-col"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface">Entrenamiento</span><span class="px-1.5 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed text-[10px] font-bold tracking-widest uppercase">IA v2.4 Activa</span></div><span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-widest">Rutina Hoy</span></div></div><div class="flex items-center gap-gutter-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-container-padding space-y-gutter-lg pb-12">
+<!-- Header Clínico / Paciente Header -->
+<section class="flex flex-col space-y-gutter-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-primary-fixed shadow-[0_0_8px_rgba(195,244,0,0.8)]"></span>
+<span class="font-label-caps text-label-caps uppercase text-primary-fixed tracking-widest">PACIENTE ID: AR-8842</span>
+</div>
+<div class="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-surface-container-highest">
+<span class="material-symbols-outlined text-secondary-fixed text-[14px]">health_and_safety</span>
+<span class="font-label-caps text-label-caps text-secondary-fixed uppercase tracking-wider">HL7 / EMR Activo</span>
+</div>
+</div>
+<div class="flex flex-col pt-1">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Ficha Clínica &amp; Perfil del Atleta</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Prescripción de fuerza, telemetría neuromuscular y control biomecánico</p>
+</div>
+<!-- Status Phase Banner -->
+<div class="mt-2 flex items-center justify-between p-3 rounded-xl bg-surface-container-high shadow-sm">
+<div class="flex items-center space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[18px]">rebase_edit</span>
+</div>
+<div>
+<span class="block font-label-caps text-label-caps text-on-surface-variant uppercase">Estado Clínico Activo</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Fase 3: Readaptación Funcional &amp; Carga Progresiva</span>
+</div>
+</div>
+<span class="px-2 py-1 rounded bg-surface-container-lowest font-label-numeric text-label-numeric text-primary-fixed text-xs">Sem 7/12</span>
+</div>
+</section>
+<!-- Tarjeta Atleta & Biometría Basal -->
+<section class="flex flex-col p-4 rounded-xl bg-surface-container-low shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="relative">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Athletic portrait of a 27 year old male soccer player with focused clinical demeanor, low-key obsidian studio lighting, high contrast neon lime subtle rim lighting and technical sports lab aura." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvWolHz0iQISl3DgZEuS5_R8nInWRg9qFzhfQmrn08OygY0Q6qhKgRjTRM1LE0TVEQO_kkicAvsCBsLkulIyseg8STjnrASOkkyaTXUphLuQuWGhjiUZzOF_f_XHXflClnVGFo747r-xJMpn3C1XuW36hEVcEiyr8hztycmTqq5qOAe_iuuCxGCGr7uy9HU62rCNdPO-2bBTLC1JJ9nm0iqrSlk49ylP1yAItSOODTqS9Ol0D8CdEHkA"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary-fixed rounded-full shadow-[0_0_6px_rgba(195,244,0,0.9)]"></span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center space-x-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">Alex R.</h2>
+<span class="font-label-caps text-label-caps text-on-surface-variant">27 AÑOS</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary-fixed flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">sports_soccer</span>
+            Fútbol Competitivo • Centrocampista
+          </span>
+</div>
+</div>
+<button aria-label="Editar datos básicos" class="p-2 rounded-lg bg-surface-container-highest text-on-surface hover:text-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</button>
+</div>
+<!-- Biometrics 4-grid Bento -->
+<div class="grid grid-cols-2 gap-2">
+<!-- Weight & Body Fat -->
+<div class="p-3 rounded-lg bg-surface-container flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase">Masa Corporal</span>
+<span class="material-symbols-outlined text-[16px]">scale</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="font-label-numeric text-headline-md text-on-surface">78.4 <span class="font-body-sm text-on-surface-variant">kg</span></span>
+<span class="font-label-numeric text-body-sm text-secondary-fixed">11.2% GC</span>
+</div>
+</div>
+<!-- HRV / rMSSD -->
+<div class="p-3 rounded-lg bg-surface-container flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase">HRV Basal (rMSSD)</span>
+<span class="material-symbols-outlined text-[16px] text-primary-fixed">ecg_heart</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="font-label-numeric text-headline-md text-primary-fixed">68 <span class="font-body-sm text-on-surface-variant">ms</span></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Óptima</span>
+</div>
+</div>
+<!-- FC Reposo -->
+<div class="p-3 rounded-lg bg-surface-container flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase">FC Reposo</span>
+<span class="material-symbols-outlined text-[16px] text-error">favorite</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="font-label-numeric text-headline-md text-on-surface">49 <span class="font-body-sm text-on-surface-variant">bpm</span></span>
+<span class="font-label-numeric text-body-sm text-primary-fixed">-3 vs m.</span>
+</div>
+</div>
+<!-- ACWR Status -->
+<div class="p-3 rounded-lg bg-surface-container flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase">ACWR Ratio</span>
+<span class="material-symbols-outlined text-[16px] text-secondary-fixed">query_stats</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="font-label-numeric text-headline-md text-secondary-fixed">1.18</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Seguro</span>
+</div>
+</div>
+</div>
+<!-- Active Clinical Diagnosis -->
+<div class="p-3 rounded-lg bg-surface-container-high flex flex-col space-y-1">
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-primary-fixed text-[16px]">stethoscope</span>
+<span class="font-label-caps text-label-caps text-primary-fixed uppercase tracking-wider">Diagnóstico Principal Activo</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface font-semibold">
+        Readaptación LCM Grado II Rodilla Izq. + Tendinopatía Rotuliana Derecha previa en fase asintomática.
+      </p>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+        Plan de carga biomecánica monitorizado por VBT con restricción de rotación tibial en flexión &gt;110°.
+      </span>
+</div>
+</section>
+<!-- Historial Médico & Articular / ROM -->
+<section class="flex flex-col space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">history_edu</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Historial Clínico &amp; Rangos Articulares</h2>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">ROM / Goniometría</span>
+</div>
+<!-- Clinical Timeline Cards -->
+<div class="flex flex-col space-y-2">
+<!-- Item 1: Active Recovery -->
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col space-y-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-fixed"></span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Rotura parcial LCM (Izquierda)</span>
+</div>
+<span class="font-label-numeric text-body-sm text-on-surface-variant">Octubre 2023</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant pl-4.5">
+          Tratamiento conservador + Carga excéntrica protocolizada. Actualmente en readaptación isométrica y trabajo concéntrico submáximo en cadena cinética cerrada.
+        </p>
+<div class="flex items-center space-x-2 pl-4.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary-fixed font-label-caps text-label-caps uppercase">Fase 3 Activa</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-label-caps uppercase">EVA Medio: 0.8/10</span>
+</div>
+</div>
+<!-- Item 2: Resolved -->
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col space-y-2 opacity-85">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed"></span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Tendinopatía rotuliana derecha</span>
+</div>
+<span class="font-label-numeric text-body-sm text-on-surface-variant">Mayo 2022</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant pl-4.5">
+          Resuelta satisfactoriamente. Protocolo HSR (Heavy Slow Resistance) completado. Control EVA continuo y seguimiento de stiffness del tendón mediante salto CMJ.
+        </p>
+<div class="flex items-center space-x-2 pl-4.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary-fixed font-label-caps text-label-caps uppercase">Alta Funcional</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-label-caps uppercase">Asintomático</span>
+</div>
+</div>
+</div>
+<!-- Goniometry & ROM Panel -->
+<div class="p-4 rounded-xl bg-surface-container-low space-y-3">
+<span class="font-label-caps text-label-caps text-primary-fixed uppercase tracking-wider block">Goniometría Dinámica &amp; Asimetrías</span>
+<!-- Knee Flexion -->
+<div class="space-y-1.5">
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface font-semibold">Flexión Rodilla Izquierda (Lesionada)</span>
+<span class="font-label-numeric text-on-surface">135° <span class="text-primary-fixed text-xs font-normal">(Δ -3.8° vs contralateral)</span></span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-fixed rounded-full" style="width: 96%;"></div>
+</div>
+<div class="flex justify-between text-[11px] text-on-surface-variant font-label-numeric">
+<span>Base post-lesión: 110°</span>
+<span>Objetivo simétrico: 139°</span>
+</div>
+</div>
+<!-- Ankle Dorsiflexion WBLT -->
+<div class="space-y-1.5 pt-1">
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface font-semibold">Dorsiflexión Tobillo (Weight-Bearing Lunge)</span>
+<span class="font-label-numeric text-on-surface">11.5 cm <span class="text-secondary-fixed text-xs font-normal">(Simétrico bilateral)</span></span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-secondary-fixed rounded-full" style="width: 92%;"></div>
+</div>
+<div class="flex justify-between text-[11px] text-on-surface-variant font-label-numeric">
+<span>Umbral clínico mínimo: 10.0 cm</span>
+<span>Rango normal: &gt;11.0 cm</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Perfil Neuromuscular & Récords VBT -->
+<section class="flex flex-col space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary-fixed text-[20px]">speed</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Perfil Neuromuscular (VBT Calibrado)</h2>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">1RM Dinámico</span>
+</div>
+<!-- 3 Big Lifts Cards -->
+<div class="grid grid-cols-3 gap-2">
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col justify-between">
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase leading-tight">Sentadilla Trasera</span>
+<div class="my-2">
+<span class="font-label-numeric text-headline-md text-primary-fixed">145<span class="text-xs text-on-surface">kg</span></span>
+</div>
+<span class="font-label-numeric text-[11px] text-secondary-fixed">V0: 1.42 m/s</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col justify-between">
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase leading-tight">Peso Muerto Rum.</span>
+<div class="my-2">
+<span class="font-label-numeric text-headline-md text-on-surface">160<span class="text-xs text-on-surface-variant">kg</span></span>
+</div>
+<span class="font-label-numeric text-[11px] text-on-surface-variant">V0: 1.28 m/s</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col justify-between">
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase leading-tight">Press Banca</span>
+<div class="my-2">
+<span class="font-label-numeric text-headline-md text-on-surface">105<span class="text-xs text-on-surface-variant">kg</span></span>
+</div>
+<span class="font-label-numeric text-[11px] text-on-surface-variant">V0: 1.15 m/s</span>
+</div>
+</div>
+<!-- Hardware Sync Telemetry Status -->
+<div class="p-4 rounded-xl bg-surface-container-low space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Dispositivos de Telemetría Vinculados</span>
+<span class="flex items-center text-primary-fixed font-label-caps text-[10px] uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-ping mr-1"></span> Live Data
+        </span>
+</div>
+<div class="space-y-2">
+<!-- Encoder Lineal -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container">
+<div class="flex items-center space-x-2.5">
+<span class="material-symbols-outlined text-primary-fixed text-[20px]">straighten</span>
+<div>
+<span class="font-body-md text-body-md text-on-surface font-semibold block">Encoder Lineal Vitruve v3</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Transductor de velocidad por cable</span>
+</div>
+</div>
+<div class="flex items-center space-x-1.5 text-primary-fixed">
+<span class="font-label-numeric text-xs font-bold">88%</span>
+<span class="material-symbols-outlined text-[18px]">battery_5_bar</span>
+</div>
+</div>
+<!-- IMU Enode -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container">
+<div class="flex items-center space-x-2.5">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">sensors</span>
+<div>
+<span class="font-body-md text-body-md text-on-surface font-semibold block">Sensores Inerciales IMU Enode</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Acelerometría 3D bar &amp; sacrum</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-secondary-fixed font-label-caps text-[10px] uppercase font-bold">
+            Sincronizado
+          </span>
+</div>
+<!-- Smartwatch / Chest Strap -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container">
+<div class="flex items-center space-x-2.5">
+<span class="material-symbols-outlined text-error text-[20px]">watch</span>
+<div>
+<span class="font-body-md text-body-md text-on-surface font-semibold block">Polar H10 / Apple Watch Ultra</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">HRV en Vivo &amp; Carga Interna</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary-fixed font-label-caps text-[10px] uppercase font-bold">
+            Activo 1000Hz
+          </span>
+</div>
+</div>
+</div>
+</section>
+<!-- Protocolos de Seguridad & Umbrales de Alerta Clínica -->
+<section class="flex flex-col space-y-3">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-error text-[20px]">fmd_bad</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Protocolos de Seguridad &amp; Umbrales</h2>
+</div>
+<div class="space-y-2">
+<!-- Alerta Roja EVA -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-error-container/40 flex-shrink-0 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+<div class="flex flex-col space-y-0.5 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-error">Alerta Roja • EVA &gt; 3/10</span>
+<span class="font-label-caps text-label-caps text-error uppercase">Parada / Push</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Dolor superior a 3/10 en serie de fuerza concéntrica detiene la sesión de inmediato y remite alerta push al fisioterapeuta con captura de ROM.
+          </p>
+</div>
+</div>
+<!-- Alerta Amarilla Fatiga VBT -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 flex-shrink-0 flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[20px]">trending_down</span>
+</div>
+<div class="flex flex-col space-y-0.5 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-primary-fixed">Alerta Amarilla • Caída MPV &gt; 20%</span>
+<span class="font-label-caps text-label-caps text-primary-fixed uppercase">Corte Preventivo</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Pérdida de velocidad media propulsiva mayor al 20% dentro de la serie activa desencadena el corte por fatiga neuromuscular no compensada.
+          </p>
+</div>
+</div>
+<!-- Límite ACWR -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-secondary-container/20 flex-shrink-0 flex items-center justify-center text-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">shield_with_heart</span>
+</div>
+<div class="flex flex-col space-y-0.5 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-secondary-fixed">Umbral Techo ACWR: 1.35</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Zona Segura</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Ratio de carga aguda vs crónica no superará 1.35 para prevenir picos mecánicos lesivos sobre el ligamento colateral medial.
+          </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Acciones Clínicas Principales -->
+<section class="flex flex-col space-y-3 pt-2">
+<!-- CTA Primario -->
+<button class="w-full h-field-height-touch rounded-lg bg-primary-fixed text-on-primary-fixed font-headline-sm text-headline-sm font-bold flex items-center justify-center space-x-2 shadow-lg active:scale-[0.98] transition-transform" id="btn-update-fms">
+<span class="material-symbols-outlined text-[22px]">assignment_add</span>
+<span>Actualizar Valoración Funcional / FMS</span>
+</button>
+<!-- Botón Secundario Exportación HL7/PDF -->
+<button class="w-full h-field-height-touch rounded-lg bg-surface-container-high text-on-surface font-headline-sm text-headline-sm flex items-center justify-center space-x-2 hover:text-primary-fixed transition-colors" id="btn-export-clinical">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+<span>Exportar Historial Clínico (PDF / HL7)</span>
+</button>
+</section>
+</div>
+<script>
+  (function() {
+    const fmsBtn = document.getElementById('btn-update-fms');
+    const exportBtn = document.getElementById('btn-export-clinical');
+
+    if (fmsBtn) {
+      fmsBtn.addEventListener('click', () => {
+        const originalText = fmsBtn.innerHTML;
+        fmsBtn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">sync</span><span>Sincronizando Goniometría...</span>';
+        setTimeout(() => {
+          fmsBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span><span>Listo para Nueva Prueba</span>';
+          setTimeout(() => {
+            fmsBtn.innerHTML = originalText;
+          }, 2000);
+        }, 900);
+      });
+    }
+
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        const originalText = exportBtn.innerHTML;
+        exportBtn.innerHTML = '<span class="material-symbols-outlined text-[20px] text-primary-fixed animate-bounce">download</span><span class="text-primary-fixed">Generando Reporte HL7 FHIR...</span>';
+        setTimeout(() => {
+          exportBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">done_all</span><span>Descargado (Alex_R_LCM_Fase3.pdf)</span>';
+          setTimeout(() => {
+            exportBtn.innerHTML = originalText;
+          }, 2500);
+        }, 1200);
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary-fixed"><div class="flex justify-around items-center h-20 px-gutter-sm"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 transition-colors text-primary-fixed" data-path="rutina-hoy" href="#"><span class="material-symbols-outlined text-[24px]">fitness_center</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Rutina</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="autoregulacion-ia" href="#"><span class="material-symbols-outlined text-[24px]">psychology</span><span class="font-label-caps text-label-caps uppercase tracking-wider">IA Auto</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="metricas-progreso" href="#"><span class="material-symbols-outlined text-[24px]">insights</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Métricas</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="perfil-atleta" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Perfil</span></a></div></nav></body></html>

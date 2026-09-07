@@ -20,7 +20,7 @@ function Card({
       className={cn(
         "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-border [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         variant === "glass" &&
-          "bg-card/70 ring-border/60 supports-[backdrop-filter]:backdrop-blur-xl",
+          "bg-card/70 ring-border/60 shadow-[0_12px_32px_-4px_rgba(0,0,0,0.7)] supports-[backdrop-filter]:backdrop-blur-xl",
         className
       )}
       {...props}

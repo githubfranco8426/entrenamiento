@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#101417;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#e0e3e7', 'on-surface-variant': '#c4c9ac', 'surface-container': '#1c2023', 'on-secondary-fixed-variant': '#004f54', 'surface-dim': '#101417', 'on-tertiary-container': '#ca0037', 'surface-container-lowest': '#0b0f12', 'secondary': '#d3fbff', 'on-error-container': '#ffdad6', 'secondary-container': '#00eefc', 'surface-variant': '#313539', 'surface-container-highest': '#313539', 'inverse-on-surface': '#2d3134', 'primary-container': '#c3f400', 'on-primary-container': '#556d00', 'tertiary': '#ffffff', 'outline': '#8e9379', 'secondary-fixed': '#7df4ff', 'tertiary-container': '#ffdada', 'surface-container-high': '#262a2e', 'on-secondary-container': '#00686f', 'surface': '#101417', 'primary-fixed-dim': '#abd600', 'primary': '#ffffff', 'on-tertiary-fixed': '#40000b', 'on-tertiary-fixed-variant': '#920025', 'on-background': '#e0e3e7', 'primary-fixed': '#c3f400', 'on-surface': '#e0e3e7', 'on-primary-fixed': '#161e00', 'outline-variant': '#444933', 'on-error': '#690005', 'inverse-primary': '#506600', 'error-container': '#93000a', 'on-primary-fixed-variant': '#3c4d00', 'on-tertiary': '#680018', 'on-primary': '#283500', 'tertiary-fixed-dim': '#ffb3b5', 'background': '#101417', 'tertiary-fixed': '#ffdada', 'on-secondary': '#00363a', 'surface-bright': '#363a3d', 'error': '#ffb4ab', 'on-secondary-fixed': '#002022', 'secondary-fixed-dim': '#00dbe9', 'surface-container-low': '#181c1f', 'surface-tint': '#abd600' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter-xl': '2rem', 'margin-mobile': '1.25rem', 'margin-tablet': '2rem', 'gutter-sm': '0.5rem', 'gutter-lg': '1.5rem', 'gutter-md': '1rem', 'gutter-xs': '0.25rem', 'container-padding': '1.25rem', 'field-height-touch': '3.25rem' }, fontFamily: { 'display-hero': ['plusJakartaSans'], 'label-caps': ['plusJakartaSans'], 'headline-md': ['plusJakartaSans'], 'body-md': ['plusJakartaSans'], 'body-lg': ['plusJakartaSans'], 'label-numeric': ['jetbrainsMono'], 'body-sm': ['plusJakartaSans'], 'headline-sm': ['plusJakartaSans'], 'headline-lg': ['plusJakartaSans'], 'display-hero-mobile': ['plusJakartaSans'] }, fontSize: { 'display-hero': ['40px', { lineHeight: '46px', fontWeight: '800' }], 'label-caps': ['11px', { lineHeight: '14px', fontWeight: '700' }], 'headline-md': ['20px', { lineHeight: '26px', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'label-numeric': ['16px', { lineHeight: '20px', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'headline-lg': ['24px', { lineHeight: '30px', fontWeight: '700' }], 'display-hero-mobile': ['32px', { lineHeight: '38px', fontWeight: '800' }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter-md flex items-center justify-between"><div class="flex items-center gap-gutter-sm"><img alt="Entrenamiento AI Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWpHZP_FDQsTiBRwtr4Vt-GPjY5t_sIkdo2sLY1nICdJp1XRr_0shxdAhY9HqYozLja-WAwJ7moUpHxTeqms9Y9z3o6SbXx2fhacMbnJBOeBQ1OiqRyTphXG27uTYXEZOYYtY4mpA7xCeP6viOB2bQsbKydi_Mp1BtDYrBUunx8i88ZnkXBq1i9lssbieETwy6ni-_uVCPaYAJrcvHvVXHkIPIQh5C60MhCvnWMMWoGshq-4SdVaRrgw"/><div class="flex flex-col"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface">Entrenamiento</span><span class="px-1.5 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed text-[10px] font-bold tracking-widest uppercase">IA v2.4 Activa</span></div><span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-widest">Rutina Hoy</span></div></div><div class="flex items-center gap-gutter-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Status & Title Banner -->
+<section class="px-margin-mobile pt-gutter-md pb-gutter-sm flex flex-col gap-gutter-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-high text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-label-caps text-label-caps tracking-wider uppercase text-secondary">Monitorización Clínica</span>
+</div>
+<div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container text-on-error-container">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">3 Alertas</span>
+</div>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Gestión Multiatleta</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Carga biomecánica, ratio ACWR y readaptación física en tiempo real</p>
+</section>
+<!-- Global ACWR Epidemiological Widget -->
+<section class="px-margin-mobile py-gutter-sm">
+<div class="bg-surface-container-low rounded-xl p-container-padding flex flex-col gap-gutter-sm shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed text-[20px]">monitor_heart</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Ratio Agudo:Crónico (ACWR)</span>
+</div>
+<span class="font-label-numeric text-body-sm text-on-surface-variant">12 atletas</span>
+</div>
+<!-- ACWR Visual Bar Gauge -->
+<div class="flex flex-col gap-1.5">
+<div class="h-2.5 w-full bg-surface-container-highest rounded-full flex overflow-hidden">
+<div class="h-full bg-secondary-fixed-dim" style="width: 8%;" title="Subentreno (&lt;0.8)"></div>
+<div class="h-full bg-primary-fixed" style="width: 84%;" title="Zona Dulce (0.8 - 1.3)"></div>
+<div class="h-full bg-error" style="width: 8%;" title="Sobrecarga (&gt;1.35)"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-label-caps text-label-caps uppercase">
+<span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim"></span>1 Sub (8%)</span>
+<span class="flex items-center gap-1 text-primary-fixed"><span class="w-1.5 h-1.5 rounded-full bg-primary-fixed"></span>10 Óptimo (84%)</span>
+<span class="flex items-center gap-1 text-error"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>1 Crítico (8%)</span>
+</div>
+</div>
+<!-- Quick summary cards -->
+<div class="grid grid-cols-3 gap-gutter-xs pt-1">
+<div class="bg-surface-container p-2 rounded-lg flex flex-col items-center text-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Media Grupo</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">1.12</span>
+<span class="font-label-caps text-[9px] text-primary-fixed uppercase tracking-wider">Estable</span>
+</div>
+<div class="bg-surface-container p-2 rounded-lg flex flex-col items-center text-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">EVA Media</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">0.9</span>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase tracking-wider">Asintomático</span>
+</div>
+<div class="bg-surface-container p-2 rounded-lg flex flex-col items-center text-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Pérdida VBT</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">11.4%</span>
+<span class="font-label-caps text-[9px] text-secondary uppercase tracking-wider">Controlada</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Clinical Chips Filter -->
+<section class="px-margin-mobile py-gutter-xs flex flex-col gap-gutter-sm">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full h-field-height-touch pl-10 pr-10 rounded-xl bg-surface-container-low text-on-surface font-body-md placeholder:text-on-surface-variant focus:outline-none focus:ring-0" id="athlete-search" placeholder="Buscar atleta, patología o club..." type="text"/>
+<button class="absolute right-3 text-on-surface-variant" title="Escanear sensor / Bluetooth">
+<span class="material-symbols-outlined text-[20px]">sensors</span>
+</button>
+</div>
+<!-- Filter chips -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1" id="filter-chips">
+<button class="px-3 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps uppercase whitespace-nowrap active:scale-95 transition-transform" data-filter="all">
+        Todos (12)
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-high text-error font-label-caps text-label-caps uppercase whitespace-nowrap active:scale-95 transition-transform flex items-center gap-1" data-filter="risk">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Riesgo Alto (1)
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface font-label-caps text-label-caps uppercase whitespace-nowrap active:scale-95 transition-transform" data-filter="rehab">
+        Readaptación (4)
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-high text-secondary-fixed font-label-caps text-label-caps uppercase whitespace-nowrap active:scale-95 transition-transform" data-filter="vbt">
+        Rendimiento VBT (7)
+      </button>
+</div>
+</section>
+<!-- Athletes List -->
+<section class="px-margin-mobile py-gutter-sm flex flex-col gap-gutter-md" id="athlete-cards-container">
+<!-- Card 1: Critical Alert (Carlos M.) -->
+<article class="bg-surface-container-low rounded-xl p-container-padding flex flex-col gap-gutter-sm shadow-md" data-category="risk">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-gutter-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-container-highest shrink-0">
+<img class="w-full h-full object-cover" data-alt="Athletic portrait of a tall male professional basketball player looking focused in high-contrast stadium rim lighting, sports conditioning dark backdrop with deep graphite and volt accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA62Q6FIEkMPhVGuPEF0TIKbaJ-ttjnfdY2ue-7BcHYrLmjDIENvxd6YbQ5MHaXaB-kt_pK77BmA3XFoka0kTH9P6XiEjSsriQMdN2h8I-1SZdOFVW_Kf-0WtpQ_fNEQ98NaHLREWCh2Kagq9yPQy63kDCI2DpTGWF9H8k458tXASyUeBNxSrQ1-bfrKsxR7Yve7MYjR-03eKOZ6Ve8LDXyLyiY9mn7t4WNGwd2iDJSk_XzNF0cBNARdw"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-error"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Carlos M.</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[9px] uppercase">ACB</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Tendinopatía Aquilea Izq • Pívot</span>
+</div>
+</div>
+<span class="font-label-numeric text-[11px] text-on-surface-variant">Hoy, 1h atrás</span>
+</div>
+<!-- Clinical Alert Box -->
+<div class="bg-error-container rounded-lg p-2.5 flex items-start gap-2 text-on-error-container">
+<span class="material-symbols-outlined text-error text-[20px] shrink-0">emergency_home</span>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase font-bold text-error">ALERTA: Repunte EVA 4/10 Matutino</span>
+<span class="font-body-sm text-[12px] text-on-error-container">Sobrecarga excéntrica en pliometría. Sugerido pase a isométrico largo.</span>
+</div>
+</div>
+<!-- Telemetry Data Grid -->
+<div class="grid grid-cols-3 gap-2 bg-surface-container p-2.5 rounded-lg">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">ACWR Semanal</span>
+<div class="flex items-baseline gap-1">
+<span class="font-label-numeric text-headline-sm text-error">1.48</span>
+<span class="material-symbols-outlined text-error text-[14px]">arrow_upward</span>
+</div>
+<span class="font-label-caps text-[9px] text-error uppercase">Zona Peligro</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Pérdida VBT</span>
+<span class="font-label-numeric text-headline-sm text-error">22%</span>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase">Fatiga Alta</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Dolor EVA</span>
+<span class="font-label-numeric text-headline-sm text-error">4 / 10</span>
+<span class="font-label-caps text-[9px] text-error uppercase">+2 pts vs ayer</span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-field-height-touch bg-primary-fixed text-on-primary-fixed rounded-lg font-headline-sm text-headline-sm flex items-center justify-center gap-2 active:scale-98 transition-transform" onclick="triggerAction('Carlos M.', 'Modificar Carga')">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+          Modificar Carga de Mañana
+        </button>
+<button class="w-12 h-field-height-touch bg-surface-container-high text-on-surface rounded-lg flex items-center justify-center active:scale-95" onclick="triggerAction('Carlos M.', 'Abrir Expediente')" title="Ficha completa">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</article>
+<!-- Card 2: Active Readaptation (Alex R.) -->
+<article class="bg-surface-container-low rounded-xl p-container-padding flex flex-col gap-gutter-sm shadow-sm" data-category="rehab">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-gutter-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-container-highest shrink-0">
+<img class="w-full h-full object-cover" data-alt="Athletic portrait of a focused young female soccer player in high performance gym lighting, dark moody background with subtle cyan reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnXrHY10KULXpAP4sr7gt7B6QkQVuI4xgf2sWwhu20yWMtq-77G3r691v-NOVPdxwl08WjgSOj_J60L2JLbgOfVMoj1m-tLVav1MYTbgP5QOK6NpXI74x1bxZi26WRkJXjdwvzOkzI_O8PHXPq_lI2bLBDfE1sOjd-HCbBEu9KZ8kkeJGnMUeHKfl2AS0MQQj8R8ruaQrMLp5BVN0ZxI-89NOtV3GnyXUp9j0YuWybB5hfpnD0azKZkA"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-primary-fixed"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Alex R.</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-label-caps text-[9px] uppercase">Fútbol</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Readaptación LCM Izq • Fase 3</span>
+</div>
+</div>
+<span class="font-label-numeric text-[11px] text-on-surface-variant">Hoy, 10:30</span>
+</div>
+<!-- Success Clinical Badge -->
+<div class="bg-surface-container rounded-lg p-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed text-[18px]">check_circle</span>
+<span class="font-headline-sm text-[13px] text-on-surface">Criterio Return to Play: 88% completado</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-caps text-[10px] uppercase">Óptimo</span>
+</div>
+<!-- Telemetry Data Grid -->
+<div class="grid grid-cols-3 gap-2 bg-surface-container p-2.5 rounded-lg">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">ACWR Actual</span>
+<div class="flex items-baseline gap-1">
+<span class="font-label-numeric text-headline-sm text-primary-fixed">1.14</span>
+<span class="material-symbols-outlined text-primary-fixed text-[14px]">done</span>
+</div>
+<span class="font-label-caps text-[9px] text-primary-fixed uppercase">Zona Dulce</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Simetría Bilat.</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">99%</span>
+<span class="font-label-caps text-[9px] text-secondary uppercase">Déficit &lt; 3%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Dolor EVA</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">0.5</span>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase">Tolerancia Max</span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-field-height-touch bg-surface-container-high text-on-surface rounded-lg font-headline-sm text-headline-sm flex items-center justify-center gap-2 active:scale-98 transition-transform" onclick="triggerAction('Alex R.', 'Ver Informe')">
+<span class="material-symbols-outlined text-secondary text-[20px]">description</span>
+          Ver Informe Post-Sesión
+        </button>
+<button class="w-12 h-field-height-touch bg-surface-container-high text-on-surface rounded-lg flex items-center justify-center active:scale-95" onclick="triggerAction('Alex R.', 'Abrir Expediente')" title="Ficha completa">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</article>
+<!-- Card 3: Power & VBT Performance (Sofía G.) -->
+<article class="bg-surface-container-low rounded-xl p-container-padding flex flex-col gap-gutter-sm shadow-sm" data-category="vbt">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-gutter-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-container-highest shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close up athletic dynamic portrait of a female sprinter with hair pulled back in high speed training track lighting, crisp shadows and neon cyan rim tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwebsgEq5dqfrpypMpjA8hGJc2K_f1ZNLP4BJZVjNhcUv0-B4qNHlbyStC2Q6YGa4XhDmFxiSimOx2uKd6yH9Uw51xyohMTOb85szfWxEIaVhkUqXWrcEQvCyVfZLATFg7G-KAHjH5mC79rOVAT3-Lb3yRtlSsKTJflwCeoGlDT-KHGUY4ddO-AQ6DkWoasaUTxqMcaYMWBcHQzFZuhVpeCnHM0IaJVpuMmJS_NvO8mDxcQqIKA2RfqQ"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-secondary-container"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Sofía G.</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-label-caps text-[9px] uppercase">Velocidad</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Salto &amp; Potencia • 100m Vallas</span>
+</div>
+</div>
+<span class="font-label-numeric text-[11px] text-secondary">En vivo</span>
+</div>
+<!-- Neurological Status Badge -->
+<div class="bg-surface-container rounded-lg p-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">bolt</span>
+<span class="font-headline-sm text-[13px] text-on-surface">Supercompensación Activa</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-[10px] uppercase font-bold">V0 +3.2%</span>
+</div>
+<!-- Telemetry Data Grid -->
+<div class="grid grid-cols-3 gap-2 bg-surface-container p-2.5 rounded-lg">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">MPV Media</span>
+<div class="flex items-baseline gap-1">
+<span class="font-label-numeric text-headline-sm text-secondary">0.88</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">m/s</span>
+</div>
+<span class="font-label-caps text-[9px] text-secondary uppercase">Vel. Media Prop.</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Perfil F-V</span>
+<span class="font-headline-sm text-[14px] text-primary-fixed">Óptimo</span>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase">Samozino Method</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">EVA Dolor</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">0 / 10</span>
+<span class="font-label-caps text-[9px] text-primary-fixed uppercase">Sin molestia</span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-field-height-touch bg-surface-container-high text-secondary-fixed rounded-lg font-headline-sm text-headline-sm flex items-center justify-center gap-2 active:scale-98 transition-transform" onclick="triggerAction('Sofía G.', 'Prescribir Bloque Neural')">
+<span class="material-symbols-outlined text-[20px]">neurology</span>
+          Prescribir Bloque Neural
+        </button>
+<button class="w-12 h-field-height-touch bg-surface-container-high text-on-surface rounded-lg flex items-center justify-center active:scale-95" onclick="triggerAction('Sofía G.', 'Abrir Expediente')" title="Ficha completa">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</article>
+<!-- Card 4: Preventive Control / Fatigue (Martín T.) -->
+<article class="bg-surface-container-low rounded-xl p-container-padding flex flex-col gap-gutter-sm shadow-sm" data-category="risk">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-gutter-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-container-highest shrink-0">
+<img class="w-full h-full object-cover" data-alt="Muscular male rugby player portrait resting after contact drill training, deep graphite and matte black surroundings with moody rim light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9OWt_de-y7O_ERof5_fByD967gY9dBjT-WXaQLj0WDVPUyrSZvCmZ5ZmIPLiIbuBQGj6NHMDAkMfx7eWPjSo440qcu3uGIOYryd_3DQu-f4DZiICmO3DSJFrpcg98H5JcJ9EC2hRiCTJlVp8mEL4EMWbgQP75uSq-g5_wsQuJXgWi6sdkK9JumXtIOobCqxVQwYpu7MI-IL4rThYDf3lBreugjbHFcUBoDARhSK8bxCDkt4FSGdzhmA"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-secondary-fixed-dim"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Martín T.</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[9px] uppercase">Rugby 7s</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Control Carga Lumbo-Pélvica</span>
+</div>
+</div>
+<span class="font-label-numeric text-[11px] text-on-surface-variant">Ayer, 18:00</span>
+</div>
+<!-- Warning Badge -->
+<div class="bg-surface-container rounded-lg p-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-[18px]">heart_broken</span>
+<span class="font-headline-sm text-[13px]">HRV Supresión Leve (-12% rMSSD)</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-secondary-fixed-dim font-label-caps text-[10px] uppercase">Vagal bajo</span>
+</div>
+<!-- Telemetry Data Grid -->
+<div class="grid grid-cols-3 gap-2 bg-surface-container p-2.5 rounded-lg">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">ACWR</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">1.28</span>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase">Límite Superior</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Percepción RPE</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">8.5</span>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase">Esfuerzo Alto</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">EVA Pubalgia</span>
+<span class="font-label-numeric text-headline-sm text-on-surface">1.0</span>
+<span class="font-label-caps text-[9px] text-primary-fixed uppercase">Bajo Control</span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-field-height-touch bg-surface-container-high text-on-surface rounded-lg font-headline-sm text-headline-sm flex items-center justify-center gap-2 active:scale-98 transition-transform" onclick="triggerAction('Martín T.', 'Programar Descarga')">
+<span class="material-symbols-outlined text-primary-fixed text-[20px]">bedtime</span>
+          Programar Descarga Activa
+        </button>
+<button class="w-12 h-field-height-touch bg-surface-container-high text-on-surface rounded-lg flex items-center justify-center active:scale-95" onclick="triggerAction('Martín T.', 'Abrir Expediente')" title="Ficha completa">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</article>
+</section>
+<!-- Multiatlete Clinical Actions -->
+<section class="px-margin-mobile pt-gutter-sm pb-gutter-lg flex flex-col gap-gutter-sm">
+<button class="w-full h-field-height-touch bg-primary-fixed text-on-primary-fixed font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-transform" onclick="openNewPatientModal()">
+<span class="material-symbols-outlined text-[22px]">person_add</span>
+      Dar de Alta Nuevo Paciente / Atleta
+    </button>
+<button class="w-full h-field-height-touch bg-surface-container-low text-on-surface font-headline-sm text-headline-sm rounded-lg flex items-center justify-center gap-2 active:scale-98 transition-transform" onclick="exportClinicalReport()">
+<span class="material-symbols-outlined text-secondary text-[20px]">ios_share</span>
+      Exportar Reporte Multiatleta (PDF/CSV)
+    </button>
+</section>
+<!-- Interactive Modal / Toast Scrim (Hidden by default) -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl shadow-xl z-50 flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none" id="clinical-toast">
+<span class="material-symbols-outlined text-primary-fixed text-[24px]" id="toast-icon">check_circle</span>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-headline-sm text-[13px]" id="toast-title">Acción Registrada</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant truncate" id="toast-msg">Actualizado en el servidor clínico.</span>
+</div>
+</div>
+<!-- Inline Micro-interactions Script -->
+<script>
+    // Search filter logic
+    const searchInput = document.getElementById('athlete-search');
+    const cards = document.querySelectorAll('#athlete-cards-container article');
+    const filterChips = document.querySelectorAll('#filter-chips button');
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(query) ? 'flex' : 'none';
+      });
+    });
+
+    // Chip Filter logic
+    filterChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach(c => {
+          c.classList.remove('bg-primary-fixed', 'text-on-primary-fixed');
+          c.classList.add('bg-surface-container-high', 'text-on-surface');
+        });
+        chip.classList.remove('bg-surface-container-high', 'text-on-surface');
+        chip.classList.add('bg-primary-fixed', 'text-on-primary-fixed');
+
+        const filter = chip.getAttribute('data-filter');
+        cards.forEach(card => {
+          if (filter === 'all') {
+            card.style.display = 'flex';
+          } else {
+            const category = card.getAttribute('data-category');
+            card.style.display = (category === filter) ? 'flex' : 'none';
+          }
+        });
+      });
+    });
+
+    // Notification toast function
+    function showNotification(title, msg, icon = 'check_circle') {
+      const toast = document.getElementById('clinical-toast');
+      document.getElementById('toast-title').innerText = title;
+      document.getElementById('toast-msg').innerText = msg;
+      document.getElementById('toast-icon').innerText = icon;
+
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+      }, 2600);
+    }
+
+    function triggerAction(athleteName, actionType) {
+      showNotification(`${actionType}: ${athleteName}`, 'Prescripción actualizada con IA de autoregulación.', 'tune');
+    }
+
+    function openNewPatientModal() {
+      showNotification('Alta Clínica', 'Iniciando asistente de anamnesis biomecánica...', 'person_add');
+    }
+
+    function exportClinicalReport() {
+      showNotification('Generando Reporte', 'Cifrando datos de ACWR y VBT para el equipo médico.', 'file_download');
+    }
+  </script>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary-fixed"><div class="flex justify-around items-center h-20 px-gutter-sm"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 transition-colors text-primary-fixed" data-path="rutina-hoy" href="#"><span class="material-symbols-outlined text-[24px]">fitness_center</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Rutina</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="autoregulacion-ia" href="#"><span class="material-symbols-outlined text-[24px]">psychology</span><span class="font-label-caps text-label-caps uppercase tracking-wider">IA Auto</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="metricas-progreso" href="#"><span class="material-symbols-outlined text-[24px]">insights</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Métricas</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="perfil-atleta" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Perfil</span></a></div></nav></body></html>

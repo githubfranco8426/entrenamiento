@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#101417;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#e0e3e7', 'on-surface-variant': '#c4c9ac', 'surface-container': '#1c2023', 'on-secondary-fixed-variant': '#004f54', 'surface-dim': '#101417', 'on-tertiary-container': '#ca0037', 'surface-container-lowest': '#0b0f12', 'secondary': '#d3fbff', 'on-error-container': '#ffdad6', 'secondary-container': '#00eefc', 'surface-variant': '#313539', 'surface-container-highest': '#313539', 'inverse-on-surface': '#2d3134', 'primary-container': '#c3f400', 'on-primary-container': '#556d00', 'tertiary': '#ffffff', 'outline': '#8e9379', 'secondary-fixed': '#7df4ff', 'tertiary-container': '#ffdada', 'surface-container-high': '#262a2e', 'on-secondary-container': '#00686f', 'surface': '#101417', 'primary-fixed-dim': '#abd600', 'primary': '#ffffff', 'on-tertiary-fixed': '#40000b', 'on-tertiary-fixed-variant': '#920025', 'on-background': '#e0e3e7', 'primary-fixed': '#c3f400', 'on-surface': '#e0e3e7', 'on-primary-fixed': '#161e00', 'outline-variant': '#444933', 'on-error': '#690005', 'inverse-primary': '#506600', 'error-container': '#93000a', 'on-primary-fixed-variant': '#3c4d00', 'on-tertiary': '#680018', 'on-primary': '#283500', 'tertiary-fixed-dim': '#ffb3b5', 'background': '#101417', 'tertiary-fixed': '#ffdada', 'on-secondary': '#00363a', 'surface-bright': '#363a3d', 'error': '#ffb4ab', 'on-secondary-fixed': '#002022', 'secondary-fixed-dim': '#00dbe9', 'surface-container-low': '#181c1f', 'surface-tint': '#abd600' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter-xl': '2rem', 'margin-mobile': '1.25rem', 'margin-tablet': '2rem', 'gutter-sm': '0.5rem', 'gutter-lg': '1.5rem', 'gutter-md': '1rem', 'gutter-xs': '0.25rem', 'container-padding': '1.25rem', 'field-height-touch': '3.25rem' }, fontFamily: { 'display-hero': ['plusJakartaSans'], 'label-caps': ['plusJakartaSans'], 'headline-md': ['plusJakartaSans'], 'body-md': ['plusJakartaSans'], 'body-lg': ['plusJakartaSans'], 'label-numeric': ['jetbrainsMono'], 'body-sm': ['plusJakartaSans'], 'headline-sm': ['plusJakartaSans'], 'headline-lg': ['plusJakartaSans'], 'display-hero-mobile': ['plusJakartaSans'] }, fontSize: { 'display-hero': ['40px', { lineHeight: '46px', fontWeight: '800' }], 'label-caps': ['11px', { lineHeight: '14px', fontWeight: '700' }], 'headline-md': ['20px', { lineHeight: '26px', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'label-numeric': ['16px', { lineHeight: '20px', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'headline-lg': ['24px', { lineHeight: '30px', fontWeight: '700' }], 'display-hero-mobile': ['32px', { lineHeight: '38px', fontWeight: '800' }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter-md flex items-center justify-between"><div class="flex items-center gap-gutter-sm"><img alt="Entrenamiento AI Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWpHZP_FDQsTiBRwtr4Vt-GPjY5t_sIkdo2sLY1nICdJp1XRr_0shxdAhY9HqYozLja-WAwJ7moUpHxTeqms9Y9z3o6SbXx2fhacMbnJBOeBQ1OiqRyTphXG27uTYXEZOYYtY4mpA7xCeP6viOB2bQsbKydi_Mp1BtDYrBUunx8i88ZnkXBq1i9lssbieETwy6ni-_uVCPaYAJrcvHvVXHkIPIQh5C60MhCvnWMMWoGshq-4SdVaRrgw"/><div class="flex flex-col"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface">Entrenamiento</span><span class="px-1.5 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed text-[10px] font-bold tracking-widest uppercase">IA v2.4 Activa</span></div><span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-widest">Rutina Hoy</span></div></div><div class="flex items-center gap-gutter-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Dynamic Confetti / Status Canvas Layer -->
+<div class="relative w-full px-container-padding pt-gutter-md pb-gutter-lg flex flex-col gap-gutter-lg">
+<!-- Top Flash Announcement Badge & Session Heading -->
+<div class="flex flex-col gap-gutter-xs">
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-container/15 text-primary-fixed font-label-caps text-label-caps tracking-widest uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-pulse"></span>
+          DATOS SINCRONIZADOS • IA V2.4
+        </span>
+<span class="font-label-numeric text-body-sm text-secondary-fixed-dim tracking-tight">VBT SENSOR #04 ONLINE</span>
+</div>
+<div class="flex flex-col mt-1">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-extrabold flex items-center gap-2">
+          Sesión Completada
+          <span class="material-symbols-outlined text-primary-fixed text-[26px]">verified</span>
+</h1>
+<p class="font-headline-sm text-headline-sm text-on-surface-variant font-medium">
+          Hoy, 10:42 AM • Pierna Hipertrofia &amp; Fuerza VBT
+        </p>
+</div>
+<!-- Telemetry Chrono Pills -->
+<div class="grid grid-cols-3 gap-2 mt-1 p-2.5 rounded-xl bg-surface-container-lowest text-center">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Duración Total</span>
+<span class="font-label-numeric text-label-numeric text-primary font-bold">54 min</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Descanso Efectivo</span>
+<span class="font-label-numeric text-label-numeric text-on-surface font-semibold">21 min</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Tensión (TUT)</span>
+<span class="font-label-numeric text-label-numeric text-secondary-fixed-dim font-bold">4m 12s</span>
+</div>
+</div>
+</div>
+<!-- Visual Achievement Flash Banner with Detailed Photo Placeholder -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low flex flex-col p-4 gap-3 shadow-md">
+<div class="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-primary-container/10 blur-2xl pointer-events-none"></div>
+<div class="flex items-center gap-3 z-10">
+<div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high relative">
+<img class="w-full h-full object-cover" data-alt="Close-up of a high-performance barbell loaded with calibrated steel plates and barbell velocity tracker clamped to the sleeve, dim cinematic gym setting with stark neon lime volumetric rim lighting and dust particles suspended in air" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2QXLOuwyG4Lqfnq2Ydp7LCFLQ9d7MuOSjt5yEH16ALmUny9C_0P9PO6R8rnD6vUCw_5stacNnw073pKcLQPRBZBVoJ_dH_DRfHtjkSLvHIUA5Y68QGu4ALz_SDO_lF3_7miopP19wmxnYe1JHq7SZWu_6w06-BAsmEgkroYZkLy8y2SyJvT3MjcL_SJb-LDK1lynZQDKfYEd3a3E9tqvxV3p13ceBca0TZpOHjff5uLXymYoMnrEiNw"/>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps uppercase text-primary-fixed tracking-wider">Hito de Velocidad</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-bright text-[10px] font-label-numeric text-on-surface">ACWR 1.08</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Umbral de Potencia Superado</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Carga aguda asimilada de forma óptima sin picos de microtrauma articular.</p>
+</div>
+</div>
+</div>
+<!-- Hero KPI Cards (2x2 Grid) -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Card 1: Tonelaje Efectivo -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Tonelaje Efectivo</span>
+<span class="material-symbols-outlined text-[18px] text-primary-fixed">weight</span>
+</div>
+<div class="my-2">
+<div class="font-display-hero-mobile text-display-hero-mobile text-on-surface tracking-tight font-extrabold">8,420<span class="font-headline-sm text-headline-sm text-on-surface-variant font-normal"> kg</span></div>
+<div class="flex items-center gap-1 mt-0.5 text-primary-fixed font-label-numeric text-body-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+4.5% vs sesión prec.</span>
+</div>
+</div>
+<span class="inline-block w-fit px-2 py-0.5 rounded bg-primary-container/20 text-primary-fixed font-label-caps text-[10px] font-bold uppercase tracking-wider">
+          100% Volumen Cumplido
+        </span>
+</div>
+<!-- Card 2: Fatiga Neuromuscular -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Fatiga Neuromuscular</span>
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed">bolt</span>
+</div>
+<div class="my-2">
+<div class="font-display-hero-mobile text-display-hero-mobile text-on-surface tracking-tight font-extrabold">13.8<span class="font-headline-sm text-headline-sm text-on-surface-variant font-normal">%</span></div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Pérdida media MPV inter-serie</p>
+</div>
+<span class="inline-block w-fit px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-label-caps text-[10px] font-bold uppercase tracking-wider">
+          Recuperable 36-48h
+        </span>
+</div>
+<!-- Card 3: Score Biomecánico -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Score Biomecánico</span>
+<span class="material-symbols-outlined text-[18px] text-primary-fixed">accessibility_new</span>
+</div>
+<div class="my-2">
+<div class="font-display-hero-mobile text-display-hero-mobile text-on-surface tracking-tight font-extrabold">94<span class="font-headline-sm text-headline-sm text-on-surface-variant font-normal">/100</span></div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Estabilidad lumbopélvica</p>
+</div>
+<span class="inline-block w-fit px-2 py-0.5 rounded bg-surface-bright text-on-surface font-label-caps text-[10px] font-medium tracking-wider">
+          COP Dev &lt; 1.1 cm
+        </span>
+</div>
+<!-- Card 4: Carga de Sesión (AU) -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Carga Sesión (AU)</span>
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed-dim">analytics</span>
+</div>
+<div class="my-2">
+<div class="font-display-hero-mobile text-display-hero-mobile text-on-surface tracking-tight font-extrabold">432<span class="font-headline-sm text-headline-sm text-on-surface-variant font-normal"> AU</span></div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">sRPE 8.0 × 54 min</p>
+</div>
+<span class="inline-block w-fit px-2 py-0.5 rounded bg-primary-container/20 text-primary-fixed font-label-caps text-[10px] font-bold uppercase tracking-wider">
+          Sweet-Spot ACWR
+        </span>
+</div>
+</div>
+<!-- Interactive Clinical Feedback & sRPE Dial Section -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-4 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-primary-fixed">Autopercepción de Esfuerzo</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Validación sRPE Inmediata</h2>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">tune</span>
+</div>
+<!-- Interactive Foster Scale (1-10 selector) -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Escala de Foster</span>
+<span class="font-label-numeric text-label-numeric text-primary-fixed font-bold">RPE 8.0 • Muy Duro</span>
+</div>
+<!-- Segment selector buttons -->
+<div class="grid grid-cols-10 gap-1 p-1 bg-surface-container-lowest rounded-lg">
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">5</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">6</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">7</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">7.5</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm bg-primary-container text-on-primary-container font-extrabold shadow-sm" type="button">8</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">8.5</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">9</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">9.5</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">10</button>
+<button class="py-2 text-center rounded font-label-numeric text-body-sm text-error/80 hover:text-error transition-colors" type="button">MAX</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant italic">
+          "Trabajo efectivo óptimo: 2 repeticiones en reserva (RIR 2) detectadas con acelerómetro triaxial."
+        </p>
+</div>
+<!-- Clinical Dual Checkers: EVA Pain & Sleep Correlation -->
+<div class="grid grid-cols-2 gap-2 pt-2">
+<div class="p-3 rounded-lg bg-surface-container flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-primary-fixed">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Dolor EVA</span>
+</div>
+<span class="font-label-numeric text-label-numeric text-on-surface font-bold">0 / 10 • Asintomático</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant truncate">Rodilla y raquis lumbar limpios</span>
+</div>
+<div class="p-3 rounded-lg bg-surface-container flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-secondary-fixed">
+<span class="material-symbols-outlined text-[16px]">bedtime</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Sueño Previo</span>
+</div>
+<span class="font-label-numeric text-label-numeric text-on-surface font-bold">8h 15m • REM +22%</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant truncate">SNC preparado para hipertrofia</span>
+</div>
+</div>
+</div>
+<!-- Exercise Telemetry Breakdown Section -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-caps text-label-caps uppercase text-primary-fixed">Desglose Cinemático</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Rendimiento por Ejercicio</h2>
+</div>
+<span class="font-label-numeric text-body-sm text-on-surface-variant">3 EJERCICIOS REGISTRADOS</span>
+</div>
+<!-- Exercise 1 Card -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-primary-fixed font-label-numeric font-bold">
+              01
+            </div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">High-Bar Back Squat</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">4 Series Efectivas • RPE 8.0</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary-fixed font-label-numeric text-body-sm font-bold">
+            122.5 kg Max
+          </span>
+</div>
+<!-- Exercise Inline Data Bar / VBT Metrics -->
+<div class="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-surface-container-lowest text-center">
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">MPV Media</div>
+<div class="font-label-numeric text-body-md text-secondary-fixed-dim font-bold">0.59 m/s</div>
+</div>
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">Caída Velocidad</div>
+<div class="font-label-numeric text-body-md text-on-surface font-semibold">11.4%</div>
+</div>
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">Volumen Serie</div>
+<div class="font-label-numeric text-body-md text-primary-fixed font-bold">3,920 kg</div>
+</div>
+</div>
+<!-- Cue feedback -->
+<div class="flex items-center gap-2 px-2.5 py-1.5 rounded bg-surface-container text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary-fixed text-[16px]">task_alt</span>
+<span class="truncate"><strong class="text-primary-fixed">Cue validado:</strong> Apertura de suelo y anclaje escapular C7 constante.</span>
+</div>
+</div>
+<!-- Exercise 2 Card -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-primary-fixed font-label-numeric font-bold">
+              02
+            </div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Romanian Deadlift</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">3 Series Efectivas • RIR 2</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-numeric text-body-sm font-bold">
+            110.0 kg
+          </span>
+</div>
+<div class="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-surface-container-lowest text-center">
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">MPV Media</div>
+<div class="font-label-numeric text-body-md text-secondary-fixed-dim font-bold">0.64 m/s</div>
+</div>
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">Bisagra Cadera</div>
+<div class="font-label-numeric text-body-md text-primary-fixed font-semibold">96% Score</div>
+</div>
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">Volumen Serie</div>
+<div class="font-label-numeric text-body-md text-on-surface font-bold">2,640 kg</div>
+</div>
+</div>
+<div class="flex items-center gap-2 px-2.5 py-1.5 rounded bg-surface-container text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary-fixed text-[16px]">task_alt</span>
+<span class="truncate"><strong class="text-primary-fixed">Cue validado:</strong> Desplazamiento pélvico dorsal neutro sin flexión lumbar.</span>
+</div>
+</div>
+<!-- Exercise 3 Card -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-primary-fixed font-label-numeric font-bold">
+              03
+            </div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Bulgarian Split Squat</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">3 Series c/u • Mancuernas 32 kg</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-label-numeric text-body-sm font-bold">
+            64.0 kg Tot.
+          </span>
+</div>
+<div class="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-surface-container-lowest text-center">
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">Simetría Bilateral</div>
+<div class="font-label-numeric text-body-md text-primary-fixed font-bold">98% EQ</div>
+</div>
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">Pérdida Izq/Der</div>
+<div class="font-label-numeric text-body-md text-on-surface font-semibold">1.8% delta</div>
+</div>
+<div>
+<div class="font-label-caps text-[10px] uppercase text-on-surface-variant">Volumen Serie</div>
+<div class="font-label-numeric text-body-md text-on-surface font-bold">1,860 kg</div>
+</div>
+</div>
+<div class="flex items-center gap-2 px-2.5 py-1.5 rounded bg-surface-container text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary-fixed text-[16px]">balance</span>
+<span class="truncate">Excelente distribución de empuje vertical unipodal sin valgo dinámico.</span>
+</div>
+</div>
+</div>
+<!-- AI Prescriptive Recovery & Next Session Forecast -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3 shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-fixed"></span>
+<span class="font-label-caps text-label-caps uppercase text-primary-fixed tracking-wider">Protocolo Post-Entreno IA</span>
+</div>
+<span class="font-label-numeric text-body-sm text-on-surface-variant">Algoritmo VBT-Adapt</span>
+</div>
+<div class="flex flex-col gap-2.5">
+<!-- Nutrition item -->
+<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-primary-fixed text-[22px] flex-shrink-0 mt-0.5">restaurant</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-body-md text-on-surface font-bold">Ventana Nutricional Anabólica</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+              Incorpore <strong class="text-primary">+40g de Proteína</strong> y <strong class="text-primary">+70g de Carbohidratos</strong> de alto índice glucémico antes de las 12:45 PM.
+            </span>
+</div>
+</div>
+<!-- Active recovery item -->
+<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-[22px] flex-shrink-0 mt-0.5">directions_walk</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-body-md text-on-surface font-bold">Descarga Activa Sugerida</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+              Caminata regenerativa 20 min (paso suave) + 5 min de protocolo de movilidad articular de tobillo y cadera en 90/90.
+            </span>
+</div>
+</div>
+<!-- Next Workout Plan item -->
+<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-primary text-[22px] flex-shrink-0 mt-0.5">event_upcoming</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-body-md text-on-surface font-bold">Próxima Sesión Programada</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+<strong class="text-primary-fixed">Torso Fuerza &amp; Tracciones</strong> mañana a las 17:30 h. Disponibilidad del Sistema Nervioso Central estimada al <strong class="text-primary">92%</strong>.
+            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Coach / Athlete Micro Card Placeholder with Photo -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full overflow-hidden bg-surface-container-high flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Portrait of an athletic strength and conditioning coach wearing black technical athletic gear with sleek telemetry headphones, dark moody gym interior background with soft ambient studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnJ83SU-GvHBFD7uNkpOUk_JcpwKa2Fx62o48GfCmo5dGU_lfvNiLhD5nJeGyF0pwl4i2ir0MejJ9KNrvfQDeW7sIUIMZPOqG-2kBGaS9IVx03UwisY3aP2Ohxet5Pi1oisTE7_v1apQEv0ImIdA4e5htLrgQImYEgZIKb4hMAl_gRXwQkNQ6VNL5tGBQ284iYN49LJsL_W0I69TtlyyvWArjSOrBKnhCVczPsTfT5yXN7eJdkg4MHbQ"/>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-body-md text-on-surface font-bold">Feedback de Entrenador IA</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Microciclo 4 - Fase de Choque VBT</span>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-bright text-on-surface font-label-caps text-label-caps uppercase hover:text-primary-fixed transition-colors" type="button">
+        Ver Gráfica
+      </button>
+</div>
+<!-- Bottom Action Controls (Thumb-Zone Ergonomics) -->
+<div class="flex flex-col gap-2.5 pt-gutter-xs pb-gutter-md">
+<!-- Primary Save Button -->
+<button class="w-full h-[52px] rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-extrabold tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform" type="button">
+<span class="material-symbols-outlined text-[22px]">verified_user</span>
+<span>Guardar en Historial Clínico &amp; Cerrar</span>
+</button>
+<!-- Secondary Telemetry / Export Buttons -->
+<div class="grid grid-cols-2 gap-2">
+<button class="h-[48px] rounded-lg bg-surface-container-high text-on-surface font-headline-sm text-body-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-surface-bright active:scale-[0.98] transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed">download</span>
+<span class="truncate">Exportar CSV / PDF</span>
+</button>
+<button class="h-[48px] rounded-lg bg-surface-container-high text-on-surface font-headline-sm text-body-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-surface-bright active:scale-[0.98] transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary-fixed">show_chart</span>
+<span class="truncate">Curvas VBT en Vivo</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interaction for sRPE dial selector buttons
+  document.querySelectorAll('.grid-cols-10 button').forEach(button => {
+    button.addEventListener('click', function() {
+      document.querySelectorAll('.grid-cols-10 button').forEach(btn => {
+        btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-extrabold', 'shadow-sm');
+        btn.classList.add('text-on-surface-variant');
+      });
+      this.classList.remove('text-on-surface-variant');
+      this.classList.add('bg-primary-container', 'text-on-primary-container', 'font-extrabold', 'shadow-sm');
+    });
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary-fixed"><div class="flex justify-around items-center h-20 px-gutter-sm"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 transition-colors text-primary-fixed" data-path="rutina-hoy" href="#"><span class="material-symbols-outlined text-[24px]">fitness_center</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Rutina</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="autoregulacion-ia" href="#"><span class="material-symbols-outlined text-[24px]">psychology</span><span class="font-label-caps text-label-caps uppercase tracking-wider">IA Auto</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="metricas-progreso" href="#"><span class="material-symbols-outlined text-[24px]">insights</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Métricas</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="perfil-atleta" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-caps text-label-caps uppercase tracking-wider">Perfil</span></a></div></nav></body></html>

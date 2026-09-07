@@ -8,7 +8,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-plus-jakarta);
-  --font-mono: var(--font-jetbrains-mono);
+  --font-mono: var(--font-space-grotesk);
   --font-heading: var(--font-sans);
   --color-tertiary: var(--tertiary);
   --color-tertiary-foreground: var(--tertiary-foreground);
@@ -54,44 +54,44 @@
 
 :root,
 .dark {
-  /* Apex AutoReg Performance — sistema de diseño Stitch (design/stitch-redesign/04-design-system).
+  /* Kinetic AI Conditioning — sistema de diseño Stitch (design/stitch-ui-visual-redesign/04-design-system).
      Dark-only por diseño (no hay toggle de tema); :root y .dark comparten valores
      para que no dependa del montaje de next-themes ni produzca flash claro/oscuro. */
-  --background: #0b0f12;
-  --foreground: #f4f7f9;
-  --card: #13191f;
-  --card-foreground: #f4f7f9;
-  --popover: #13191f;
-  --popover-foreground: #f4f7f9;
-  --primary: #ccff00;
-  --primary-foreground: #0b0f12;
+  --background: #090d14;
+  --foreground: #f5f8fc;
+  --card: #0d1420;
+  --card-foreground: #f5f8fc;
+  --popover: #0d1420;
+  --popover-foreground: #f5f8fc;
+  --primary: #d4ff28;
+  --primary-foreground: #171e00;
   --secondary: #00f0ff;
   --secondary-foreground: #00363a;
-  --tertiary: #ff3355;
+  --tertiary: #7000ff;
   --tertiary-foreground: #ffffff;
-  --muted: #181c1f;
-  --muted-foreground: #7e8b9b;
-  --accent: #1c2023;
-  --accent-foreground: #ccff00;
+  --muted: #181c27;
+  --muted-foreground: #94a3b8;
+  --accent: #1c2330;
+  --accent-foreground: #d4ff28;
   --destructive: #ff3355;
   --destructive-foreground: #ffffff;
-  --border: #262a2e;
-  --input: #0f151b;
-  --ring: #ccff00;
-  --chart-1: #ccff00;
+  --border: rgba(148, 163, 184, 0.14);
+  --input: #0d1420;
+  --ring: #d4ff28;
+  --chart-1: #d4ff28;
   --chart-2: #00f0ff;
-  --chart-3: #ff3355;
-  --chart-4: #8e9379;
+  --chart-3: #7000ff;
+  --chart-4: #94a3b8;
   --chart-5: #ffffff;
-  --radius: 0.5rem;
-  --sidebar: #0b0f12;
-  --sidebar-foreground: #f4f7f9;
-  --sidebar-primary: #ccff00;
-  --sidebar-primary-foreground: #0b0f12;
-  --sidebar-accent: #181c1f;
-  --sidebar-accent-foreground: #f4f7f9;
-  --sidebar-border: #262a2e;
-  --sidebar-ring: #ccff00;
+  --radius: 0.625rem;
+  --sidebar: #090d14;
+  --sidebar-foreground: #f5f8fc;
+  --sidebar-primary: #d4ff28;
+  --sidebar-primary-foreground: #171e00;
+  --sidebar-accent: #181c27;
+  --sidebar-accent-foreground: #f5f8fc;
+  --sidebar-border: rgba(148, 163, 184, 0.14);
+  --sidebar-ring: #d4ff28;
 }
 
 @layer base {
@@ -100,6 +100,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at 85% 5%, rgba(0, 240, 255, 0.1), transparent 45%),
+      radial-gradient(circle at 15% 45%, rgba(212, 255, 40, 0.05), transparent 50%);
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;
