@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dumbbell, Fingerprint, Gauge, Waves, HeartPulse, PlayIcon } from "lucide-react";
+import { Fingerprint, Gauge, Waves, HeartPulse, PlayIcon } from "lucide-react";
+import { AppLogo } from "@/components/app-logo";
 
 const CAPABILITIES = [
   {
@@ -81,8 +82,8 @@ export default function LoginPage() {
     <div className="flex flex-1 flex-col items-center justify-center gap-gutter-lg bg-background px-container-padding py-gutter-xl">
       <div className="relative flex flex-col items-center gap-2 text-center">
         <div className="pointer-events-none absolute -top-6 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative flex size-20 items-center justify-center rounded-2xl bg-card shadow-xl shadow-background/60 ring-1 ring-border">
-          <Dumbbell className="size-10 text-primary" />
+        <div className="relative">
+          <AppLogo className="size-20 drop-shadow-[0_8px_24px_rgba(212,255,40,0.25)]" />
           <span className="absolute -bottom-1 -right-1 flex size-3.5">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-secondary opacity-75" />
             <span className="relative inline-flex size-3.5 rounded-full bg-secondary" />

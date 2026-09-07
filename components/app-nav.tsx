@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "@/components/nav-links";
-import { DumbbellIcon, LogOutIcon } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
+import { AppLogo } from "@/components/app-logo";
 
 export function AppNav({ email }: { email: string | null }) {
   const pathname = usePathname();
@@ -22,9 +23,7 @@ export function AppNav({ email }: { email: string | null }) {
   return (
     <aside className="hidden w-60 shrink-0 flex-col gap-1 bg-sidebar px-3 py-5 text-sidebar-foreground sm:flex">
       <div className="mb-4 flex items-center gap-2 px-2">
-        <div className="flex size-8 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
-          <DumbbellIcon className="size-4" />
-        </div>
+        <AppLogo className="size-8 shrink-0" />
         <span className="font-heading text-sm font-semibold">Entrenamiento</span>
       </div>
 
