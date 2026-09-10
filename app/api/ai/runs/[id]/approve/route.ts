@@ -102,8 +102,20 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
 
   if (microError) return NextResponse.json({ error: microError.message }, { status: 500 });
 
-  for (const [dayIndex, routineTarget] of decision.nextMicrocycleTargets.entries()) {
-    await createRoutineFromTarget(supabase, user.id, newMicrocycle.id, dayIndex, routineTarget);
+  try {
+    for (const [dayIndex, routineTarget] of decision.nextMicrocycleTargets.entries()) {
+      await createRoutineFromTarget(supabase, user.id, newMicrocycle.id, dayIndex, routineTarget);
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Error desconocido creando las rutinas del microciclo";
+    await supabase
+      .from("ai_periodization_runs")
+      .update({ status: "error", error_message: message, reviewed_at: new Date().toISOString() })
+      .eq("id", runId);
+    return NextResponse.json(
+      { error: `El microciclo se creó pero falló al aplicar las rutinas: ${message}` },
+      { status: 500 },
+    );
   }
 
   const { data: updatedRun, error: updateError } = await supabase
@@ -145,12 +157,16 @@ async function createRoutineFromTarget(
     .select("id")
     .single();
 
-  if (routineError || !routine) return;
+  if (routineError || !routine) {
+    throw new Error(
+      `No se pudo crear la rutina "${routineTarget.dayLabel}": ${routineError?.message ?? "error desconocido"}`,
+    );
+  }
 
   for (const [exIndex, exTarget] of routineTarget.exercises.entries()) {
     const exerciseId = await findOrCreateExerciseByName(supabase, userId, exTarget.exerciseName);
 
-    const { data: routineExercise } = await supabase
+    const { data: routineExercise, error: routineExerciseError } = await supabase
       .from("routine_exercises")
       .insert({
         user_id: userId,
@@ -162,7 +178,11 @@ async function createRoutineFromTarget(
       .select("id")
       .single();
 
-    if (!routineExercise) continue;
+    if (routineExerciseError || !routineExercise) {
+      throw new Error(
+        `No se pudo agregar "${exTarget.exerciseName}" a "${routineTarget.dayLabel}": ${routineExerciseError?.message ?? "error desconocido"}`,
+      );
+    }
 
     const sets = Array.from({ length: exTarget.targetSets }, (_, setIndex) => ({
       user_id: userId,
@@ -176,7 +196,10 @@ async function createRoutineFromTarget(
     }));
 
     if (sets.length > 0) {
-      await supabase.from("target_sets").insert(sets);
+      const { error: setsError } = await supabase.from("target_sets").insert(sets);
+      if (setsError) {
+        throw new Error(`No se pudieron guardar las series de "${exTarget.exerciseName}": ${setsError.message}`);
+      }
     }
   }
 }
@@ -186,19 +209,29 @@ async function findOrCreateExerciseByName(
   userId: string,
   name: string,
 ): Promise<string> {
-  const { data: existing } = await supabase
+  const { data: existing, error: existingError } = await supabase
     .from("exercises")
     .select("id")
+    .eq("user_id", userId)
     .ilike("name", name)
+    .order("created_at", { ascending: true })
+    .limit(1)
     .maybeSingle();
 
+  if (existingError) {
+    throw new Error(`No se pudo buscar el ejercicio "${name}": ${existingError.message}`);
+  }
   if (existing) return existing.id;
 
-  const { data: created } = await supabase
+  const { data: created, error: createError } = await supabase
     .from("exercises")
     .insert({ user_id: userId, name, is_custom: true })
     .select("id")
     .single();
 
-  return created!.id;
+  if (createError || !created) {
+    throw new Error(`No se pudo crear el ejercicio "${name}": ${createError?.message ?? "error desconocido"}`);
+  }
+
+  return created.id;
 }
