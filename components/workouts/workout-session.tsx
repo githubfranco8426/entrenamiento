@@ -21,6 +21,7 @@ import {
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 import { WorkoutSummary } from "@/components/workouts/workout-summary";
 import { useRestTimer } from "@/components/workouts/rest-timer-context";
+import { useActiveWorkout } from "@/components/workouts/active-workout-context";
 import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon, RotateCcwIcon } from "lucide-react";
 
 interface ExerciseOption {
@@ -153,6 +154,7 @@ export function WorkoutSession({
 }) {
   const router = useRouter();
   const restTimer = useRestTimer();
+  const { setActiveWorkout } = useActiveWorkout();
   const [blocks, setBlocks] = useState<Block[]>(() => buildInitialBlocks(workout));
   const [extraRowsByBlock, setExtraRowsByBlock] = useState<Record<string, number>>({});
   const [ended, setEnded] = useState(!!workout.ended_at);
@@ -323,6 +325,7 @@ export function WorkoutSession({
       toast.error(error);
       return;
     }
+    setActiveWorkout(null);
     toast.success("Entrenamiento anulado");
     router.push("/dashboard");
   }
@@ -363,6 +366,46 @@ export function WorkoutSession({
     setEndedAt(null);
     toast.success("Entrenamiento reabierto — ya podés editarlo");
   }
+
+  // Publica cuál es la próxima serie pendiente para el widget flotante global (visible en
+  // cualquier pantalla mientras el entreno sigue abierto) — mismos valores por defecto que
+  // ya se precargan en la fila del set, para que "tocar el check" ahí equivalga a confirmar
+  // esta fila sin ajustar nada.
+  useEffect(() => {
+    if (ended) {
+      setActiveWorkout(null);
+      return;
+    }
+    const pendingBlock = blocks.find((b) => b.loggedSets.length < b.targetSets.length);
+    if (!pendingBlock) {
+      setActiveWorkout(null);
+      return;
+    }
+    const nextIndex = pendingBlock.loggedSets.length;
+    const nextTarget = pendingBlock.targetSets[nextIndex];
+    const defaultReps = nextTarget.target_reps_max ?? nextTarget.target_reps_min ?? null;
+    const defaultRir =
+      nextTarget.target_rpe != null ? Math.round(repsInReserve(nextTarget.target_rpe)) : DEFAULT_TARGET_RIR;
+    const defaultRpeActual = Math.min(10, Math.max(5, 10 - defaultRir));
+
+    setActiveWorkout({
+      workoutId: workout.id,
+      exerciseName: pendingBlock.exerciseName,
+      setNumber: nextIndex + 1,
+      totalSets: pendingBlock.targetSets.length,
+      quickLog:
+        nextTarget.target_weight_kg != null && defaultReps != null
+          ? {
+              exerciseId: pendingBlock.exerciseId,
+              routineExerciseId: pendingBlock.routineExerciseId,
+              targetSetId: nextTarget.id,
+              weightKg: nextTarget.target_weight_kg,
+              reps: defaultReps,
+              rpeActual: defaultRpeActual,
+            }
+          : null,
+    });
+  }, [blocks, ended, workout.id, setActiveWorkout]);
 
   const availableExercises = allExercises.filter((e) => !blocks.some((b) => b.exerciseId === e.id));
   const availableExerciseItems = Object.fromEntries(availableExercises.map((e) => [e.id, e.name]));
