@@ -29,6 +29,23 @@ export function ExerciseBiomechanicsForm({
   const [cuesText, setCuesText] = useState((initialCues ?? []).join("\n"));
   const [notes, setNotes] = useState(initialNotes ?? "");
 
+  async function saveDetails(cues: string[], biomechanicsNotes: string) {
+    const res = await fetch(`/api/exercises/${exerciseId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cues: cues.length > 0 ? cues : null,
+        biomechanicsNotes: biomechanicsNotes || null,
+      }),
+    });
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
+      toast.error(error);
+      return false;
+    }
+    return true;
+  }
+
   async function handleGenerate() {
     setGenerating(true);
     const res = await fetch("/api/ai/exercise-cues", {
@@ -36,9 +53,9 @@ export function ExerciseBiomechanicsForm({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ exerciseName, muscleGroup, equipment }),
     });
-    setGenerating(false);
 
     if (!res.ok) {
+      setGenerating(false);
       const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
       toast.error(error);
       return;
@@ -46,7 +63,13 @@ export function ExerciseBiomechanicsForm({
     const { cues, biomechanicsNotes } = await res.json();
     setCuesText(cues.join("\n"));
     setNotes(biomechanicsNotes);
-    toast.success("Sugerencia generada — revisá y guardá si te sirve");
+
+    const saved = await saveDetails(cues, biomechanicsNotes);
+    setGenerating(false);
+    if (saved) {
+      toast.success("Detalle biomecánico generado y guardado");
+      router.refresh();
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -58,23 +81,12 @@ export function ExerciseBiomechanicsForm({
       .map((line) => line.trim())
       .filter(Boolean);
 
-    const res = await fetch(`/api/exercises/${exerciseId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        cues: cues.length > 0 ? cues : null,
-        biomechanicsNotes: notes || null,
-      }),
-    });
-
+    const saved = await saveDetails(cues, notes);
     setLoading(false);
-    if (!res.ok) {
-      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
-      toast.error(error);
-      return;
+    if (saved) {
+      toast.success("Detalle biomecánico guardado");
+      router.refresh();
     }
-    toast.success("Detalle biomecánico guardado");
-    router.refresh();
   }
 
   return (
@@ -88,7 +100,7 @@ export function ExerciseBiomechanicsForm({
         onClick={handleGenerate}
       >
         <SparklesIcon className="size-3.5" />
-        {generating ? "Generando..." : "Generar con IA"}
+        {generating ? "Generando..." : "Generar y guardar con IA"}
       </Button>
 
       <div className="flex flex-col gap-1.5">
