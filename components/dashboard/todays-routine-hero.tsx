@@ -50,7 +50,7 @@ export function TodaysRoutineHero({
   const estimatedMinutes = totalSets > 0 ? Math.round(totalSets * MINUTES_PER_SET) : null;
 
   return (
-    <section className="relative flex flex-col gap-gutter-md overflow-hidden rounded-xl bg-card p-container-padding ring-1 ring-border">
+    <section className="relative flex flex-col gap-gutter-md overflow-hidden rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
       <div className="pointer-events-none absolute -right-12 -top-12 size-48 rounded-full bg-primary/10 blur-3xl" />
 
       <div className="flex items-center justify-between">

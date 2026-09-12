@@ -158,5 +158,9 @@ export function ReadinessQuickCheckin({
 }
 
 function Card({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-col gap-gutter-md rounded-xl bg-card p-container-padding ring-1 ring-border">{children}</div>;
+  return (
+    <div className="flex flex-col gap-gutter-md rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
+      {children}
+    </div>
+  );
 }

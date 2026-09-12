@@ -48,7 +48,7 @@ export function WorkoutSummary({
   if (totalSets === 0) return null;
 
   return (
-    <section className="flex flex-col gap-gutter-md rounded-xl bg-card p-container-padding ring-1 ring-border">
+    <section className="flex flex-col gap-gutter-md rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
       <h2 className="font-heading text-headline-md font-bold">Informe post-sesión</h2>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
