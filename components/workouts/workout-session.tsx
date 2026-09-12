@@ -22,7 +22,7 @@ import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 import { WorkoutSummary } from "@/components/workouts/workout-summary";
 import { useRestTimer } from "@/components/workouts/rest-timer-context";
 import { useActiveWorkout } from "@/components/workouts/active-workout-context";
-import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon, RotateCcwIcon } from "lucide-react";
+import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon, RotateCcwIcon, ActivityIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
@@ -30,6 +30,8 @@ interface ExerciseOption {
   plate_increment_kg: number;
   thumbnail_url: string | null;
   video_url: string | null;
+  cues?: string[] | null;
+  biomechanics_notes?: string | null;
 }
 
 interface TargetSet {
@@ -92,6 +94,8 @@ interface Block {
   videoUrl: string | null;
   routineExerciseId: string | null;
   notes: string | null;
+  cues: string[] | null;
+  biomechanicsNotes: string | null;
   targetSets: TargetSet[];
   loggedSets: SetLog[];
 }
@@ -114,6 +118,8 @@ function buildInitialBlocks(workout: WorkoutData): Block[] {
       videoUrl: re.exercises.video_url,
       routineExerciseId: re.id,
       notes: re.notes,
+      cues: re.exercises.cues ?? null,
+      biomechanicsNotes: re.exercises.biomechanics_notes ?? null,
       targetSets: [...re.target_sets].sort((a, b) => a.set_index - b.set_index),
       loggedSets: [...(matchingWe?.set_logs ?? [])].sort((a, b) => a.set_index - b.set_index),
     });
@@ -131,6 +137,8 @@ function buildInitialBlocks(workout: WorkoutData): Block[] {
       videoUrl: we.exercises.video_url,
       routineExerciseId: null,
       notes: null,
+      cues: we.exercises.cues ?? null,
+      biomechanicsNotes: we.exercises.biomechanics_notes ?? null,
       targetSets: [],
       loggedSets: [...we.set_logs].sort((a, b) => a.set_index - b.set_index),
     });
@@ -179,6 +187,8 @@ export function WorkoutSession({
         videoUrl: ex.video_url,
         routineExerciseId: null,
         notes: null,
+        cues: ex.cues ?? null,
+        biomechanicsNotes: ex.biomechanics_notes ?? null,
         targetSets: [],
         loggedSets: [],
       },
@@ -657,6 +667,26 @@ function ExerciseBlockCard({
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-0 px-0 pb-0">
+        {((block.cues && block.cues.length > 0) || block.biomechanicsNotes) && (
+          <div className="flex flex-col gap-1.5 border-b border-border bg-primary/5 px-3 py-2">
+            <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-primary">
+              <ActivityIcon className="size-3" /> Puntos clave de ejecución
+            </div>
+            {block.cues && block.cues.length > 0 && (
+              <ul className="flex flex-col gap-0.5">
+                {block.cues.map((cue, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-xs text-foreground">
+                    <span className="mt-1 size-1 shrink-0 rounded-full bg-primary" />
+                    {cue}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {block.biomechanicsNotes && (
+              <p className="whitespace-pre-wrap text-xs text-muted-foreground">{block.biomechanicsNotes}</p>
+            )}
+          </div>
+        )}
         {block.notes && (
           <p className="border-b border-border bg-secondary/10 px-3 py-2 text-xs text-secondary">{block.notes}</p>
         )}

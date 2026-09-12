@@ -13,11 +13,14 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
     supabase
       .from("workouts")
       .select(
-        "*, routines(title, day_label, routine_exercises(*, exercises(id, name, plate_increment_kg, thumbnail_url, video_url), target_sets(*))), workout_exercises(*, exercises(id, name, plate_increment_kg, thumbnail_url, video_url), set_logs(*))",
+        "*, routines(title, day_label, routine_exercises(*, exercises(id, name, plate_increment_kg, thumbnail_url, video_url, cues, biomechanics_notes), target_sets(*))), workout_exercises(*, exercises(id, name, plate_increment_kg, thumbnail_url, video_url, cues, biomechanics_notes), set_logs(*))",
       )
       .eq("id", id)
       .single(),
-    supabase.from("exercises").select("id, name, plate_increment_kg, thumbnail_url, video_url").order("name"),
+    supabase
+      .from("exercises")
+      .select("id, name, plate_increment_kg, thumbnail_url, video_url, cues, biomechanics_notes")
+      .order("name"),
   ]);
 
   if (error || !workout) notFound();
