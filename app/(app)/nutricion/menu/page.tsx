@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeftIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { shiftTypeForDate, SHIFT_TYPE_LABELS } from "@/lib/utils/shift-pattern";
-import { MEAL_PLAN_BY_SHIFT } from "@/lib/nutrition/plan";
+import { MEAL_PLAN_BY_SHIFT, FOOD_REPLACEMENTS } from "@/lib/nutrition/plan";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default async function NutritionMenuPage() {
@@ -41,6 +41,22 @@ export default async function NutritionMenuPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div>
+        <h2 className="mb-2 font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Alternativas si falta algo
+        </h2>
+        <div className="flex flex-col gap-2">
+          {FOOD_REPLACEMENTS.map((r) => (
+            <Card key={r.original}>
+              <CardContent className="flex flex-col gap-1">
+                <span className="text-sm font-semibold text-primary">{r.original}</span>
+                <span className="text-xs text-muted-foreground">{r.alternatives}</span>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
