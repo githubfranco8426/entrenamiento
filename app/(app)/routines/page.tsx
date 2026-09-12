@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { RoutineForm } from "@/components/routines/routine-form";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
+import { ExerciseNoteEditor } from "@/components/routines/exercise-note-editor";
 import { DeleteButton } from "@/components/ui/delete-button";
 
 export default async function RoutinesPage() {
@@ -75,6 +76,7 @@ export default async function RoutinesPage() {
                           </p>
                         </div>
                       </div>
+                      <ExerciseNoteEditor routineExerciseId={re.id} initialNotes={re.notes} />
                     </div>
                   );
                 })}
