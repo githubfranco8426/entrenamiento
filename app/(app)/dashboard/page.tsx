@@ -8,7 +8,7 @@ import {
   isSameDay,
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { SettingsIcon, SparklesIcon, ClockIcon } from "lucide-react";
+import { SettingsIcon, SparklesIcon, ClockIcon, CheckCircleIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { shiftTypeForDate } from "@/lib/utils/shift-pattern";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -132,6 +132,7 @@ export default async function DashboardPage() {
   const activeMicro = (activeMeso?.microcycles ?? []).find((m) => m.status === "active");
 
   const nextRoutine = pickNextRoutine(routines ?? [], workouts ?? []);
+  const todaysWorkout = (workouts ?? []).find((w) => isSameDay(new Date(w.started_at), new Date()));
 
   const daysSinceLastTrained = nextRoutine
     ? (() => {
@@ -265,13 +266,46 @@ export default async function DashboardPage() {
         defaultShiftType={defaultShiftType}
         initial={readiness ?? null}
         aiNote={
-          nextRoutine
+          !todaysWorkout && nextRoutine
             ? `Basado en tu readiness: seguimos con "${nextRoutine.title}" tal como está planificada.`
             : null
         }
       />
 
-      {nextRoutine ? (
+      {todaysWorkout?.ended_at ? (
+        <div className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <CheckCircleIcon className="size-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="font-heading text-headline-sm font-bold">Ya entrenaste hoy</p>
+            <p className="truncate text-sm text-muted-foreground">
+              {todaysWorkout.routines?.title ?? "Entreno libre"} · buen trabajo, descansá lo que necesites.
+            </p>
+          </div>
+          <Link
+            href={`/workouts/${todaysWorkout.id}`}
+            className="shrink-0 text-sm text-primary underline underline-offset-2"
+          >
+            Ver
+          </Link>
+        </div>
+      ) : todaysWorkout ? (
+        <Link
+          href={`/workouts/${todaysWorkout.id}`}
+          className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)] transition-colors hover:bg-accent"
+        >
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <ClockIcon className="size-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="font-heading text-headline-sm font-bold">Entrenamiento en curso</p>
+            <p className="truncate text-sm text-muted-foreground">
+              {todaysWorkout.routines?.title ?? "Entreno libre"} · continuá donde quedaste.
+            </p>
+          </div>
+        </Link>
+      ) : nextRoutine ? (
         <TodaysRoutineHero
           routine={nextRoutine}
           daysSinceLastTrained={daysSinceLastTrained}
