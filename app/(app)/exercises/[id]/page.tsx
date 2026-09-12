@@ -1,12 +1,13 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeftIcon, PlayCircleIcon, ActivityIcon } from "lucide-react";
+import { PlayCircleIcon, ActivityIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 import { ExerciseBiomechanicsForm } from "@/components/exercises/exercise-biomechanics-form";
+import { ExerciseMediaDialog } from "@/components/exercises/exercise-media-dialog";
+import { DeleteButton } from "@/components/ui/delete-button";
 
 export default async function ExerciseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -17,33 +18,40 @@ export default async function ExerciseDetailPage({ params }: { params: Promise<{
 
   return (
     <div className="flex flex-col gap-6">
-      <Link
-        href="/exercises"
-        className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeftIcon className="size-4" />
-        Ejercicios
-      </Link>
-
-      <div className="flex items-center gap-4">
-        <ExerciseThumbnail src={exercise.thumbnail_url} alt={exercise.name} className="size-16 rounded-xl" />
-        <div className="flex flex-col gap-1">
-          <h1 className="font-heading text-xl font-bold">{exercise.name}</h1>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {exercise.muscle_group && <Badge variant="outline">{exercise.muscle_group}</Badge>}
-            {exercise.equipment && <Badge variant="outline">{exercise.equipment}</Badge>}
-            {exercise.video_url && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 gap-1 px-1.5 text-secondary"
-                render={<a href={exercise.video_url} target="_blank" rel="noreferrer" />}
-              >
-                <PlayCircleIcon className="size-3.5" />
-                Ver ejecución
-              </Button>
-            )}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-4">
+          <ExerciseThumbnail src={exercise.thumbnail_url} alt={exercise.name} className="size-16 rounded-xl" />
+          <div className="flex flex-col gap-1">
+            <h1 className="font-heading text-xl font-bold">{exercise.name}</h1>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {exercise.muscle_group && <Badge variant="outline">{exercise.muscle_group}</Badge>}
+              {exercise.equipment && <Badge variant="outline">{exercise.equipment}</Badge>}
+              {exercise.video_url && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 gap-1 px-1.5 text-secondary"
+                  render={<a href={exercise.video_url} target="_blank" rel="noreferrer" />}
+                >
+                  <PlayCircleIcon className="size-3.5" />
+                  Ver ejecución
+                </Button>
+              )}
+            </div>
           </div>
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+          <ExerciseMediaDialog
+            exerciseId={exercise.id}
+            exerciseName={exercise.name}
+            initialThumbnailUrl={exercise.thumbnail_url}
+            initialVideoUrl={exercise.video_url}
+          />
+          <DeleteButton
+            endpoint={`/api/exercises/${exercise.id}`}
+            confirmMessage={`¿Borrar "${exercise.name}"? Esta acción no se puede deshacer.`}
+            successMessage="Ejercicio borrado"
+          />
         </div>
       </div>
 

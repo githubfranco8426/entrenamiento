@@ -30,7 +30,7 @@ export default async function RoutinesPage() {
       {(routines ?? []).length === 0 && (
         <p className="text-sm text-muted-foreground">
           {(exercises ?? []).length === 0
-            ? "Primero agregá ejercicios en la sección Ejercicios, y después armá tu primera rutina."
+            ? "Creá tu primera rutina con \"Nueva rutina\" — vas a poder agregar ejercicios sobre la marcha."
             : "Todavía no creaste ninguna rutina."}
         </p>
       )}

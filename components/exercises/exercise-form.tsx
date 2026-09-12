@@ -7,7 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function ExerciseForm() {
+export function ExerciseForm({
+  onCreated,
+  compact = false,
+}: {
+  /** Llamado con el ejercicio recién creado — para seleccionarlo sin depender de un refresh. */
+  onCreated?: (exercise: { id: string; name: string }) => void;
+  /** Layout más chico para usar embebido (ej. dentro del picker de Rutinas). */
+  compact?: boolean;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
@@ -38,17 +46,19 @@ export function ExerciseForm() {
       toast.error(error);
       return;
     }
+    const { exercise } = await res.json();
     setName("");
     setMuscleGroup("");
     setEquipment("");
     setThumbnailUrl("");
     setVideoUrl("");
     toast.success("Ejercicio agregado");
+    onCreated?.(exercise);
     router.refresh();
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
+    <form onSubmit={handleSubmit} className={compact ? "flex flex-col gap-2" : "flex flex-wrap items-end gap-3"}>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="ex-name">Nombre</Label>
         <Input id="ex-name" required value={name} onChange={(e) => setName(e.target.value)} />
