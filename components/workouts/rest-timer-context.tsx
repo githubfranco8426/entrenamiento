@@ -4,11 +4,24 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, us
 
 const STORAGE_KEY = "rest-timer-v1";
 
+export interface NextSetPrescription {
+  weightKg: number | null;
+  repsMin: number | null;
+  repsMax: number | null;
+  rir: number | null;
+}
+
 interface RestTimerState {
   endAt: number;
   totalSeconds: number;
   label: string;
   note: string | null;
+  cue: string | null;
+  nextSet: NextSetPrescription | null;
+  paused: boolean;
+  /** Segundos restantes congelados mientras paused=true (endAt deja de ser válido). */
+  pausedRemainingSeconds: number | null;
+  minimized: boolean;
 }
 
 interface RestTimerContextValue {
@@ -17,11 +30,21 @@ interface RestTimerContextValue {
   label: string | null;
   /** Sugerencia de autoregulación (IA) para la próxima serie — llega async, después de start(). */
   note: string | null;
+  /** Cue biomecánico del ejercicio (exercises.cues/biomechanics_notes) para la próxima serie. */
+  cue: string | null;
+  nextSet: NextSetPrescription | null;
+  paused: boolean;
+  minimized: boolean;
   /** Arranca (o reemplaza) el descanso global. Sobrevive a la navegación entre páginas y a recargas. */
-  start: (seconds: number, label: string) => void;
-  /** Actualiza la nota de IA de un descanso ya arrancado (la sugerencia llega unos segundos después del set). */
+  start: (
+    seconds: number,
+    label: string,
+    extra?: { cue?: string | null; nextSet?: NextSetPrescription | null },
+  ) => void;
   setNote: (note: string | null) => void;
   adjust: (deltaSeconds: number) => void;
+  togglePause: () => void;
+  toggleMinimized: () => void;
   skip: () => void;
 }
 
@@ -42,7 +65,8 @@ function parseState(raw: string | null): RestTimerState | null {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as RestTimerState;
-    if (typeof parsed.endAt !== "number" || parsed.endAt <= Date.now()) return null;
+    if (typeof parsed.endAt !== "number") return null;
+    if (!parsed.paused && parsed.endAt <= Date.now()) return null;
     return parsed;
   } catch {
     return null;
@@ -115,12 +139,16 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
   const chimedRef = useRef(false);
 
   useEffect(() => {
-    if (!state) return;
+    if (!state || state.paused) return;
     const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
   }, [state]);
 
-  const secondsLeft = state ? Math.max(0, Math.round((state.endAt - now) / 1000)) : null;
+  const secondsLeft = state
+    ? state.paused
+      ? (state.pausedRemainingSeconds ?? 0)
+      : Math.max(0, Math.round((state.endAt - now) / 1000))
+    : null;
 
   useEffect(() => {
     if (secondsLeft === 0 && !chimedRef.current) {
@@ -130,11 +158,24 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [secondsLeft]);
 
-  const start = useCallback((seconds: number, label: string) => {
-    chimedRef.current = false;
-    writeState({ endAt: Date.now() + seconds * 1000, totalSeconds: seconds, label, note: null });
-    setNow(Date.now());
-  }, []);
+  const start = useCallback(
+    (seconds: number, label: string, extra?: { cue?: string | null; nextSet?: NextSetPrescription | null }) => {
+      chimedRef.current = false;
+      writeState({
+        endAt: Date.now() + seconds * 1000,
+        totalSeconds: seconds,
+        label,
+        note: null,
+        cue: extra?.cue ?? null,
+        nextSet: extra?.nextSet ?? null,
+        paused: false,
+        pausedRemainingSeconds: null,
+        minimized: false,
+      });
+      setNow(Date.now());
+    },
+    [],
+  );
 
   const setNote = useCallback((note: string | null) => {
     const current = getSnapshot();
@@ -145,7 +186,37 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
   const adjust = useCallback((deltaSeconds: number) => {
     const current = getSnapshot();
     if (!current) return;
+    if (current.paused) {
+      writeState({
+        ...current,
+        pausedRemainingSeconds: Math.max(0, (current.pausedRemainingSeconds ?? 0) + deltaSeconds),
+      });
+      return;
+    }
     writeState({ ...current, endAt: Math.max(Date.now(), current.endAt + deltaSeconds * 1000) });
+  }, []);
+
+  const togglePause = useCallback(() => {
+    const current = getSnapshot();
+    if (!current) return;
+    if (current.paused) {
+      writeState({
+        ...current,
+        paused: false,
+        endAt: Date.now() + (current.pausedRemainingSeconds ?? 0) * 1000,
+        pausedRemainingSeconds: null,
+      });
+      setNow(Date.now());
+    } else {
+      const remaining = Math.max(0, Math.round((current.endAt - Date.now()) / 1000));
+      writeState({ ...current, paused: true, pausedRemainingSeconds: remaining });
+    }
+  }, []);
+
+  const toggleMinimized = useCallback(() => {
+    const current = getSnapshot();
+    if (!current) return;
+    writeState({ ...current, minimized: !current.minimized });
   }, []);
 
   const skip = useCallback(() => {
@@ -160,9 +231,15 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
         totalSeconds: state?.totalSeconds ?? null,
         label: state?.label ?? null,
         note: state?.note ?? null,
+        cue: state?.cue ?? null,
+        nextSet: state?.nextSet ?? null,
+        paused: state?.paused ?? false,
+        minimized: state?.minimized ?? false,
         start,
         setNote,
         adjust,
+        togglePause,
+        toggleMinimized,
         skip,
       }}
     >

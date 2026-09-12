@@ -620,12 +620,24 @@ function ExerciseBlockCard({
     const newCount = block.loggedSets.length;
     if (newCount > prevCount && !ended) {
       const justCompletedTarget = block.targetSets[newCount - 1] ?? null;
-      restTimer.start(justCompletedTarget?.rest_seconds ?? DEFAULT_REST_SECONDS, block.exerciseName);
+      const upcomingTarget = block.targetSets[newCount] ?? null;
+      const cue = block.biomechanicsNotes || block.cues?.[0] || null;
+      restTimer.start(justCompletedTarget?.rest_seconds ?? DEFAULT_REST_SECONDS, block.exerciseName, {
+        cue,
+        nextSet: upcomingTarget
+          ? {
+              weightKg: upcomingTarget.target_weight_kg,
+              repsMin: upcomingTarget.target_reps_min,
+              repsMax: upcomingTarget.target_reps_max,
+              rir: upcomingTarget.target_rpe != null ? Math.round(repsInReserve(upcomingTarget.target_rpe)) : null,
+            }
+          : null,
+      });
     }
     prevLoggedCountRef.current = newCount;
     // restTimer.start es estable (useCallback), no hace falta en deps.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [block.loggedSets.length, block.targetSets, block.exerciseName, ended]);
+  }, [block.loggedSets.length, block.targetSets, block.exerciseName, block.cues, block.biomechanicsNotes, ended]);
 
   return (
     <Card className="overflow-hidden py-0 gap-0">

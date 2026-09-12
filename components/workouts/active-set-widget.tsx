@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { DumbbellIcon, CheckIcon } from "lucide-react";
 import { fetchWithAuthRetry } from "@/lib/supabase/fetch-with-auth-retry";
 import { useActiveWorkout } from "@/components/workouts/active-workout-context";
+import { useRestTimer } from "@/components/workouts/rest-timer-context";
 
 /**
  * Barra flotante visible en cualquier pantalla de la app mientras hay un entrenamiento
@@ -17,12 +18,15 @@ import { useActiveWorkout } from "@/components/workouts/active-workout-context";
  */
 export function ActiveSetWidget() {
   const { state } = useActiveWorkout();
+  const { secondsLeft, minimized } = useRestTimer();
   const pathname = usePathname();
   const router = useRouter();
   const [logging, setLogging] = useState(false);
 
   if (!state) return null;
   if (pathname === `/workouts/${state.workoutId}`) return null;
+  // La consola de descanso (expandida) ya muestra la próxima serie + cue — evita duplicar UI.
+  if (secondsLeft != null && secondsLeft > 0 && !minimized) return null;
 
   async function handleQuickLog() {
     if (!state?.quickLog) return;
