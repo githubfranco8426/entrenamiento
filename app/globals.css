@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plus-jakarta);
-  --font-mono: var(--font-space-grotesk);
-  --font-heading: var(--font-sans);
+  --font-sans: var(--font-hanken-grotesk);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-heading: var(--font-space-grotesk);
   --color-tertiary: var(--tertiary);
   --color-tertiary-foreground: var(--tertiary-foreground);
   --color-warning: var(--tertiary);
@@ -54,44 +54,46 @@
 
 :root,
 .dark {
-  /* Kinetic AI Conditioning — sistema de diseño Stitch (design/stitch-ui-visual-redesign/04-design-system).
+  /* Kinetic Obsidian — sistema de diseño Stitch (design extraído de las pantallas
+     Dashboard/Sesión Activa, proyecto "Minimalist Fitness Dashboard").
+     Austero, sin neón ni glows: instrumentación de precisión en acero/obsidiana.
      Dark-only por diseño (no hay toggle de tema); :root y .dark comparten valores
      para que no dependa del montaje de next-themes ni produzca flash claro/oscuro. */
-  --background: #090d14;
-  --foreground: #f5f8fc;
-  --card: #0d1420;
-  --card-foreground: #f5f8fc;
-  --popover: #0d1420;
-  --popover-foreground: #f5f8fc;
-  --primary: #d4ff28;
-  --primary-foreground: #171e00;
-  --secondary: #00f0ff;
-  --secondary-foreground: #00363a;
-  --tertiary: #7000ff;
-  --tertiary-foreground: #ffffff;
-  --muted: #181c27;
-  --muted-foreground: #94a3b8;
-  --accent: #1c2330;
-  --accent-foreground: #d4ff28;
-  --destructive: #ff3355;
-  --destructive-foreground: #ffffff;
-  --border: rgba(148, 163, 184, 0.14);
-  --input: #0d1420;
-  --ring: #d4ff28;
-  --chart-1: #d4ff28;
-  --chart-2: #00f0ff;
-  --chart-3: #7000ff;
-  --chart-4: #94a3b8;
-  --chart-5: #ffffff;
-  --radius: 0.625rem;
-  --sidebar: #090d14;
-  --sidebar-foreground: #f5f8fc;
-  --sidebar-primary: #d4ff28;
-  --sidebar-primary-foreground: #171e00;
-  --sidebar-accent: #181c27;
-  --sidebar-accent-foreground: #f5f8fc;
-  --sidebar-border: rgba(148, 163, 184, 0.14);
-  --sidebar-ring: #d4ff28;
+  --background: #0c0e12;
+  --foreground: #f5f7fa;
+  --card: #0f1115;
+  --card-foreground: #f5f7fa;
+  --popover: #0f1115;
+  --popover-foreground: #f5f7fa;
+  --primary: #8ea3b0;
+  --primary-foreground: #08090b;
+  --secondary: #50616e;
+  --secondary-foreground: #f5f7fa;
+  --tertiary: #d6e2e9;
+  --tertiary-foreground: #08090b;
+  --muted: #16191f;
+  --muted-foreground: #9da5b4;
+  --accent: #1f242c;
+  --accent-foreground: #f5f7fa;
+  --destructive: #8e4d48;
+  --destructive-foreground: #f5f7fa;
+  --border: #252c34;
+  --input: #0b0d10;
+  --ring: #8ea3b0;
+  --chart-1: #8ea3b0;
+  --chart-2: #50616e;
+  --chart-3: #d6e2e9;
+  --chart-4: #a67c52;
+  --chart-5: #8e4d48;
+  --radius: 0.5rem;
+  --sidebar: #0c0e12;
+  --sidebar-foreground: #f5f7fa;
+  --sidebar-primary: #8ea3b0;
+  --sidebar-primary-foreground: #08090b;
+  --sidebar-accent: #16191f;
+  --sidebar-accent-foreground: #f5f7fa;
+  --sidebar-border: #252c34;
+  --sidebar-ring: #8ea3b0;
 }
 
 @layer base {
@@ -100,10 +102,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(circle at 85% 5%, rgba(0, 240, 255, 0.1), transparent 45%),
-      radial-gradient(circle at 15% 45%, rgba(212, 255, 40, 0.05), transparent 50%);
-    background-attachment: fixed;
   }
   html {
     @apply font-sans;

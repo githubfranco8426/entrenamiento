@@ -8,6 +8,7 @@ import { LoadMatrix, type LoadMatrixSession } from "@/components/data/load-matri
 import { AcwrCard } from "@/components/data/acwr-card";
 import { ProgressPhotoGallery } from "@/components/data/progress-photo-gallery";
 import { PlanVsActual, type PlanVsActualRow } from "@/components/data/plan-vs-actual";
+import { ReadinessTrendCard } from "@/components/data/readiness-trend-card";
 
 export default async function DataPage() {
   const supabase = await createClient();
@@ -15,7 +16,7 @@ export default async function DataPage() {
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
   twentyEightDaysAgo.setHours(0, 0, 0, 0);
 
-  const [{ data: bodyMetrics }, { data: history }, { data: recentSets }, { data: photoRows }, { data: activeMeso }, { data: liveRoutines }] = await Promise.all([
+  const [{ data: bodyMetrics }, { data: history }, { data: recentSets }, { data: photoRows }, { data: activeMeso }, { data: liveRoutines }, { data: readinessLogs }] = await Promise.all([
     supabase
       .from("body_metrics")
       .select("log_date, weight_kg, body_fat_pct")
@@ -50,6 +51,11 @@ export default async function DataPage() {
         "day_label, title, routine_exercises(exercise_id, exercises(name), target_sets(target_weight_kg, target_reps_min, target_reps_max))",
       )
       .is("microcycle_id", null),
+    supabase
+      .from("readiness_logs")
+      .select("log_date, sleep_hours, energy_level, muscle_soreness")
+      .order("log_date", { ascending: false })
+      .limit(7),
   ]);
 
   const activeMicro = (activeMeso?.microcycles ?? []).find((m) => m.status === "active");
@@ -177,8 +183,18 @@ export default async function DataPage() {
       <div>
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-primary">Mission Control</p>
         <h1 className="font-heading text-xl font-bold">Data</h1>
-        <p className="text-sm text-muted-foreground">Peso corporal y progresión de cargas.</p>
+        <p className="text-sm text-muted-foreground">Readiness, peso corporal y progresión de cargas.</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold uppercase tracking-wide">Readiness (últimos 7 días)</CardTitle>
+          <CardDescription>Promedio de sueño, energía y dolor muscular reportados en el check-in diario.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ReadinessTrendCard logs={readinessLogs ?? []} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
