@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { estimateOneRepMax } from "@/lib/autoregulation/rpe-tables";
+import { computeAcwr, type DailyLoad } from "@/lib/analytics/acwr";
+import { pickNextRoutine } from "@/lib/utils/next-routine";
 import { WorkoutSession } from "@/components/workouts/workout-session";
 
 export default async function WorkoutPage({ params }: { params: Promise<{ id: string }> }) {
@@ -50,11 +52,44 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
     }
   }
 
+  const twentyEightDaysAgo = new Date();
+  twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
+  twentyEightDaysAgo.setHours(0, 0, 0, 0);
+  const { data: acwrSets } = await supabase
+    .from("set_logs")
+    .select("weight_kg, reps, completed_at")
+    .not("weight_kg", "is", null)
+    .not("reps", "is", null)
+    .gte("completed_at", twentyEightDaysAgo.toISOString())
+    .limit(2000);
+
+  const loadByDay = new Map<string, number>();
+  for (const s of acwrSets ?? []) {
+    const day = s.completed_at.slice(0, 10);
+    loadByDay.set(day, (loadByDay.get(day) ?? 0) + (s.weight_kg ?? 0) * (s.reps ?? 0));
+  }
+  const dailyLoads: DailyLoad[] = Array.from({ length: 28 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (27 - i));
+    const key = d.toISOString().slice(0, 10);
+    return { date: key, load: loadByDay.get(key) ?? 0 };
+  });
+  const acwr = computeAcwr(dailyLoads);
+
+  const [{ data: liveRoutines }, { data: recentWorkouts }] = await Promise.all([
+    supabase.from("routines").select("id, title, day_label").is("microcycle_id", null),
+    supabase.from("workouts").select("routine_id, started_at").order("started_at", { ascending: false }).limit(5),
+  ]);
+  const nextRoutine = pickNextRoutine(liveRoutines ?? [], recentWorkouts ?? []);
+  const nextRoutineLabel = nextRoutine ? (nextRoutine.day_label ?? nextRoutine.title) : null;
+
   return (
     <WorkoutSession
       workout={workout}
       allExercises={exercises ?? []}
       estimatedOneRepMaxByExercise={estimatedOneRepMaxByExercise}
+      acwr={acwr.ratio != null ? { ratio: acwr.ratio, zone: acwr.zone } : null}
+      nextRoutineLabel={nextRoutineLabel}
     />
   );
 }

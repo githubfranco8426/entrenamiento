@@ -1,6 +1,8 @@
 import { differenceInMinutes } from "date-fns";
-import { ClockIcon, LayersIcon, TrendingUpIcon, GaugeIcon } from "lucide-react";
+import { ClockIcon, LayersIcon, TrendingUpIcon, GaugeIcon, ActivityIcon, CalendarClockIcon } from "lucide-react";
 import { repsInReserve } from "@/lib/autoregulation/rpe-tables";
+import { ACWR_ZONE_LABELS, type AcwrZone } from "@/lib/analytics/acwr";
+import { cn } from "@/lib/utils";
 
 interface SetLog {
   weight_kg: number | null;
@@ -14,15 +16,26 @@ interface SummaryBlock {
   estimatedOneRepMaxKg: number | null;
 }
 
+const ACWR_ZONE_STYLES: Record<AcwrZone, string> = {
+  undertraining: "bg-secondary/15 text-secondary",
+  optimo: "bg-primary/15 text-primary",
+  precaucion: "bg-tertiary/15 text-tertiary",
+  riesgo: "bg-destructive/15 text-destructive",
+};
+
 /** Informe post-sesión: derivado enteramente de datos ya registrados, sin métricas inventadas. */
 export function WorkoutSummary({
   startedAt,
   endedAt,
   blocks,
+  acwr,
+  nextRoutineLabel,
 }: {
   startedAt: string;
   endedAt: string;
   blocks: SummaryBlock[];
+  acwr?: { ratio: number; zone: AcwrZone | null } | null;
+  nextRoutineLabel?: string | null;
 }) {
   const durationMin = differenceInMinutes(new Date(endedAt), new Date(startedAt));
   const allSets = blocks.flatMap((b) => b.loggedSets);
@@ -44,6 +57,26 @@ export function WorkoutSummary({
         <SummaryStat icon={TrendingUpIcon} label="Volumen" value={`${Math.round(totalVolumeKg).toLocaleString("es")} kg`} />
         <SummaryStat icon={GaugeIcon} label="RIR promedio" value={avgRir != null ? String(avgRir) : "—"} />
       </div>
+
+      {acwr && acwr.zone && (
+        <div className="flex items-center justify-between gap-3 rounded-lg bg-muted/60 px-3 py-2.5">
+          <div className="flex items-center gap-2">
+            <ActivityIcon className="size-4 shrink-0 text-muted-foreground" />
+            <span className="text-sm text-foreground">Carga de entrenamiento (ACWR)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-sm font-bold">{acwr.ratio.toFixed(2)}</span>
+            <span
+              className={cn(
+                "rounded-full px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide",
+                ACWR_ZONE_STYLES[acwr.zone],
+              )}
+            >
+              {ACWR_ZONE_LABELS[acwr.zone]}
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         <p className="font-mono text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -73,6 +106,16 @@ export function WorkoutSummary({
             );
           })}
       </div>
+
+      {nextRoutineLabel && (
+        <div className="flex items-center gap-2.5 rounded-lg bg-primary/10 px-3 py-2.5">
+          <CalendarClockIcon className="size-4 shrink-0 text-primary" />
+          <p className="text-sm text-foreground">
+            <span className="text-muted-foreground">Próxima sesión sugerida: </span>
+            <span className="font-semibold">{nextRoutineLabel}</span>
+          </p>
+        </div>
+      )}
     </section>
   );
 }

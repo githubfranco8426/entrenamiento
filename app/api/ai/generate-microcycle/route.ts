@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedUser } from "@/lib/supabase/get-authenticated-user";
 import { buildPeriodizationContext } from "@/lib/ai/context-builder";
 import { generateMicrocyclePlan, PERIODIZATION_MODEL } from "@/lib/ai/client";
 import type { AiTriggerType, Json } from "@/lib/types/database";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser(supabase);
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));

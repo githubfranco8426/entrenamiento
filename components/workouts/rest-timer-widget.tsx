@@ -1,6 +1,6 @@
 "use client";
 
-import { TimerIcon, XIcon } from "lucide-react";
+import { TimerIcon, XIcon, SparklesIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRestTimer } from "@/components/workouts/rest-timer-context";
 
@@ -13,7 +13,7 @@ function formatClock(seconds: number): string {
 }
 
 export function RestTimerWidget() {
-  const { secondsLeft, totalSeconds, label, adjust, skip } = useRestTimer();
+  const { secondsLeft, totalSeconds, label, note, adjust, skip } = useRestTimer();
 
   if (secondsLeft == null) return null;
 
@@ -70,6 +70,12 @@ export function RestTimerWidget() {
         {!done && (
           <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
             <div className="h-full bg-secondary transition-[width]" style={{ width: `${progress * 100}%` }} />
+          </div>
+        )}
+        {note && (
+          <div className="flex items-start gap-1.5 rounded-lg bg-primary/10 px-2.5 py-2">
+            <SparklesIcon className="mt-0.5 size-3.5 shrink-0 text-primary" />
+            <p className="text-xs text-foreground">{note}</p>
           </div>
         )}
       </div>

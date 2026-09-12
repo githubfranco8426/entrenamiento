@@ -8,14 +8,19 @@ interface RestTimerState {
   endAt: number;
   totalSeconds: number;
   label: string;
+  note: string | null;
 }
 
 interface RestTimerContextValue {
   secondsLeft: number | null;
   totalSeconds: number | null;
   label: string | null;
+  /** Sugerencia de autoregulación (IA) para la próxima serie — llega async, después de start(). */
+  note: string | null;
   /** Arranca (o reemplaza) el descanso global. Sobrevive a la navegación entre páginas y a recargas. */
   start: (seconds: number, label: string) => void;
+  /** Actualiza la nota de IA de un descanso ya arrancado (la sugerencia llega unos segundos después del set). */
+  setNote: (note: string | null) => void;
   adjust: (deltaSeconds: number) => void;
   skip: () => void;
 }
@@ -127,8 +132,14 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
 
   const start = useCallback((seconds: number, label: string) => {
     chimedRef.current = false;
-    writeState({ endAt: Date.now() + seconds * 1000, totalSeconds: seconds, label });
+    writeState({ endAt: Date.now() + seconds * 1000, totalSeconds: seconds, label, note: null });
     setNow(Date.now());
+  }, []);
+
+  const setNote = useCallback((note: string | null) => {
+    const current = getSnapshot();
+    if (!current) return;
+    writeState({ ...current, note });
   }, []);
 
   const adjust = useCallback((deltaSeconds: number) => {
@@ -144,7 +155,16 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <RestTimerContext.Provider
-      value={{ secondsLeft, totalSeconds: state?.totalSeconds ?? null, label: state?.label ?? null, start, adjust, skip }}
+      value={{
+        secondsLeft,
+        totalSeconds: state?.totalSeconds ?? null,
+        label: state?.label ?? null,
+        note: state?.note ?? null,
+        start,
+        setNote,
+        adjust,
+        skip,
+      }}
     >
       {children}
     </RestTimerContext.Provider>

@@ -2,7 +2,7 @@
 
 import { BarChart, Bar, XAxis, ResponsiveContainer, ReferenceLine } from "recharts";
 import { format } from "date-fns";
-import { ACWR_ZONE_LABELS, type AcwrZone } from "@/lib/analytics/acwr";
+import { ACWR_ZONE_LABELS, MONOTONY_ZONE_LABELS, type AcwrZone, type MonotonyZone } from "@/lib/analytics/acwr";
 import { cn } from "@/lib/utils";
 
 const ZONE_STYLES: Record<AcwrZone, string> = {
@@ -12,18 +12,30 @@ const ZONE_STYLES: Record<AcwrZone, string> = {
   riesgo: "bg-destructive/15 text-destructive",
 };
 
+const MONOTONY_STYLES: Record<MonotonyZone, string> = {
+  normal: "bg-primary/15 text-primary",
+  elevada: "bg-tertiary/15 text-tertiary",
+  alta: "bg-destructive/15 text-destructive",
+};
+
 export function AcwrCard({
   acuteLoad,
   chronicLoad,
   ratio,
   zone,
   dailyLoads,
+  monotony,
+  strain,
+  monotonyZone,
 }: {
   acuteLoad: number;
   chronicLoad: number;
   ratio: number | null;
   zone: AcwrZone | null;
   dailyLoads: { date: string; load: number }[];
+  monotony?: number | null;
+  strain?: number | null;
+  monotonyZone?: MonotonyZone | null;
 }) {
   const chartData = dailyLoads.map((d) => ({ ...d, label: format(new Date(d.date), "dd/MM") }));
 
@@ -47,6 +59,28 @@ export function AcwrCard({
               )}
             >
               {zone && ACWR_ZONE_LABELS[zone]}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {monotony != null && monotonyZone && (
+        <div className="flex items-center justify-between gap-2 rounded-lg bg-muted/60 px-3 py-2.5">
+          <div className="flex flex-col">
+            <span className="text-sm text-foreground">Monotonía de Foster</span>
+            <span className="text-[11px] text-muted-foreground">
+              Variabilidad de carga (7d){strain != null && ` · Strain ${strain.toLocaleString("es")}`}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-sm font-bold">{monotony.toFixed(2)}</span>
+            <span
+              className={cn(
+                "rounded-full px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide",
+                MONOTONY_STYLES[monotonyZone],
+              )}
+            >
+              {MONOTONY_ZONE_LABELS[monotonyZone]}
             </span>
           </div>
         </div>

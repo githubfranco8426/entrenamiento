@@ -1,12 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { estimateOneRepMax, repsInReserve } from "@/lib/autoregulation/rpe-tables";
-import { computeAcwr, type DailyLoad } from "@/lib/analytics/acwr";
+import { computeAcwr, computeMonotony, type DailyLoad } from "@/lib/analytics/acwr";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { WeightChart } from "@/components/data/weight-chart";
 import { ProgressionChart } from "@/components/data/progression-chart";
 import { LoadMatrix, type LoadMatrixSession } from "@/components/data/load-matrix";
 import { AcwrCard } from "@/components/data/acwr-card";
 import { ProgressPhotoGallery } from "@/components/data/progress-photo-gallery";
+import { PlanVsActual, type PlanVsActualRow } from "@/components/data/plan-vs-actual";
 
 export default async function DataPage() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ export default async function DataPage() {
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
   twentyEightDaysAgo.setHours(0, 0, 0, 0);
 
-  const [{ data: bodyMetrics }, { data: history }, { data: recentSets }, { data: photoRows }] = await Promise.all([
+  const [{ data: bodyMetrics }, { data: history }, { data: recentSets }, { data: photoRows }, { data: activeMeso }, { data: liveRoutines }] = await Promise.all([
     supabase
       .from("body_metrics")
       .select("log_date, weight_kg, body_fat_pct")
@@ -42,7 +43,57 @@ export default async function DataPage() {
       .not("photo_path", "is", null)
       .order("log_date", { ascending: false })
       .limit(60),
+    supabase.from("mesocycles").select("*, microcycles(*)").eq("status", "active").maybeSingle(),
+    supabase
+      .from("routines")
+      .select(
+        "day_label, title, routine_exercises(exercise_id, exercises(name), target_sets(target_weight_kg, target_reps_min, target_reps_max))",
+      )
+      .is("microcycle_id", null),
   ]);
+
+  const activeMicro = (activeMeso?.microcycles ?? []).find((m) => m.status === "active");
+
+  const planRowsBase: Array<Omit<PlanVsActualRow, "lastLoggedKg"> & { exerciseId: string }> = [];
+  for (const r of liveRoutines ?? []) {
+    for (const re of r.routine_exercises ?? []) {
+      const t = re.target_sets?.[0];
+      if (!t || t.target_weight_kg == null) continue;
+      planRowsBase.push({
+        dayLabel: r.day_label ?? r.title,
+        exerciseId: re.exercise_id,
+        exerciseName: re.exercises?.name ?? "Ejercicio",
+        targetWeightKg: t.target_weight_kg,
+        targetRepsMin: t.target_reps_min,
+        targetRepsMax: t.target_reps_max,
+      });
+    }
+  }
+
+  const uniqueExerciseIds = [...new Set(planRowsBase.map((p) => p.exerciseId))];
+  const lastLoggedByExercise = new Map<string, number>();
+  await Promise.all(
+    uniqueExerciseIds.map(async (exId) => {
+      const { data: lastSet } = await supabase
+        .from("set_logs")
+        .select("weight_kg, completed_at, workout_exercises!inner(exercise_id)")
+        .eq("workout_exercises.exercise_id", exId)
+        .not("weight_kg", "is", null)
+        .order("completed_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (lastSet?.weight_kg != null) lastLoggedByExercise.set(exId, lastSet.weight_kg);
+    }),
+  );
+
+  const planVsActualRows: PlanVsActualRow[] = planRowsBase.map((p) => ({
+    dayLabel: p.dayLabel,
+    exerciseName: p.exerciseName,
+    targetWeightKg: p.targetWeightKg,
+    targetRepsMin: p.targetRepsMin,
+    targetRepsMax: p.targetRepsMax,
+    lastLoggedKg: lastLoggedByExercise.get(p.exerciseId) ?? null,
+  }));
 
   const photos = await Promise.all(
     (photoRows ?? []).map(async (row) => {
@@ -71,6 +122,7 @@ export default async function DataPage() {
     return { date: key, load: loadByDay.get(key) ?? 0 };
   });
   const acwr = computeAcwr(dailyLoads);
+  const monotony = computeMonotony(dailyLoads);
 
   const weightPoints = (bodyMetrics ?? [])
     .filter((m) => m.weight_kg != null)
@@ -177,7 +229,20 @@ export default async function DataPage() {
             ratio={acwr.ratio}
             zone={acwr.zone}
             dailyLoads={dailyLoads}
+            monotony={monotony.monotony}
+            strain={monotony.strain}
+            monotonyZone={monotony.zone}
           />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold uppercase tracking-wide">Plan vs. Real</CardTitle>
+          <CardDescription>Objetivo de esta semana vs. tu último registro, por ejercicio.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PlanVsActual rows={planVsActualRows} weekNumber={activeMicro?.week_number ?? null} />
         </CardContent>
       </Card>
 

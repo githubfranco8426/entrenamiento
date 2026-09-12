@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { addDays, formatISO } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedUser } from "@/lib/supabase/get-authenticated-user";
 import type { MesocyclePhase } from "@/lib/types/database";
 
 interface MesocycleBody {
@@ -25,9 +26,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser(supabase);
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const body = (await request.json()) as MesocycleBody;

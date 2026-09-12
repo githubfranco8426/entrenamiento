@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { repsInReserve } from "@/lib/autoregulation/rpe-tables";
+import type { AcwrZone } from "@/lib/analytics/acwr";
 import { fetchWithAuthRetry } from "@/lib/supabase/fetch-with-auth-retry";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -141,12 +142,17 @@ export function WorkoutSession({
   workout,
   allExercises,
   estimatedOneRepMaxByExercise,
+  acwr,
+  nextRoutineLabel,
 }: {
   workout: WorkoutData;
   allExercises: ExerciseOption[];
   estimatedOneRepMaxByExercise: Record<string, number>;
+  acwr: { ratio: number; zone: AcwrZone | null } | null;
+  nextRoutineLabel: string | null;
 }) {
   const router = useRouter();
+  const restTimer = useRestTimer();
   const [blocks, setBlocks] = useState<Block[]>(() => buildInitialBlocks(workout));
   const [extraRowsByBlock, setExtraRowsByBlock] = useState<Record<string, number>>({});
   const [ended, setEnded] = useState(!!workout.ended_at);
@@ -236,6 +242,7 @@ export function WorkoutSession({
     if (targetSet?.target_rpe) {
       const targetReps = targetSet.target_reps_max ?? targetSet.target_reps_min ?? reps;
       // Fire-and-forget: la sugerencia de autoregulación no debe bloquear el siguiente set.
+      // Se muestra en el widget de descanso (persistente) en vez de un toast que desaparece solo.
       fetchWithAuthRetry("/api/autoregulate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -250,7 +257,7 @@ export function WorkoutSession({
         }),
       })
         .then((autoRes) => (autoRes.ok ? autoRes.json() : null))
-        .then((suggestion) => suggestion && toast.info(suggestion.rationale))
+        .then((suggestion) => suggestion && restTimer.setNote(suggestion.rationale))
         .catch(() => {});
     } else {
       toast.success("Set registrado");
@@ -336,6 +343,8 @@ export function WorkoutSession({
     setEnded(true);
     setEndedAt(updated.ended_at);
     toast.success("¡Entrenamiento finalizado! Acá tenés tu informe.");
+    // Refresca los datos del servidor (ACWR, etc.) para que incluyan las series recién registradas.
+    router.refresh();
   }
 
   async function reopenWorkout() {
@@ -409,6 +418,8 @@ export function WorkoutSession({
             loggedSets: b.loggedSets,
             estimatedOneRepMaxKg: estimatedOneRepMaxByExercise[b.exerciseId] ?? null,
           }))}
+          acwr={acwr}
+          nextRoutineLabel={nextRoutineLabel}
         />
       )}
 
@@ -741,7 +752,7 @@ function SetRow({
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
             placeholder={defaultWeight || "-"}
-            className="h-9 w-20 rounded-md border border-border bg-card text-center font-mono text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            className="h-12 w-24 rounded-md border border-border bg-card text-center font-mono text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
           />
           <span className="font-mono text-xs text-muted-foreground">kg</span>
         </div>
@@ -751,7 +762,7 @@ function SetRow({
         <button
           type="button"
           onClick={() => stepReps(-1)}
-          className="flex size-10 items-center justify-center rounded-full bg-card text-foreground hover:bg-muted active:scale-90"
+          className="flex size-12 items-center justify-center rounded-full bg-card text-foreground hover:bg-muted active:scale-90"
         >
           <MinusIcon className="size-5" />
         </button>
@@ -762,7 +773,7 @@ function SetRow({
         <button
           type="button"
           onClick={() => stepReps(1)}
-          className="flex size-10 items-center justify-center rounded-full bg-card text-primary hover:bg-muted active:scale-90"
+          className="flex size-12 items-center justify-center rounded-full bg-card text-primary hover:bg-muted active:scale-90"
         >
           <PlusIcon className="size-5" />
         </button>
@@ -791,9 +802,9 @@ function SetRow({
         type="button"
         onClick={handleDone}
         disabled={submitting}
-        className="w-full gap-2 font-semibold"
+        className="h-12 w-full gap-2 text-base font-semibold"
       >
-        <CheckIcon className="size-4" />
+        <CheckIcon className="size-5" />
         Registrar set {index + 1} ({reps || "-"} reps @ {weight || "-"}kg)
       </Button>
     </div>
@@ -837,14 +848,14 @@ function DoneSetRow({
               setEditing(true);
             }}
             aria-label="Editar set"
-            className="flex size-6 items-center justify-center justify-self-center rounded-md bg-primary text-primary-foreground hover:bg-primary/80"
+            className="flex size-8 items-center justify-center justify-self-center rounded-md bg-primary text-primary-foreground hover:bg-primary/80"
           >
-            <PencilIcon className="size-3.5" />
+            <PencilIcon className="size-4" />
           </button>
         ) : (
           <span className="flex justify-center">
-            <span className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <CheckIcon className="size-3.5" />
+            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <CheckIcon className="size-4" />
             </span>
           </span>
         )}
@@ -882,7 +893,7 @@ function DoneSetRow({
         inputMode="decimal"
         value={weight}
         onChange={(e) => setWeight(e.target.value)}
-        className="h-8 w-16 rounded-md border border-border bg-card text-center font-mono text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+        className="h-10 w-16 rounded-md border border-border bg-card text-center font-mono text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
       />
       <span className="font-mono text-xs text-muted-foreground">kg ×</span>
       <input
@@ -890,7 +901,7 @@ function DoneSetRow({
         inputMode="numeric"
         value={reps}
         onChange={(e) => setReps(e.target.value)}
-        className="h-8 w-14 rounded-md border border-border bg-card text-center font-mono text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+        className="h-10 w-14 rounded-md border border-border bg-card text-center font-mono text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
       />
       <span className="font-mono text-xs text-muted-foreground">reps · RIR</span>
       <input
@@ -900,7 +911,7 @@ function DoneSetRow({
         inputMode="numeric"
         value={rir}
         onChange={(e) => setRir(e.target.value)}
-        className="h-8 w-12 rounded-md border border-secondary/40 bg-secondary/10 text-center font-mono text-sm text-secondary outline-none focus:border-secondary focus:ring-1 focus:ring-secondary"
+        className="h-10 w-12 rounded-md border border-secondary/40 bg-secondary/10 text-center font-mono text-sm text-secondary outline-none focus:border-secondary focus:ring-1 focus:ring-secondary"
       />
       <div className="ml-auto flex items-center gap-1.5">
         <button
@@ -908,7 +919,7 @@ function DoneSetRow({
           onClick={handleDelete}
           disabled={saving}
           aria-label="Borrar set"
-          className="flex size-8 items-center justify-center rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10 disabled:opacity-40"
+          className="flex size-9 items-center justify-center rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10 disabled:opacity-40"
         >
           <TrashIcon className="size-4" />
         </button>
@@ -917,7 +928,7 @@ function DoneSetRow({
           onClick={() => setEditing(false)}
           disabled={saving}
           aria-label="Cancelar"
-          className="flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted disabled:opacity-40"
+          className="flex size-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted disabled:opacity-40"
         >
           <XIcon className="size-4" />
         </button>
@@ -926,7 +937,7 @@ function DoneSetRow({
           onClick={handleSave}
           disabled={saving}
           aria-label="Guardar"
-          className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/80 disabled:opacity-40"
+          className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/80 disabled:opacity-40"
         >
           <CheckIcon className="size-4" />
         </button>

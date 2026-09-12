@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedUser } from "@/lib/supabase/get-authenticated-user";
 import type { SetType } from "@/lib/types/database";
 
 interface LogSetBody {
@@ -31,9 +32,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: workoutId } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser(supabase);
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const body = (await request.json()) as LogSetBody;

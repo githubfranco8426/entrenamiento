@@ -72,10 +72,23 @@ export async function buildPeriodizationContext(
     energyLevel: r.energy_level,
   }));
 
-  const { data: routines } = await supabase
+  // Las rutinas del microciclo activo son las que la IA generó y aprobó antes. Si todavía
+  // no hay ninguna (primera vez, o el usuario entrena con rutinas propias sin microciclo
+  // asignado), usamos esas rutinas "sueltas" como base — si no, la IA arma la propuesta
+  // sin ver los pesos/series reales que el atleta está levantando.
+  const { data: microcycleRoutines } = await supabase
     .from("routines")
     .select("*, routine_exercises(*, exercises(name), target_sets(*))")
     .eq("microcycle_id", microcycle?.id ?? "__none__");
+
+  let routines = microcycleRoutines;
+  if (!routines || routines.length === 0) {
+    const { data: standaloneRoutines } = await supabase
+      .from("routines")
+      .select("*, routine_exercises(*, exercises(name), target_sets(*))")
+      .is("microcycle_id", null);
+    routines = standaloneRoutines;
+  }
 
   const currentTargets: RoutineTargetSnapshot[] = (routines ?? []).map((r) => ({
     dayLabel: r.day_label ?? r.title,

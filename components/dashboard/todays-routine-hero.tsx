@@ -6,6 +6,7 @@ interface TargetSet {
   target_reps_min: number | null;
   target_reps_max: number | null;
   target_rpe: number | null;
+  target_weight_kg: number | null;
 }
 
 interface RoutineExercise {
@@ -103,6 +104,7 @@ export function TodaysRoutineHero({
               first?.target_reps_min != null && first?.target_reps_max != null
                 ? `${re.target_sets.length}x${first.target_reps_min}-${first.target_reps_max}`
                 : `${re.target_sets.length} series`;
+            const weightLabel = first?.target_weight_kg != null ? `${first.target_weight_kg} kg` : null;
             return (
               <div
                 key={`${re.exercise_id}-${i}`}
@@ -117,7 +119,14 @@ export function TodaysRoutineHero({
                   <p className="truncate text-sm font-semibold">{re.exercises?.name ?? "Ejercicio"}</p>
                   <p className="text-xs text-muted-foreground">{re.notes ?? repsLabel}</p>
                 </div>
-                <span className="whitespace-nowrap font-mono text-xs text-secondary">{repsLabel}</span>
+                <div className="flex flex-col items-end gap-0.5">
+                  <span className="whitespace-nowrap font-mono text-xs text-secondary">{repsLabel}</span>
+                  {weightLabel && (
+                    <span className="whitespace-nowrap font-mono text-xs font-bold text-primary">
+                      {weightLabel}
+                    </span>
+                  )}
+                </div>
               </div>
             );
           })}

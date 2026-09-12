@@ -19,6 +19,11 @@ import { WeeklyActivity } from "@/components/dashboard/weekly-activity";
 import { WeeklyVolume } from "@/components/dashboard/weekly-volume";
 import { StagnationAlert, type StagnantExercise } from "@/components/dashboard/stagnation-alert";
 import { DeleteButton } from "@/components/ui/delete-button";
+import { RunReviewCard } from "@/components/ai/run-review-card";
+import { PeriodizationDecisionSchema } from "@/lib/ai/schema";
+import { AcwrAlert } from "@/components/dashboard/acwr-alert";
+import { computeAcwr, type DailyLoad } from "@/lib/analytics/acwr";
+import { pickNextRoutine } from "@/lib/utils/next-routine";
 
 const PHASE_LABELS: Record<string, string> = {
   acumulacion: "Acumulación",
@@ -41,6 +46,7 @@ export default async function DashboardPage() {
     { data: workouts },
     { data: activeMeso },
     { data: weekSets },
+    { data: pendingRuns },
   ] = await Promise.all([
     supabase.from("user_settings").select("*").maybeSingle(),
     supabase.from("readiness_logs").select("*").eq("log_date", today).maybeSingle(),
@@ -62,7 +68,43 @@ export default async function DashboardPage() {
       .select("completed_at, workout_exercises(exercises(muscle_group))")
       .gte("completed_at", weekStart)
       .lte("completed_at", weekEnd),
+    supabase
+      .from("ai_periodization_runs")
+      .select("id, triggered_at, raw_output")
+      .eq("status", "pending_review")
+      .order("triggered_at", { ascending: false })
+      .limit(1),
   ]);
+
+  const pendingRun = pendingRuns?.[0];
+  const pendingDecision = pendingRun
+    ? PeriodizationDecisionSchema.safeParse(pendingRun.raw_output)
+    : null;
+
+  const twentyEightDaysAgo = new Date();
+  twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
+  twentyEightDaysAgo.setHours(0, 0, 0, 0);
+  const { data: acwrSets } = await supabase
+    .from("set_logs")
+    .select("weight_kg, reps, completed_at")
+    .not("weight_kg", "is", null)
+    .not("reps", "is", null)
+    .gte("completed_at", twentyEightDaysAgo.toISOString())
+    .limit(2000);
+
+  const loadByDay = new Map<string, number>();
+  for (const s of acwrSets ?? []) {
+    const day = s.completed_at.slice(0, 10);
+    const load = (s.weight_kg ?? 0) * (s.reps ?? 0);
+    loadByDay.set(day, (loadByDay.get(day) ?? 0) + load);
+  }
+  const dailyLoads: DailyLoad[] = Array.from({ length: 28 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (27 - i));
+    return { date: d.toISOString().slice(0, 10), load: loadByDay.get(d.toISOString().slice(0, 10)) ?? 0 };
+  });
+  const acwr = computeAcwr(dailyLoads);
+  const acwrAlertZone = acwr.zone === "riesgo" || acwr.zone === "precaucion" ? acwr.zone : null;
 
   const { data: weekWorkouts } = await supabase
     .from("workouts")
@@ -79,24 +121,11 @@ export default async function DashboardPage() {
 
   const activeMicro = (activeMeso?.microcycles ?? []).find((m) => m.status === "active");
 
-  const lastTrainedByRoutine = new Map<string, string>();
-  for (const w of workouts ?? []) {
-    if (w.routine_id && !lastTrainedByRoutine.has(w.routine_id)) {
-      lastTrainedByRoutine.set(w.routine_id, w.started_at);
-    }
-  }
-  const nextRoutine = [...(routines ?? [])].sort((a, b) => {
-    const da = lastTrainedByRoutine.get(a.id);
-    const db = lastTrainedByRoutine.get(b.id);
-    if (!da && !db) return 0;
-    if (!da) return -1;
-    if (!db) return 1;
-    return da.localeCompare(db);
-  })[0];
+  const nextRoutine = pickNextRoutine(routines ?? [], workouts ?? []);
 
   const daysSinceLastTrained = nextRoutine
     ? (() => {
-        const last = lastTrainedByRoutine.get(nextRoutine.id);
+        const last = (workouts ?? []).find((w) => w.routine_id === nextRoutine.id)?.started_at;
         return last ? differenceInCalendarDays(new Date(), new Date(last)) : null;
       })()
     : null;
@@ -192,6 +221,24 @@ export default async function DashboardPage() {
           </p>
         </div>
       </div>
+
+      {acwrAlertZone && acwr.ratio != null && <AcwrAlert ratio={acwr.ratio} zone={acwrAlertZone} />}
+
+      {pendingDecision?.success && pendingRun && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <SparklesIcon className="size-4 text-primary" />
+            <h2 className="font-heading text-sm font-bold uppercase tracking-wide text-primary">
+              Nueva propuesta de progresión — revisala
+            </h2>
+          </div>
+          <RunReviewCard
+            runId={pendingRun.id}
+            triggeredAt={pendingRun.triggered_at}
+            decision={pendingDecision.data}
+          />
+        </div>
+      )}
 
       <StagnationAlert exercises={stagnantExercises} />
 
