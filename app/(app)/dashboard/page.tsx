@@ -5,6 +5,7 @@ import {
   endOfISOWeek,
   eachDayOfInterval,
   differenceInCalendarDays,
+  isSameDay,
 } from "date-fns";
 import { es } from "date-fns/locale";
 import { SettingsIcon, SparklesIcon } from "lucide-react";
@@ -22,6 +23,7 @@ import { DeleteButton } from "@/components/ui/delete-button";
 import { RunReviewCard } from "@/components/ai/run-review-card";
 import { PeriodizationDecisionSchema } from "@/lib/ai/schema";
 import { AcwrAlert } from "@/components/dashboard/acwr-alert";
+import { DaySummaryRings } from "@/components/dashboard/day-summary-rings";
 import { computeAcwr, type DailyLoad } from "@/lib/analytics/acwr";
 import { pickNextRoutine } from "@/lib/utils/next-routine";
 
@@ -114,6 +116,7 @@ export default async function DashboardPage() {
 
   const weekDays = eachDayOfInterval({ start: startOfISOWeek(new Date()), end: endOfISOWeek(new Date()) });
   const trainedDates = (weekWorkouts ?? []).map((w) => new Date(w.started_at));
+  const trainedCount = weekDays.filter((d) => trainedDates.some((t) => isSameDay(t, d))).length;
 
   const defaultShiftType = settings?.shift_anchor_date
     ? shiftTypeForDate(new Date(today), new Date(settings.shift_anchor_date))
@@ -221,6 +224,14 @@ export default async function DashboardPage() {
           </p>
         </div>
       </div>
+
+      <DaySummaryRings
+        energyLevel={readiness?.energy_level ?? null}
+        trainedDays={trainedCount}
+        totalDays={weekDays.length}
+        acwrRatio={acwr.ratio}
+        acwrZone={acwr.zone}
+      />
 
       {acwrAlertZone && acwr.ratio != null && <AcwrAlert ratio={acwr.ratio} zone={acwrAlertZone} />}
 

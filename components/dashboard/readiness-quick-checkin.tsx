@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { BatteryMedium, Moon, Dumbbell, Sparkles, ChevronDown } from "lucide-react";
+import { BatteryMedium, Sparkles, ChevronDown } from "lucide-react";
 import { willTrainByDefault } from "@/lib/utils/shift-pattern";
 import { ReadinessForm } from "@/components/dashboard/readiness-form";
+import { StatRing } from "@/components/dashboard/stat-ring";
 import type { ShiftType } from "@/lib/types/database";
 
 interface ReadinessLogData {
@@ -26,20 +27,6 @@ const ENERGY_OPTIONS = [
   { label: "Media", value: 3 },
   { label: "A tope", value: 5 },
 ] as const;
-
-function sleepVerdict(hours: number | null): string {
-  if (hours == null) return "Sin registrar";
-  if (hours >= 7) return "😴 Reparador";
-  if (hours >= 5.5) return "🙂 Aceptable";
-  return "⚠️ Corto";
-}
-
-function sorenessVerdict(level: number | null): string {
-  if (level == null) return "Sin registrar";
-  if (level <= 2) return "💪 Fresco";
-  if (level <= 3) return "🙂 Liviano";
-  return "🔥 Cargado";
-}
 
 export function ReadinessQuickCheckin({
   today,
@@ -126,27 +113,23 @@ export function ReadinessQuickCheckin({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <div className="flex flex-col gap-1 rounded-lg bg-muted/60 p-3">
-          <span className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-            <Moon className="size-[15px] text-secondary" />
-            Descanso
-          </span>
-          <span className="font-heading text-sm font-semibold">
-            {initial?.sleep_hours != null ? `${initial.sleep_hours}h` : "—"}
-          </span>
-          <span className="text-xs text-secondary">{sleepVerdict(initial?.sleep_hours ?? null)}</span>
-        </div>
-        <div className="flex flex-col gap-1 rounded-lg bg-muted/60 p-3">
-          <span className="flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-            <Dumbbell className="size-[15px] text-primary" />
-            Cuerpo
-          </span>
-          <span className="font-heading text-sm font-semibold">
-            {initial?.muscle_soreness != null ? `Dolor ${initial.muscle_soreness}/5` : "—"}
-          </span>
-          <span className="text-xs text-primary">{sorenessVerdict(initial?.muscle_soreness ?? null)}</span>
-        </div>
+      <div className="flex items-center justify-around py-1">
+        <StatRing
+          size={64}
+          strokeWidth={5}
+          pct={initial?.sleep_hours != null ? Math.min(100, (initial.sleep_hours / 9) * 100) : 0}
+          value={initial?.sleep_hours != null ? `${initial.sleep_hours}h` : "—"}
+          label="Sueño"
+          color="var(--secondary)"
+        />
+        <StatRing
+          size={64}
+          strokeWidth={5}
+          pct={initial?.muscle_soreness != null ? (1 - (initial.muscle_soreness - 1) / 4) * 100 : 0}
+          value={initial?.muscle_soreness != null ? `${initial.muscle_soreness}/5` : "—"}
+          label="Frescura"
+          color="var(--primary)"
+        />
       </div>
 
       {aiNote && (

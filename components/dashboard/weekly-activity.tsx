@@ -1,26 +1,14 @@
-import { format, isSameDay } from "date-fns";
+import { isSameDay, format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { CheckIcon, DumbbellIcon, FlameIcon } from "lucide-react";
+import { CheckIcon, DumbbellIcon } from "lucide-react";
 
 const DAY_LETTERS = ["L", "M", "M", "J", "V", "S", "D"];
 
 export function WeeklyActivity({ weekDays, trainedDates }: { weekDays: Date[]; trainedDates: Date[] }) {
   const today = new Date();
-  const trainedCount = weekDays.filter((d) => trainedDates.some((t) => isSameDay(t, d))).length;
 
   return (
-    <section className="flex flex-col gap-gutter-md rounded-xl bg-card p-container-padding ring-1 ring-border">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="font-heading text-headline-md font-bold">Tu semana activa</h3>
-          <p className="text-xs text-muted-foreground">Constancia sin presiones ni culpas</p>
-        </div>
-        <div className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-1">
-          <FlameIcon className="size-4 text-primary" />
-          <span className="text-sm font-semibold text-primary">{trainedCount} de {weekDays.length} días</span>
-        </div>
-      </div>
-
+    <section className="flex flex-col gap-2">
       <div className="grid grid-cols-7 gap-1.5 py-1">
         {weekDays.map((day, i) => {
           const trained = trainedDates.some((t) => isSameDay(t, day));
