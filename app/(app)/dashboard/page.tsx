@@ -8,7 +8,7 @@ import {
   isSameDay,
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { SettingsIcon, SparklesIcon } from "lucide-react";
+import { SettingsIcon, SparklesIcon, ClockIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { shiftTypeForDate } from "@/lib/utils/shift-pattern";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -33,6 +33,13 @@ const PHASE_LABELS: Record<string, string> = {
   deload: "Deload",
   realizacion: "Realización",
 };
+
+function workoutDurationLabel(startedAt: string, endedAt: string | null): string | null {
+  if (!endedAt) return null;
+  const minutes = Math.max(0, Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 60000));
+  if (minutes < 60) return `${minutes} min`;
+  return `${Math.floor(minutes / 60)}h ${minutes % 60}min`;
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -314,7 +321,12 @@ export default async function DashboardPage() {
             <CardTitle>Todas las rutinas</CardTitle>
             <CardDescription>Iniciá un entrenamiento desde cualquier rutina, o uno libre.</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-2">
+          <CardContent className="flex flex-col gap-3">
+            <StartWorkoutButton
+              className="w-full justify-start gap-2 bg-muted text-foreground hover:bg-accent"
+              label="Empezar entreno libre"
+            />
+
             {(routines ?? []).length === 0 && (
               <p className="text-sm text-muted-foreground">
                 Todavía no hay rutinas. Creá una en{" "}
@@ -324,18 +336,27 @@ export default async function DashboardPage() {
                 .
               </p>
             )}
-            {(routines ?? []).map((r) => (
-              <div key={r.id} className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2">
-                <div>
-                  <p className="text-sm font-medium">{r.title}</p>
-                  {r.day_label && <p className="text-xs text-muted-foreground">{r.day_label}</p>}
+            {(routines ?? []).map((r) => {
+              const exerciseNames = (r.routine_exercises ?? [])
+                .map((re) => re.exercises?.name)
+                .filter((name): name is string => !!name);
+              return (
+                <div key={r.id} className="flex flex-col gap-2.5 rounded-lg bg-muted/60 p-3">
+                  <div>
+                    <p className="text-sm font-semibold">{r.title}</p>
+                    {r.day_label && (
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                        {r.day_label}
+                      </p>
+                    )}
+                    {exerciseNames.length > 0 && (
+                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{exerciseNames.join(", ")}</p>
+                    )}
+                  </div>
+                  <StartWorkoutButton routineId={r.id} className="w-full" label="Iniciar rutina" />
                 </div>
-                <StartWorkoutButton routineId={r.id} />
-              </div>
-            ))}
-            <div className="flex justify-end pt-1">
-              <StartWorkoutButton />
-            </div>
+              );
+            })}
           </CardContent>
         </Card>
       </div>
@@ -348,25 +369,41 @@ export default async function DashboardPage() {
           {(workouts ?? []).length === 0 && (
             <p className="text-sm text-muted-foreground">Todavía no registraste ningún entrenamiento.</p>
           )}
-          {(workouts ?? []).map((w) => (
-            <div key={w.id} className="flex items-center gap-2">
-              <Link
-                href={`/workouts/${w.id}`}
-                className="flex flex-1 items-center justify-between rounded-lg border px-3 py-2 text-sm hover:bg-muted"
-              >
-                <span>{w.routines?.title ?? "Entreno libre"}</span>
-                <span className="font-mono text-muted-foreground">
-                  {format(new Date(w.started_at), "dd/MM/yyyy HH:mm")}
-                  {!w.ended_at && " · en curso"}
-                </span>
-              </Link>
-              <DeleteButton
-                endpoint={`/api/workouts/${w.id}`}
-                confirmMessage={`¿Borrar el entrenamiento "${w.routines?.title ?? "Entreno libre"}" del ${format(new Date(w.started_at), "dd/MM/yyyy")}? Esta acción no se puede deshacer.`}
-                successMessage="Entrenamiento borrado"
-              />
-            </div>
-          ))}
+          {(workouts ?? []).map((w) => {
+            const duration = workoutDurationLabel(w.started_at, w.ended_at);
+            return (
+              <div key={w.id} className="flex items-center gap-2">
+                <Link
+                  href={`/workouts/${w.id}`}
+                  className="flex flex-1 items-center gap-2.5 rounded-lg bg-muted/60 px-3 py-2.5 text-sm transition-colors hover:bg-accent"
+                >
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-card text-secondary">
+                    <ClockIcon className="size-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{w.routines?.title ?? "Entreno libre"}</p>
+                    <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {format(new Date(w.started_at), "dd/MM/yyyy · HH:mm")}
+                    </p>
+                  </div>
+                  {!w.ended_at ? (
+                    <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-primary">
+                      En curso
+                    </span>
+                  ) : (
+                    duration && (
+                      <span className="shrink-0 font-mono text-xs text-muted-foreground">{duration}</span>
+                    )
+                  )}
+                </Link>
+                <DeleteButton
+                  endpoint={`/api/workouts/${w.id}`}
+                  confirmMessage={`¿Borrar el entrenamiento "${w.routines?.title ?? "Entreno libre"}" del ${format(new Date(w.started_at), "dd/MM/yyyy")}? Esta acción no se puede deshacer.`}
+                  successMessage="Entrenamiento borrado"
+                />
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
     </div>
