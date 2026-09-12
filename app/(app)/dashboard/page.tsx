@@ -8,9 +8,10 @@ import {
   isSameDay,
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { SettingsIcon, SparklesIcon, ClockIcon, CheckCircleIcon } from "lucide-react";
+import { SettingsIcon, SparklesIcon, ClockIcon, CheckCircleIcon, UtensilsIcon, ChevronRightIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { shiftTypeForDate } from "@/lib/utils/shift-pattern";
+import { MEAL_PLAN_BY_SHIFT } from "@/lib/nutrition/plan";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ReadinessQuickCheckin } from "@/components/dashboard/readiness-quick-checkin";
 import { BodyMetricForm } from "@/components/dashboard/body-metric-form";
@@ -240,6 +241,20 @@ export default async function DashboardPage() {
         acwrRatio={acwr.ratio}
         acwrZone={acwr.zone}
       />
+
+      <Link
+        href="/nutricion"
+        className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)] transition-colors hover:bg-accent"
+      >
+        <UtensilsIcon className="size-5 shrink-0 text-primary" />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium">Nutrición</p>
+          <p className="truncate text-xs text-muted-foreground">
+            {MEAL_PLAN_BY_SHIFT[defaultShiftType].totalKcal} kcal de plan hoy
+          </p>
+        </div>
+        <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" />
+      </Link>
 
       {acwrAlertZone && acwr.ratio != null && <AcwrAlert ratio={acwr.ratio} zone={acwrAlertZone} />}
 
