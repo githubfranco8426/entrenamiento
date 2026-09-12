@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getAuthenticatedUser } from "@/lib/supabase/get-authenticated-user";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { SettingsForm } from "@/components/settings/settings-form";
 import { CoachRequests } from "@/components/coach/coach-requests";
+import { NutritionPlanCard } from "@/components/settings/nutrition-plan-card";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -18,6 +20,15 @@ export default async function SettingsPage() {
       .limit(1)
       .maybeSingle(),
   ]);
+
+  let nutritionPlanUrl: string | null = null;
+  if (user) {
+    const admin = createAdminClient();
+    const { data: signed } = await admin.storage
+      .from("documents")
+      .createSignedUrl(`${user.id}/plan-nutricional.pdf`, 60 * 10);
+    nutritionPlanUrl = signed?.signedUrl ?? null;
+  }
 
   return (
     <div className="flex max-w-lg flex-col gap-6">
@@ -48,6 +59,15 @@ export default async function SettingsPage() {
           </CardContent>
         </Card>
       )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Nutrición</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <NutritionPlanCard url={nutritionPlanUrl} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
