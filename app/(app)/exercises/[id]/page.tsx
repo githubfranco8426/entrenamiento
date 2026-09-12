@@ -96,6 +96,9 @@ export default async function ExerciseDetailPage({ params }: { params: Promise<{
         <CardContent>
           <ExerciseBiomechanicsForm
             exerciseId={exercise.id}
+            exerciseName={exercise.name}
+            muscleGroup={exercise.muscle_group}
+            equipment={exercise.equipment}
             initialCues={exercise.cues}
             initialNotes={exercise.biomechanics_notes}
           />

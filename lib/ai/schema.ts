@@ -37,3 +37,10 @@ export const PeriodizationDecisionSchema = z.object({
 export type PeriodizationDecision = z.infer<typeof PeriodizationDecisionSchema>;
 export type RoutineTarget = z.infer<typeof RoutineTargetSchema>;
 export type ExerciseTarget = z.infer<typeof ExerciseTargetSchema>;
+
+export const ExerciseCuesSchema = z.object({
+  cues: z.array(z.string()).min(2).max(6),
+  biomechanicsNotes: z.string(),
+});
+
+export type ExerciseCues = z.infer<typeof ExerciseCuesSchema>;

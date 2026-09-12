@@ -3,23 +3,51 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { SparklesIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export function ExerciseBiomechanicsForm({
   exerciseId,
+  exerciseName,
+  muscleGroup,
+  equipment,
   initialCues,
   initialNotes,
 }: {
   exerciseId: string;
+  exerciseName: string;
+  muscleGroup: string | null;
+  equipment: string | null;
   initialCues: string[] | null;
   initialNotes: string | null;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [cuesText, setCuesText] = useState((initialCues ?? []).join("\n"));
   const [notes, setNotes] = useState(initialNotes ?? "");
+
+  async function handleGenerate() {
+    setGenerating(true);
+    const res = await fetch("/api/ai/exercise-cues", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ exerciseName, muscleGroup, equipment }),
+    });
+    setGenerating(false);
+
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
+      toast.error(error);
+      return;
+    }
+    const { cues, biomechanicsNotes } = await res.json();
+    setCuesText(cues.join("\n"));
+    setNotes(biomechanicsNotes);
+    toast.success("Sugerencia generada — revisá y guardá si te sirve");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,6 +79,18 @@ export function ExerciseBiomechanicsForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="w-fit gap-1.5"
+        disabled={generating}
+        onClick={handleGenerate}
+      >
+        <SparklesIcon className="size-3.5" />
+        {generating ? "Generando..." : "Generar con IA"}
+      </Button>
+
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="ex-cues">Puntos clave de ejecución (uno por línea)</Label>
         <Textarea
