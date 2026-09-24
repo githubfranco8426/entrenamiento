@@ -51,7 +51,8 @@ export function TodaysRoutineHero({
 
   return (
     <section className="relative flex flex-col gap-gutter-md overflow-hidden rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
-      <div className="pointer-events-none absolute -right-12 -top-12 size-48 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-12 -top-12 size-64 rounded-full bg-primary/15 blur-3xl" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-primary to-secondary" />
 
       <div className="flex items-center justify-between">
         <span className="rounded-full bg-primary/15 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
