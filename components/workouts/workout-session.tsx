@@ -419,48 +419,85 @@ export function WorkoutSession({
 
   const availableExercises = allExercises.filter((e) => !blocks.some((b) => b.exerciseId === e.id));
   const availableExerciseItems = Object.fromEntries(availableExercises.map((e) => [e.id, e.name]));
+  const completedSetCount = blocks.reduce((total, block) => total + block.loggedSets.length, 0);
+  const plannedSetCount = blocks.reduce((total, block) => total + block.targetSets.length, 0);
+  const activeBlockKey = !ended
+    ? blocks.find((block) => block.loggedSets.length < block.targetSets.length)?.key ?? null
+    : null;
+  const progressPct = plannedSetCount > 0 ? Math.min(100, Math.round((completedSetCount / plannedSetCount) * 100)) : 0;
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-            {workout.routines?.day_label ?? "Entreno libre"}
-          </p>
-          <h1 className="font-heading text-xl font-bold uppercase tracking-tight">
-            {workout.routines?.title ?? "Entreno libre"}
-          </h1>
-          <p className="font-mono text-xs text-muted-foreground">
-            {format(new Date(workout.started_at), "dd/MM/yyyy HH:mm")}
-          </p>
-          {!ended && <WorkoutStopwatch startedAt={workout.started_at} />}
-        </div>
-        {ended ? (
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary">Finalizado</Badge>
-            <Button variant="outline" size="sm" onClick={reopenWorkout} disabled={reopening} className="gap-1.5">
-              <RotateCcwIcon className="size-3.5" />
-              {reopening ? "Reabriendo..." : "Reabrir"}
-            </Button>
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-container-padding shadow-[0_12px_28px_-16px_rgba(0,0,0,0.9)]">
+        {!ended && <div className="absolute inset-x-0 top-0 h-1 bg-primary" />}
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <div className="mb-2 flex items-center gap-2">
+              <span className={cn("size-2 rounded-full", ended ? "bg-muted-foreground" : "animate-pulse bg-primary")} />
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+                {ended ? "Sesión finalizada" : "Sesión en vivo"} · {workout.routines?.day_label ?? "Entreno libre"}
+              </p>
+            </div>
+            <h1 className="font-heading text-2xl font-bold uppercase tracking-tight sm:text-3xl">
+              {workout.routines?.title ?? "Entreno libre"}
+            </h1>
+            <p className="mt-1 font-mono text-xs text-muted-foreground">
+              Inicio · {format(new Date(workout.started_at), "dd/MM/yyyy HH:mm")}
+            </p>
           </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={cancelWorkout}
-              disabled={cancelling || finishing}
-              aria-label="Cancelar entrenamiento"
-              title={hasLoggedSets ? "Anula el entrenamiento y borra las series ya registradas" : "Anula el entrenamiento"}
-            >
-              <XIcon className="size-4" />
-              {cancelling ? "Anulando..." : "Cancelar"}
-            </Button>
-            <Button onClick={finishWorkout} disabled={finishing || cancelling} className="font-semibold uppercase tracking-wide">
-              {finishing ? "Finalizando..." : "Finalizar"}
-            </Button>
+          {ended ? (
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary">Finalizado</Badge>
+              <Button variant="outline" size="sm" onClick={reopenWorkout} disabled={reopening} className="gap-1.5">
+                <RotateCcwIcon className="size-3.5" />
+                {reopening ? "Reabriendo..." : "Reabrir"}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={cancelWorkout}
+                disabled={cancelling || finishing}
+                aria-label="Cancelar entrenamiento"
+                title={hasLoggedSets ? "Anula el entrenamiento y borra las series ya registradas" : "Anula el entrenamiento"}
+              >
+                <XIcon className="size-3.5" />
+                {cancelling ? "Anulando..." : "Cancelar"}
+              </Button>
+              <Button onClick={finishWorkout} disabled={finishing || cancelling} className="font-semibold uppercase tracking-wide">
+                {finishing ? "Finalizando..." : "Finalizar"}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {!ended && (
+          <div className="mt-5 grid gap-3 sm:grid-cols-[1.1fr_1fr]">
+            <div className="rounded-xl bg-background/70 p-3.5 ring-1 ring-border">
+              <div className="flex items-center justify-between gap-3">
+                <span className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  <CheckIcon className="size-3.5 text-primary" /> Progreso
+                </span>
+                <span className="font-mono text-sm font-bold text-foreground">
+                  {completedSetCount}/{plannedSetCount || "—"} <span className="text-xs font-normal text-muted-foreground">series</span>
+                </span>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${progressPct}%` }} />
+              </div>
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-primary/10 p-3.5 ring-1 ring-primary/20">
+              <div>
+                <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-primary">Tiempo activo</p>
+                <p className="mt-1 text-xs text-muted-foreground">El cronómetro sigue aunque navegues.</p>
+              </div>
+              <WorkoutStopwatch startedAt={workout.started_at} />
+            </div>
           </div>
         )}
-      </div>
+      </section>
 
       {ended && endedAt && (
         <WorkoutSummary
@@ -486,6 +523,7 @@ export function WorkoutSession({
           onDeleteSet={deleteSet}
           estimatedOneRepMaxKg={estimatedOneRepMaxByExercise[block.exerciseId] ?? null}
           extraRows={extraRowsByBlock[block.key] ?? 0}
+          isActive={block.key === activeBlockKey}
           onAddRow={() =>
             setExtraRowsByBlock((prev) => ({ ...prev, [block.key]: (prev[block.key] ?? 0) + 1 }))
           }
@@ -593,6 +631,7 @@ function ExerciseBlockCard({
   estimatedOneRepMaxKg,
   extraRows,
   onAddRow,
+  isActive,
 }: {
   block: Block;
   ended: boolean;
@@ -602,6 +641,7 @@ function ExerciseBlockCard({
   estimatedOneRepMaxKg: number | null;
   extraRows: number;
   onAddRow: () => void;
+  isActive: boolean;
 }) {
   const nextIndex = block.loggedSets.length;
   const nextTarget = block.targetSets[nextIndex] ?? null;
@@ -640,13 +680,14 @@ function ExerciseBlockCard({
   }, [block.loggedSets.length, block.targetSets, block.exerciseName, block.cues, block.biomechanicsNotes, ended]);
 
   return (
-    <Card className="overflow-hidden py-0 gap-0">
-      <CardHeader className="flex-row items-center justify-between gap-3 border-b border-border bg-muted/30 py-3">
+    <Card className={cn("overflow-hidden py-0 gap-0 transition-shadow", isActive && "ring-primary/45 shadow-[0_14px_32px_-18px_rgba(142,163,176,0.65)]")}>
+      <CardHeader className={cn("flex-row items-center justify-between gap-3 border-b border-border py-3", isActive ? "bg-primary/10" : "bg-muted/30")}>
         <div className="flex items-center gap-3">
           <ExerciseThumbnail src={block.thumbnailUrl} alt={block.exerciseName} className="size-11" />
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="text-base">{block.exerciseName}</CardTitle>
+              {isActive && <Badge className="bg-primary text-primary-foreground">Ahora</Badge>}
               {nextTarget?.set_type && nextTarget.set_type !== "normal" && (
                 <Badge className="bg-primary/15 text-primary">{SET_TYPE_LABELS[nextTarget.set_type] ?? nextTarget.set_type}</Badge>
               )}
@@ -826,9 +867,12 @@ function SetRow({
   const selectedRirOption = rir !== "" ? closestRirOption(Number(rir)) : null;
 
   return (
-    <div className="flex flex-col gap-3 border-b border-border/60 bg-primary/5 p-3">
+    <div className="flex flex-col gap-3 border-b border-primary/20 bg-primary/[0.07] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-xs uppercase tracking-wide text-muted-foreground">Set {index + 1}</span>
+        <div className="flex flex-col gap-0.5">
+          <span className="font-mono text-[10px] font-semibold uppercase tracking-widest text-primary">Siguiente serie</span>
+          <span className="font-mono text-xs uppercase tracking-wide text-muted-foreground">Set {index + 1}</span>
+        </div>
         <div className="flex items-center gap-1.5">
           <input
             type="number"
@@ -837,7 +881,7 @@ function SetRow({
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
             placeholder={defaultWeight || "-"}
-            className="h-12 w-24 rounded-md border border-border bg-card text-center font-mono text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            className="h-12 w-24 rounded-lg border border-primary/30 bg-card text-center font-mono text-base font-semibold text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
           />
           <span className="font-mono text-xs text-muted-foreground">kg</span>
         </div>
@@ -887,7 +931,7 @@ function SetRow({
         type="button"
         onClick={handleDone}
         disabled={submitting}
-        className="h-12 w-full gap-2 text-base font-semibold"
+        className="h-13 w-full gap-2 text-base font-semibold shadow-[0_8px_18px_-10px_rgba(142,163,176,0.9)]"
       >
         <CheckIcon className="size-5" />
         Registrar set {index + 1} ({reps || "-"} reps @ {weight || "-"}kg)

@@ -282,7 +282,9 @@ export default async function DashboardPage() {
         initial={readiness ?? null}
         aiNote={
           !todaysWorkout && nextRoutine
-            ? `Basado en tu readiness: seguimos con "${nextRoutine.title}" tal como está planificada.`
+            ? readiness
+              ? `Tu check-in permite mantener "${nextRoutine.title}" tal como está planificada.`
+              : `Completá el check-in para confirmar si "${nextRoutine.title}" es adecuada para hoy.`
             : null
         }
       />

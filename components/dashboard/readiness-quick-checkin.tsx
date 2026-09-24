@@ -135,7 +135,14 @@ export function ReadinessQuickCheckin({
       {aiNote && (
         <div className="flex items-start gap-3 rounded-lg bg-accent/60 p-3.5">
           <Sparkles className="mt-0.5 size-[18px] shrink-0 text-primary" />
-          <p className="text-sm">{aiNote}</p>
+          <div className="flex min-w-0 flex-col gap-0.5">
+            {!initial && (
+              <span className="font-mono text-[10px] font-semibold uppercase tracking-widest text-secondary">
+                Pendiente de check-in
+              </span>
+            )}
+            <p className="text-sm">{aiNote}</p>
+          </div>
         </div>
       )}
 

@@ -17,7 +17,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <RestTimerProvider>
         <div className="flex min-h-full flex-1">
           <AppNav email={user?.email ?? null} />
-          <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 pb-24 sm:px-8 sm:py-8 sm:pb-8">{children}</main>
+          <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 sm:px-8 sm:py-8 sm:pb-8">{children}</main>
           <AppMobileNav />
         </div>
         <RestTimerWidget />

@@ -186,52 +186,54 @@ export default async function DataPage() {
         <p className="text-sm text-muted-foreground">Readiness, peso corporal y progresión de cargas.</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold uppercase tracking-wide">Readiness (últimos 7 días)</CardTitle>
-          <CardDescription>Promedio de sueño, energía y dolor muscular reportados en el check-in diario.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ReadinessTrendCard logs={readinessLogs ?? []} />
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wide">Readiness (últimos 7 días)</CardTitle>
+            <CardDescription>Promedio de sueño, energía y dolor muscular reportados en el check-in diario.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ReadinessTrendCard logs={readinessLogs ?? []} />
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold uppercase tracking-wide">Peso corporal</CardTitle>
-          {latestWeight && (
-            <CardDescription className="font-mono text-lg text-foreground">
-              {latestWeight.weightKg} kg
-              {weightDelta != null && (
-                <span className={weightDelta <= 0 ? "text-secondary" : "text-destructive"}>
-                  {" "}
-                  ({weightDelta > 0 ? "+" : ""}
-                  {weightDelta} kg)
-                </span>
-              )}
-            </CardDescription>
-          )}
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <WeightChart points={weightPoints} />
-          {(bodyFatPct != null || leanMassKg != null) && (
-            <div className="grid grid-cols-2 gap-3">
-              {bodyFatPct != null && (
-                <div className="rounded-lg border border-border bg-card p-3">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">% Grasa</p>
-                  <p className="font-mono text-lg text-secondary">{bodyFatPct}%</p>
-                </div>
-              )}
-              {leanMassKg != null && (
-                <div className="rounded-lg border border-border bg-card p-3">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Masa magra</p>
-                  <p className="font-mono text-lg text-primary">{leanMassKg} kg</p>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wide">Peso corporal</CardTitle>
+            {latestWeight && (
+              <CardDescription className="font-mono text-lg text-foreground">
+                {latestWeight.weightKg} kg
+                {weightDelta != null && (
+                  <span className={weightDelta <= 0 ? "text-secondary" : "text-destructive"}>
+                    {" "}
+                    ({weightDelta > 0 ? "+" : ""}
+                    {weightDelta} kg)
+                  </span>
+                )}
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <WeightChart points={weightPoints} />
+            {(bodyFatPct != null || leanMassKg != null) && (
+              <div className="grid grid-cols-2 gap-3">
+                {bodyFatPct != null && (
+                  <div className="rounded-lg border border-border bg-card p-3">
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">% Grasa</p>
+                    <p className="font-mono text-lg text-secondary">{bodyFatPct}%</p>
+                  </div>
+                )}
+                {leanMassKg != null && (
+                  <div className="rounded-lg border border-border bg-card p-3">
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Masa magra</p>
+                    <p className="font-mono text-lg text-primary">{leanMassKg} kg</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>
@@ -267,7 +269,7 @@ export default async function DataPage() {
           <CardTitle className="text-sm font-semibold uppercase tracking-wide">Progression Analytics</CardTitle>
           <CardDescription>Carga máxima por sesión, ejercicios con más historial.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-6">
+        <CardContent className="grid gap-6 lg:grid-cols-2">
           {topExercises.length === 0 && (
             <p className="text-sm text-muted-foreground">
               Todavía no hay suficiente historial. Necesitás al menos 2 sesiones registradas del mismo
@@ -275,7 +277,7 @@ export default async function DataPage() {
             </p>
           )}
           {topExercises.map((ex) => (
-            <div key={ex.name} className="flex flex-col gap-2">
+            <div key={ex.name} className="flex flex-col gap-2 rounded-xl border border-border bg-muted/20 p-3 sm:p-4">
               <p className="font-mono text-xs uppercase tracking-widest text-secondary">{ex.name}</p>
               <ProgressionChart points={ex.points} />
               <LoadMatrix sessions={ex.sessions.slice(-4)} />
