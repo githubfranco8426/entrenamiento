@@ -1,4 +1,5 @@
-import { AlertTriangleIcon, ArrowRightIcon, SlidersHorizontalIcon } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangleIcon, ArrowRightIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
 
 export interface StagnantExercise {
   exerciseName: string;
@@ -46,9 +47,18 @@ export function StagnationAlert({ exercises }: { exercises: StagnantExercise[] }
           </div>
         ))}
       </div>
-      <div className="mt-3 flex items-center gap-1.5 rounded-lg bg-destructive/7 px-3 py-2 text-xs text-muted-foreground">
-        <SlidersHorizontalIcon className="size-3.5 text-secondary" />
-        <span><strong className="font-semibold text-foreground">Siguiente paso:</strong> sumá una repetición, aplicá una microcarga o reducí una serie.</span>
+      <div className="mt-3 flex flex-col gap-3 rounded-lg bg-destructive/7 p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
+          <SlidersHorizontalIcon className="mt-0.5 size-3.5 shrink-0 text-secondary" />
+          <span><strong className="font-semibold text-foreground">Siguiente paso:</strong> sumá una repetición, aplicá una microcarga o reducí una serie.</span>
+        </div>
+        <Link
+          href="/routines"
+          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-primary/35 bg-primary/10 px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-wide text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+        >
+          <PlusIcon className="size-3.5" />
+          Agregar corrección
+        </Link>
       </div>
     </section>
   );

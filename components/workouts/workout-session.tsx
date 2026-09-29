@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { differenceInMinutes, format } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { repsInReserve } from "@/lib/autoregulation/rpe-tables";
@@ -11,6 +11,8 @@ import { fetchWithAuthRetry } from "@/lib/supabase/fetch-with-auth-retry";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -22,7 +24,7 @@ import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 import { WorkoutSummary } from "@/components/workouts/workout-summary";
 import { useRestTimer } from "@/components/workouts/rest-timer-context";
 import { useActiveWorkout } from "@/components/workouts/active-workout-context";
-import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon, RotateCcwIcon, ActivityIcon } from "lucide-react";
+import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon, RotateCcwIcon, ActivityIcon, AlertTriangleIcon, ListChecksIcon, TimerResetIcon } from "lucide-react";
 
 interface ExerciseOption {
   id: string;
@@ -171,6 +173,10 @@ export function WorkoutSession({
   const [finishing, setFinishing] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [reopening, setReopening] = useState(false);
+  const [finishDialogOpen, setFinishDialogOpen] = useState(false);
+  const [durationDialogOpen, setDurationDialogOpen] = useState(false);
+  const [durationMinutes, setDurationMinutes] = useState("");
+  const blockRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const hasLoggedSets = blocks.some((b) => b.loggedSets.length > 0);
 
   function addFreestyleExercise() {
@@ -340,12 +346,41 @@ export function WorkoutSession({
     router.push("/dashboard");
   }
 
+  function setSuggestedDuration(end: Date) {
+    const minutes = Math.max(1, differenceInMinutes(end, new Date(workout.started_at)));
+    setDurationMinutes(String(minutes));
+  }
+
+  function openFinishDialog() {
+    setSuggestedDuration(new Date());
+    setFinishDialogOpen(true);
+  }
+
+  function openDurationDialog() {
+    setSuggestedDuration(endedAt ? new Date(endedAt) : new Date());
+    setDurationDialogOpen(true);
+  }
+
+  function reviewIncompleteSets() {
+    const firstIncomplete = blocks.find((block) => block.loggedSets.length < block.targetSets.length);
+    if (!firstIncomplete) return;
+    setFinishDialogOpen(false);
+    requestAnimationFrame(() => {
+      blockRefs.current[firstIncomplete.key]?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }
+
   async function finishWorkout() {
+    const parsedDuration = Number(durationMinutes);
+    if (!Number.isInteger(parsedDuration) || parsedDuration < 1 || parsedDuration > 720) {
+      toast.error("Ingresá una duración entre 1 y 720 minutos");
+      return;
+    }
     setFinishing(true);
     const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ended: true }),
+      body: JSON.stringify({ ended: true, durationMinutes: parsedDuration }),
     });
     setFinishing(false);
     if (!res.ok) {
@@ -355,6 +390,8 @@ export function WorkoutSession({
     const { workout: updated } = await res.json();
     setEnded(true);
     setEndedAt(updated.ended_at);
+    setFinishDialogOpen(false);
+    setDurationDialogOpen(false);
     toast.success("¡Entrenamiento finalizado! Acá tenés tu informe.");
     // Refresca los datos del servidor (ACWR, etc.) para que incluyan las series recién registradas.
     router.refresh();
@@ -421,6 +458,11 @@ export function WorkoutSession({
   const availableExerciseItems = Object.fromEntries(availableExercises.map((e) => [e.id, e.name]));
   const completedSetCount = blocks.reduce((total, block) => total + block.loggedSets.length, 0);
   const plannedSetCount = blocks.reduce((total, block) => total + block.targetSets.length, 0);
+  const incompleteBlocks = blocks.filter((block) => block.loggedSets.length < block.targetSets.length);
+  const missingSetCount = incompleteBlocks.reduce(
+    (total, block) => total + (block.targetSets.length - block.loggedSets.length),
+    0,
+  );
   const activeBlockKey = !ended
     ? blocks.find((block) => block.loggedSets.length < block.targetSets.length)?.key ?? null
     : null;
@@ -448,6 +490,10 @@ export function WorkoutSession({
           {ended ? (
             <div className="flex items-center gap-2">
               <Badge variant="secondary">Finalizado</Badge>
+              <Button variant="outline" size="sm" onClick={openDurationDialog} className="gap-1.5">
+                <TimerResetIcon className="size-3.5" />
+                Corregir tiempo
+              </Button>
               <Button variant="outline" size="sm" onClick={reopenWorkout} disabled={reopening} className="gap-1.5">
                 <RotateCcwIcon className="size-3.5" />
                 {reopening ? "Reabriendo..." : "Reabrir"}
@@ -466,7 +512,7 @@ export function WorkoutSession({
                 <XIcon className="size-3.5" />
                 {cancelling ? "Anulando..." : "Cancelar"}
               </Button>
-              <Button onClick={finishWorkout} disabled={finishing || cancelling} className="font-semibold uppercase tracking-wide">
+              <Button onClick={openFinishDialog} disabled={finishing || cancelling} className="font-semibold uppercase tracking-wide">
                 {finishing ? "Finalizando..." : "Finalizar"}
               </Button>
             </div>
@@ -514,20 +560,21 @@ export function WorkoutSession({
       )}
 
       {blocks.map((block) => (
-        <ExerciseBlockCard
-          key={block.key}
-          block={block}
-          ended={ended}
-          onLogSet={logSet}
-          onUpdateSet={updateSet}
-          onDeleteSet={deleteSet}
-          estimatedOneRepMaxKg={estimatedOneRepMaxByExercise[block.exerciseId] ?? null}
-          extraRows={extraRowsByBlock[block.key] ?? 0}
-          isActive={block.key === activeBlockKey}
-          onAddRow={() =>
-            setExtraRowsByBlock((prev) => ({ ...prev, [block.key]: (prev[block.key] ?? 0) + 1 }))
-          }
-        />
+        <div key={block.key} ref={(node) => { blockRefs.current[block.key] = node; }}>
+          <ExerciseBlockCard
+            block={block}
+            ended={ended}
+            onLogSet={logSet}
+            onUpdateSet={updateSet}
+            onDeleteSet={deleteSet}
+            estimatedOneRepMaxKg={estimatedOneRepMaxByExercise[block.exerciseId] ?? null}
+            extraRows={extraRowsByBlock[block.key] ?? 0}
+            isActive={block.key === activeBlockKey}
+            onAddRow={() =>
+              setExtraRowsByBlock((prev) => ({ ...prev, [block.key]: (prev[block.key] ?? 0) + 1 }))
+            }
+          />
+        </div>
       ))}
 
       {!ended && (
@@ -558,7 +605,76 @@ export function WorkoutSession({
           </CardContent>
         </Card>
       )}
+
+      <Dialog open={finishDialogOpen} onOpenChange={setFinishDialogOpen}>
+        <DialogContent className="border border-border bg-[#101827] p-5 sm:max-w-md">
+          <DialogHeader className="pr-8">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <CheckIcon className="size-5" />
+            </div>
+            <DialogTitle className="pt-1 text-xl font-bold">¿Finalizar entrenamiento?</DialogTitle>
+            <DialogDescription>Revisá el tiempo real antes de guardar tu sesión.</DialogDescription>
+          </DialogHeader>
+
+          {missingSetCount > 0 ? (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/8 p-3.5">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Quedan {missingSetCount} serie{missingSetCount === 1 ? "" : "s"} sin registrar</p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">{incompleteBlocks.map((block) => block.exerciseName).join(" · ")}</p>
+                </div>
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={reviewIncompleteSets} className="mt-3 w-full gap-1.5 border-destructive/35 text-foreground hover:bg-destructive/10">
+                <ListChecksIcon className="size-3.5 text-destructive" />
+                Revisar series pendientes
+              </Button>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-primary/20 bg-primary/8 p-3 text-sm text-muted-foreground">
+              Todo registrado: {completedSetCount} serie{completedSetCount === 1 ? "" : "s"} lista{completedSetCount === 1 ? "" : "s"} para guardar.
+            </div>
+          )}
+
+          <DurationField value={durationMinutes} onChange={setDurationMinutes} />
+
+          <DialogFooter className="-mx-5 -mb-5 bg-background/35">
+            <Button type="button" variant="outline" onClick={() => setFinishDialogOpen(false)}>Seguir entrenando</Button>
+            <Button type="button" variant={missingSetCount > 0 ? "destructive" : "default"} onClick={finishWorkout} disabled={finishing}>
+              {finishing ? "Finalizando..." : missingSetCount > 0 ? "Finalizar igual" : "Sí, finalizar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={durationDialogOpen} onOpenChange={setDurationDialogOpen}>
+        <DialogContent className="border border-border bg-[#101827] p-5 sm:max-w-md">
+          <DialogHeader className="pr-8">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-secondary/10 text-secondary"><TimerResetIcon className="size-5" /></div>
+            <DialogTitle className="pt-1 text-xl font-bold">Corregir duración</DialogTitle>
+            <DialogDescription>Actualizá solo el tiempo real; tus series y carga no cambian.</DialogDescription>
+          </DialogHeader>
+          <DurationField value={durationMinutes} onChange={setDurationMinutes} />
+          <DialogFooter className="-mx-5 -mb-5 bg-background/35">
+            <Button type="button" variant="outline" onClick={() => setDurationDialogOpen(false)}>Cancelar</Button>
+            <Button type="button" onClick={finishWorkout} disabled={finishing}>{finishing ? "Guardando..." : "Guardar tiempo"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+}
+
+function DurationField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return (
+    <label className="flex flex-col gap-2 rounded-xl border border-white/8 bg-background/35 p-3.5">
+      <span className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-primary"><ClockIcon className="size-3.5" /> Duración real</span>
+      <div className="flex items-center gap-2">
+        <Input type="number" min="1" max="720" step="1" inputMode="numeric" value={value} onChange={(event) => onChange(event.target.value)} className="h-12 font-mono text-lg font-bold" />
+        <span className="pr-2 text-sm text-muted-foreground">minutos</span>
+      </div>
+      <span className="text-xs text-muted-foreground">Usá el tiempo que realmente entrenaste, aunque hayas dejado la sesión abierta.</span>
+    </label>
   );
 }
 

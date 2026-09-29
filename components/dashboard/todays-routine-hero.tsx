@@ -1,4 +1,5 @@
 import { ClockIcon, DumbbellIcon, GaugeIcon, SparklesIcon } from "lucide-react";
+import Image from "next/image";
 import { StartWorkoutButton } from "@/components/dashboard/start-workout-button";
 
 interface TargetSet {
@@ -49,10 +50,21 @@ export function TodaysRoutineHero({
   const estimatedMinutes = totalSets > 0 ? Math.round(totalSets * MINUTES_PER_SET) : null;
 
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-[#30435e] bg-[#090d16] shadow-[0_26px_65px_-35px_rgba(0,242,254,0.42)]">
+    <section className="relative overflow-hidden rounded-[28px] border border-[#26344a] bg-[#090d16] shadow-[0_26px_65px_-35px_rgba(0,242,254,0.42)]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary to-transparent" />
-      <div className="pointer-events-none absolute -right-20 -top-24 size-72 rounded-full bg-primary/10 blur-3xl" />
-      <div className="grid md:grid-cols-[1.1fr_0.9fr]">
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[48%] md:block">
+        <Image
+          src="/images/performance-os-athlete.png"
+          alt="Atleta preparado para su sesión"
+          fill
+          priority
+          sizes="(min-width: 768px) 48vw, 0px"
+          className="object-cover object-[72%_34%] opacity-80 saturate-[.9]"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,#090d16_0%,#090d16_8%,rgba(9,13,22,.35)_47%,rgba(9,13,22,.08)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,#090d16_0%,transparent_42%)]" />
+      </div>
+      <div className="relative grid md:grid-cols-[1.08fr_0.92fr]">
         <div className="relative flex flex-col p-5 sm:p-6 md:border-r md:border-white/10">
           <div className="flex items-center justify-between gap-3">
             <span className="inline-flex items-center gap-2 rounded-md border border-primary/25 bg-primary/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
@@ -99,7 +111,7 @@ export function TodaysRoutineHero({
           />
         </div>
 
-        <div className="relative bg-white/[0.025] p-5 sm:p-6">
+        <div className="relative bg-[#090d16]/50 p-5 backdrop-blur-[1px] sm:p-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Enfoque de la sesión</p>

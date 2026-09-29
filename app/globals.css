@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-hanken-grotesk);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
-  --font-heading: var(--font-space-grotesk);
+  --font-heading: var(--font-plus-jakarta-sans);
   --color-tertiary: var(--tertiary);
   --color-tertiary-foreground: var(--tertiary-foreground);
   --color-warning: var(--tertiary);
@@ -72,48 +72,48 @@
 
 :root,
 .dark {
-  /* Midnight / Tide: superficies azul noche, acciones turquesa,
-     datos lavanda, advertencias ámbar y errores coral. */
+  /* Kinetic Apex / Stitch: azul noche, turquesa eléctrico, lavanda de datos
+     y coral reservado para alertas. */
   /* Niveles de superficie (de más recesado a más elevado): background (canvas base)
      < muted (nivel 1, paneles/listas) < card/popover (nivel 2, elevado) < accent
      (nivel 3, presionado/activo). Antes card y muted estaban invertidos (muted más
      claro que card), por lo que las tarjetas no se distinguían del fondo — de ahí
      la sensación de interfaz plana. */
-  --background: #07101d;
-  --foreground: #f7f9fc;
-  --card: #112238;
-  --card-foreground: #f5f7fa;
-  --popover: #1b2c45;
-  --popover-foreground: #f5f7fa;
-  --primary: #5ee4c3;
-  --primary-foreground: #06251f;
-  --secondary: #b3a7ff;
-  --secondary-foreground: #191332;
-  --tertiary: #f6c76b;
-  --tertiary-foreground: #2a1c05;
-  --muted: #0c1a2d;
-  --muted-foreground: #aebed4;
-  --accent: #1c3853;
-  --accent-foreground: #f5f7fa;
-  --destructive: #ff969c;
-  --destructive-foreground: #310e17;
-  --border: #29435f;
-  --input: #29435f;
-  --ring: #5ee4c3;
-  --chart-1: #5ee4c3;
-  --chart-2: #b3a7ff;
-  --chart-3: #73c9ff;
-  --chart-4: #f6c76b;
-  --chart-5: #ff969c;
+  --background: #090d16;
+  --foreground: #f8fafc;
+  --card: #101827;
+  --card-foreground: #f8fafc;
+  --popover: #151e2d;
+  --popover-foreground: #f8fafc;
+  --primary: #00f2fe;
+  --primary-foreground: #06161d;
+  --secondary: #a78bfa;
+  --secondary-foreground: #160f2c;
+  --tertiary: #fb7185;
+  --tertiary-foreground: #2c0d16;
+  --muted: #0d1420;
+  --muted-foreground: #93a4bb;
+  --accent: #172236;
+  --accent-foreground: #f8fafc;
+  --destructive: #fb7185;
+  --destructive-foreground: #2c0d16;
+  --border: #26344a;
+  --input: #26344a;
+  --ring: #00f2fe;
+  --chart-1: #00f2fe;
+  --chart-2: #a78bfa;
+  --chart-3: #38bdf8;
+  --chart-4: #a78bfa;
+  --chart-5: #fb7185;
   --radius: 0.875rem;
-  --sidebar: #091727;
-  --sidebar-foreground: #f5f7fa;
-  --sidebar-primary: #5ee4c3;
-  --sidebar-primary-foreground: #06251f;
-  --sidebar-accent: #1b2c45;
-  --sidebar-accent-foreground: #f5f7fa;
-  --sidebar-border: #30435e;
-  --sidebar-ring: #5ee4c3;
+  --sidebar: #0b1220;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #00f2fe;
+  --sidebar-primary-foreground: #06161d;
+  --sidebar-accent: #172236;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #26344a;
+  --sidebar-ring: #00f2fe;
 }
 
 @layer base {
@@ -123,9 +123,9 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(ellipse at 85% -5%, #637dff20, transparent 38rem),
-      radial-gradient(ellipse at 12% 8%, #31d9b51a, transparent 30rem),
-      linear-gradient(135deg, #07101d 0%, #081527 48%, #07111f 100%);
+      radial-gradient(ellipse at 88% -8%, #a78bfa1f, transparent 36rem),
+      radial-gradient(ellipse at 10% 5%, #00f2fe13, transparent 30rem),
+      linear-gradient(135deg, #090d16 0%, #0b1220 52%, #090d16 100%);
     background-attachment: fixed;
   }
   html {
