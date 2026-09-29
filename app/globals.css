@@ -79,9 +79,9 @@
      (nivel 3, presionado/activo). Antes card y muted estaban invertidos (muted más
      claro que card), por lo que las tarjetas no se distinguían del fondo — de ahí
      la sensación de interfaz plana. */
-  --background: #080f1c;
-  --foreground: #f5f7fa;
-  --card: #142238;
+  --background: #07101d;
+  --foreground: #f7f9fc;
+  --card: #112238;
   --card-foreground: #f5f7fa;
   --popover: #1b2c45;
   --popover-foreground: #f5f7fa;
@@ -91,22 +91,22 @@
   --secondary-foreground: #191332;
   --tertiary: #f6c76b;
   --tertiary-foreground: #2a1c05;
-  --muted: #0e1a2c;
-  --muted-foreground: #b0bdd1;
-  --accent: #263955;
+  --muted: #0c1a2d;
+  --muted-foreground: #aebed4;
+  --accent: #1c3853;
   --accent-foreground: #f5f7fa;
   --destructive: #ff969c;
   --destructive-foreground: #310e17;
-  --border: #30435e;
-  --input: #30435e;
+  --border: #29435f;
+  --input: #29435f;
   --ring: #5ee4c3;
   --chart-1: #5ee4c3;
   --chart-2: #b3a7ff;
   --chart-3: #73c9ff;
   --chart-4: #f6c76b;
   --chart-5: #ff969c;
-  --radius: 0.5rem;
-  --sidebar: #0b1525;
+  --radius: 0.875rem;
+  --sidebar: #091727;
   --sidebar-foreground: #f5f7fa;
   --sidebar-primary: #5ee4c3;
   --sidebar-primary-foreground: #06251f;
@@ -123,11 +123,33 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(ellipse at 95% 0%, #b3a7ff12, transparent 45rem),
-      radial-gradient(ellipse at 10% 0%, #5ee4c312, transparent 38rem);
-    background-repeat: no-repeat;
+      radial-gradient(ellipse at 85% -5%, #637dff20, transparent 38rem),
+      radial-gradient(ellipse at 12% 8%, #31d9b51a, transparent 30rem),
+      linear-gradient(135deg, #07101d 0%, #081527 48%, #07111f 100%);
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;
   }
+}
+
+@keyframes float-orb {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-14px, 12px, 0) scale(1.06); }
+}
+
+@keyframes sheen {
+  from { transform: translateX(-120%) skewX(-18deg); }
+  to { transform: translateX(220%) skewX(-18deg); }
+}
+
+.dashboard-orb { animation: float-orb 12s ease-in-out infinite; }
+.dashboard-sheen::after {
+  animation: sheen 8s ease-in-out infinite 1s;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.09), transparent);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 35%;
 }

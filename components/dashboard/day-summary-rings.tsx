@@ -27,25 +27,31 @@ export function DaySummaryRings({
   acwrZone: AcwrZone | null;
 }) {
   return (
-    <div className="flex items-center justify-around gap-gutter-sm rounded-xl bg-card px-gutter-md py-gutter-lg ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
-      <StatRing
-        pct={energyLevel != null ? (energyLevel / 5) * 100 : 0}
-        value={energyLevel != null ? `${energyLevel}/5` : "—"}
-        label="Readiness"
-        color="var(--primary)"
-      />
-      <StatRing
-        pct={totalDays > 0 ? (trainedDays / totalDays) * 100 : 0}
-        value={`${trainedDays}/${totalDays}`}
-        label="Semana activa"
-        color="var(--secondary)"
-      />
-      <StatRing
-        pct={acwrRatio != null ? Math.min(100, (acwrRatio / 2) * 100) : 0}
-        value={acwrRatio != null ? acwrRatio.toFixed(2) : "—"}
-        label="Carga (ACWR)"
-        color={acwrZone ? ACWR_RING_COLOR[acwrZone] : "var(--muted-foreground)"}
-      />
+    <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/8 bg-card/70 p-2 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+      <div className="flex justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
+        <StatRing
+          pct={energyLevel != null ? (energyLevel / 5) * 100 : 0}
+          value={energyLevel != null ? `${energyLevel}/5` : "—"}
+          label="Readiness"
+          color="var(--primary)"
+        />
+      </div>
+      <div className="flex justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
+        <StatRing
+          pct={totalDays > 0 ? (trainedDays / totalDays) * 100 : 0}
+          value={`${trainedDays}/${totalDays}`}
+          label="Semana activa"
+          color="var(--secondary)"
+        />
+      </div>
+      <div className="flex justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
+        <StatRing
+          pct={acwrRatio != null ? Math.min(100, (acwrRatio / 2) * 100) : 0}
+          value={acwrRatio != null ? acwrRatio.toFixed(2) : "—"}
+          label="Carga (ACWR)"
+          color={acwrZone ? ACWR_RING_COLOR[acwrZone] : "var(--muted-foreground)"}
+        />
+      </div>
     </div>
   );
 }

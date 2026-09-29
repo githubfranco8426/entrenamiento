@@ -50,12 +50,13 @@ export function TodaysRoutineHero({
   const estimatedMinutes = totalSets > 0 ? Math.round(totalSets * MINUTES_PER_SET) : null;
 
   return (
-    <section className="relative flex flex-col gap-gutter-md overflow-hidden rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
-      <div className="pointer-events-none absolute -right-12 -top-12 size-64 rounded-full bg-primary/15 blur-3xl" />
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-primary to-secondary" />
+    <section className="dashboard-sheen relative flex flex-col gap-gutter-md overflow-hidden rounded-2xl border border-primary/25 bg-[linear-gradient(135deg,#153c4b_0%,#132b46_48%,#251f4b_100%)] p-container-padding shadow-[0_22px_48px_-24px_rgba(16,228,195,0.38)]">
+      <div className="dashboard-orb pointer-events-none absolute -right-12 -top-12 size-64 rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 left-1/3 size-48 rounded-full bg-secondary/20 blur-3xl" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-primary via-secondary to-primary" />
 
       <div className="flex items-center justify-between">
-        <span className="rounded-full bg-primary/15 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
+        <span className="rounded-full border border-primary/25 bg-primary/15 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
           {hasActiveMeso ? "Recomendada hoy · Adaptada" : "Próxima rutina"}
         </span>
         <SparklesIcon className="size-5 text-secondary" />
@@ -71,7 +72,7 @@ export function TodaysRoutineHero({
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-2 rounded-lg bg-background/60 p-3">
+      <div className="grid grid-cols-3 gap-2 rounded-xl border border-white/8 bg-background/35 p-3 backdrop-blur-sm">
         <div className="flex flex-col items-center gap-0.5 text-center">
           <ClockIcon className="size-5 text-secondary" />
           <span className="font-mono text-sm font-semibold">{estimatedMinutes ? `~${estimatedMinutes} min` : "—"}</span>
@@ -109,7 +110,7 @@ export function TodaysRoutineHero({
             return (
               <div
                 key={`${re.exercise_id}-${i}`}
-                className="flex items-center gap-3 rounded-lg bg-background/60 p-2.5"
+                className="flex items-center gap-3 rounded-xl border border-white/6 bg-background/35 p-2.5 transition-colors hover:bg-background/55"
               >
                 <ExerciseThumbnail
                   src={re.exercises?.thumbnail_url}

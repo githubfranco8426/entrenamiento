@@ -204,10 +204,13 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-gutter-lg">
-      <div className="flex flex-col gap-gutter-sm pt-2">
+      <section className="dashboard-sheen relative overflow-hidden rounded-2xl border border-white/8 bg-[linear-gradient(115deg,rgba(19,45,65,.94),rgba(25,31,74,.92))] px-5 py-5 shadow-[0_22px_46px_-28px_rgba(0,0,0,0.9)] sm:px-7 sm:py-6">
+        <div className="dashboard-orb pointer-events-none absolute -right-12 -top-20 size-60 rounded-full bg-secondary/25 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 right-1/4 size-56 rounded-full bg-primary/15 blur-3xl" />
+        <div className="relative flex flex-col gap-gutter-sm">
         <div className="flex items-center justify-between">
           {activeMeso ? (
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-primary">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/12 px-3 py-1 text-primary backdrop-blur-sm">
               <SparklesIcon className="size-4" />
               <span className="font-mono text-[11px] font-bold uppercase tracking-wider">
                 Adaptación inteligente activa
@@ -218,21 +221,23 @@ export default async function DashboardPage() {
           )}
           <Link
             href="/settings"
-            className="flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-background/20 text-muted-foreground transition-colors hover:bg-background/45 hover:text-foreground"
           >
             <SettingsIcon className="size-4" />
             <span className="sr-only">Ajustes</span>
           </Link>
         </div>
         <div className="flex flex-col">
-          <h1 className="font-heading text-3xl font-extrabold tracking-tight">{greeting} 👋</h1>
-          <p className="text-headline-sm text-muted-foreground">
+          <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-primary/90">Tu centro de rendimiento</p>
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{greeting} <span className="inline-block origin-bottom-right rotate-[-12deg]">👋</span></h1>
+          <p className="mt-1 text-headline-sm text-slate-300">
             {format(new Date(), "EEEE d 'de' MMMM", { locale: es })}
             {activeMeso &&
               ` · ${PHASE_LABELS[activeMeso.phase] ?? activeMeso.phase}${activeMicro?.is_deload ? " (Descarga)" : ""}${activeMicro ? ` · Semana ${activeMicro.week_number}` : ""}`}
           </p>
         </div>
-      </div>
+        </div>
+      </section>
 
       <DaySummaryRings
         energyLevel={readiness?.energy_level ?? null}
@@ -244,16 +249,16 @@ export default async function DashboardPage() {
 
       <Link
         href="/nutricion"
-        className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)] transition-colors hover:bg-accent"
+        className="group flex items-center gap-3 rounded-2xl border border-border/80 bg-card/75 p-container-padding shadow-[0_14px_30px_-24px_rgba(0,0,0,.9)] transition-all hover:-translate-y-0.5 hover:border-primary/35 hover:bg-accent/70"
       >
-        <UtensilsIcon className="size-5 shrink-0 text-primary" />
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20"><UtensilsIcon className="size-5" /></div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium">Nutrición</p>
           <p className="truncate text-xs text-muted-foreground">
             {MEAL_PLAN_BY_SHIFT[defaultShiftType].totalKcal} kcal de plan hoy
           </p>
         </div>
-        <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" />
+        <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
       </Link>
 
       {acwrAlertZone && acwr.ratio != null && <AcwrAlert ratio={acwr.ratio} zone={acwrAlertZone} />}
