@@ -1,11 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { MacrocycleForm } from "@/components/program/macrocycle-form";
 import { MesocycleForm } from "@/components/program/mesocycle-form";
 import { ActivateMesocycleButton } from "@/components/program/activate-mesocycle-button";
+import { advanceMicrocycle } from "./actions";
 
 const PHASE_LABELS: Record<string, string> = {
   acumulacion: "Acumulación",
@@ -84,6 +86,16 @@ export default async function ProgramPage() {
                         <div className="flex items-center gap-2">
                           <Badge variant={STATUS_VARIANT[meso.status] ?? "outline"}>{meso.status}</Badge>
                           {meso.status === "planned" && <ActivateMesocycleButton mesocycleId={meso.id} />}
+                          {isActive && activeMicro && (
+                            <form action={advanceMicrocycle}>
+                              <input type="hidden" name="mesocycleId" value={meso.id} />
+                              <Button type="submit" size="sm" variant="outline" disabled={activeMicro.week_number >= meso.planned_weeks}>
+                                {activeMicro.week_number >= meso.planned_weeks
+                                  ? "Última semana"
+                                  : `Pasar a semana ${activeMicro.week_number + 1}`}
+                              </Button>
+                            </form>
+                          )}
                         </div>
                       </div>
                       {isActive && (

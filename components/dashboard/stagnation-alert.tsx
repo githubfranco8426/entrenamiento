@@ -11,7 +11,7 @@ export function StagnationAlert({ exercises }: { exercises: StagnantExercise[] }
   if (exercises.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden rounded-xl border border-destructive/35 bg-card p-container-padding shadow-[0_8px_20px_-12px_rgba(142,77,72,0.7)]">
+    <section className="relative overflow-hidden rounded-2xl border border-destructive/35 bg-card p-container-padding shadow-[0_8px_20px_-12px_rgba(142,77,72,0.7)]">
       <div className="absolute inset-y-0 left-0 w-1 bg-destructive" />
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
@@ -25,7 +25,7 @@ export function StagnationAlert({ exercises }: { exercises: StagnantExercise[] }
         </span>
       </div>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-        Se mantuvieron en la misma carga durante varias sesiones. Revisá técnica, rango de repeticiones y recuperación antes de subir peso.
+        Se mantuvieron en la misma carga durante varias sesiones. Elegí un solo ajuste antes de la próxima sesión para medir la respuesta.
       </p>
       <div className="mt-3 flex flex-col gap-2">
         {exercises.map((ex) => (
@@ -46,9 +46,9 @@ export function StagnationAlert({ exercises }: { exercises: StagnantExercise[] }
           </div>
         ))}
       </div>
-      <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="mt-3 flex items-center gap-1.5 rounded-lg bg-destructive/7 px-3 py-2 text-xs text-muted-foreground">
         <SlidersHorizontalIcon className="size-3.5 text-secondary" />
-        Ajustá una sola variable por vez para evaluar la respuesta.
+        <span><strong className="font-semibold text-foreground">Siguiente paso:</strong> sumá una repetición, aplicá una microcarga o reducí una serie.</span>
       </div>
     </section>
   );

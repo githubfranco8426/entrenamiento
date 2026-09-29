@@ -1,6 +1,5 @@
 import { ClockIcon, DumbbellIcon, GaugeIcon, SparklesIcon } from "lucide-react";
 import { StartWorkoutButton } from "@/components/dashboard/start-workout-button";
-import { ExerciseThumbnail } from "@/components/exercises/exercise-thumbnail";
 
 interface TargetSet {
   target_reps_min: number | null;
@@ -50,56 +49,68 @@ export function TodaysRoutineHero({
   const estimatedMinutes = totalSets > 0 ? Math.round(totalSets * MINUTES_PER_SET) : null;
 
   return (
-    <section className="dashboard-sheen relative flex flex-col gap-gutter-md overflow-hidden rounded-2xl border border-primary/25 bg-[linear-gradient(135deg,#153c4b_0%,#132b46_48%,#251f4b_100%)] p-container-padding shadow-[0_22px_48px_-24px_rgba(16,228,195,0.38)]">
-      <div className="dashboard-orb pointer-events-none absolute -right-12 -top-12 size-64 rounded-full bg-primary/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-16 left-1/3 size-48 rounded-full bg-secondary/20 blur-3xl" />
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-linear-to-b from-primary via-secondary to-primary" />
+    <section className="relative overflow-hidden rounded-[28px] border border-[#30435e] bg-[#090d16] shadow-[0_26px_65px_-35px_rgba(0,242,254,0.42)]">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary to-transparent" />
+      <div className="pointer-events-none absolute -right-20 -top-24 size-72 rounded-full bg-primary/10 blur-3xl" />
+      <div className="grid md:grid-cols-[1.1fr_0.9fr]">
+        <div className="relative flex flex-col p-5 sm:p-6 md:border-r md:border-white/10">
+          <div className="flex items-center justify-between gap-3">
+            <span className="inline-flex items-center gap-2 rounded-md border border-primary/25 bg-primary/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+              <span className="size-1.5 rounded-full bg-primary shadow-[0_0_10px_var(--primary)]" />
+              {hasActiveMeso ? "Sesión programada" : "Próxima sesión"}
+            </span>
+            <SparklesIcon className="size-5 text-secondary" />
+          </div>
 
-      <div className="flex items-center justify-between">
-        <span className="rounded-full border border-primary/25 bg-primary/15 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
-          {hasActiveMeso ? "Recomendada hoy · Adaptada" : "Próxima rutina"}
-        </span>
-        <SparklesIcon className="size-5 text-secondary" />
-      </div>
+          <div className="mt-7">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Prescripción principal</p>
+            <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight text-white sm:text-4xl">{routine.title}</h2>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+              {routine.day_label && <span className="font-medium text-secondary">{routine.day_label}</span>}
+              {daysSinceLastTrained != null && (
+                <span className="font-mono text-xs text-destructive">Última vez hace {daysSinceLastTrained} día{daysSinceLastTrained === 1 ? "" : "s"}</span>
+              )}
+            </div>
+          </div>
 
-      <div className="flex flex-col gap-1">
-        <h2 className="font-heading text-headline-lg font-bold">{routine.title}</h2>
-        {routine.day_label && <p className="text-sm text-muted-foreground">{routine.day_label}</p>}
-        {daysSinceLastTrained != null && (
-          <p className="font-mono text-xs text-destructive">
-            Último hit hace {daysSinceLastTrained} día{daysSinceLastTrained === 1 ? "" : "s"}
-          </p>
-        )}
-      </div>
+          <div className="mt-7 grid grid-cols-3 divide-x divide-white/10 border-y border-white/10 py-3">
+            <div className="flex flex-col gap-1 px-3 first:pl-0">
+              <ClockIcon className="size-4 text-secondary" />
+              <span className="font-mono text-base font-semibold">{estimatedMinutes ? `~${estimatedMinutes}` : "—"}</span>
+              <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Minutos</span>
+            </div>
+            <div className="flex flex-col gap-1 px-3">
+              <DumbbellIcon className="size-4 text-primary" />
+              <span className="font-mono text-base font-semibold">{exercises.length}</span>
+              <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Bloques</span>
+            </div>
+            <div className="flex flex-col gap-1 px-3">
+              <GaugeIcon className="size-4 text-primary" />
+              <span className="font-mono text-base font-semibold">{effortLabel(avgRpe)}</span>
+              <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">Esfuerzo</span>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-3 gap-2 rounded-xl border border-white/8 bg-background/35 p-3 backdrop-blur-sm">
-        <div className="flex flex-col items-center gap-0.5 text-center">
-          <ClockIcon className="size-5 text-secondary" />
-          <span className="font-mono text-sm font-semibold">{estimatedMinutes ? `~${estimatedMinutes} min` : "—"}</span>
-          <span className="font-mono text-[10px] uppercase text-muted-foreground">Duración</span>
+          <StartWorkoutButton
+            routineId={routine.id}
+            size="lg"
+            className="mt-6 w-full gap-2 rounded-xl font-heading text-base font-bold uppercase tracking-wide shadow-[0_12px_28px_-12px_rgba(0,242,254,0.65)]"
+            label="Comenzar rutina"
+          />
         </div>
-        <div className="flex flex-col items-center gap-0.5 text-center">
-          <DumbbellIcon className="size-5 text-primary" />
-          <span className="font-mono text-sm font-semibold">{exercises.length} bloques</span>
-          <span className="font-mono text-[10px] uppercase text-muted-foreground">Ejercicios</span>
-        </div>
-        <div className="flex flex-col items-center gap-0.5 text-center">
-          <GaugeIcon className="size-5 text-primary" />
-          <span className="font-mono text-sm font-semibold">{effortLabel(avgRpe)}</span>
-          <span className="font-mono text-[10px] uppercase text-muted-foreground">Esfuerzo</span>
-        </div>
-      </div>
 
-      <StartWorkoutButton
-        routineId={routine.id}
-        size="lg"
-        className="w-full gap-2 font-heading text-base font-bold uppercase tracking-wide"
-        label="Comenzar rutina de hoy"
-      />
+        <div className="relative bg-white/[0.025] p-5 sm:p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Enfoque de la sesión</p>
+              <h3 className="mt-1 font-heading text-lg font-bold">Bloques de hoy</h3>
+            </div>
+            <span className="font-mono text-xs text-muted-foreground">{totalSets} series</span>
+          </div>
 
-      {exercises.length > 0 && (
-        <div className="flex flex-col gap-2 pt-1">
-          {exercises.slice(0, 4).map((re, i) => {
+          {exercises.length > 0 && (
+            <div className="flex flex-col divide-y divide-white/8">
+              {exercises.slice(0, 3).map((re, i) => {
             const sets = [...re.target_sets].sort((a, b) => (a.target_reps_max ?? 0) - (b.target_reps_max ?? 0));
             const first = sets[0];
             const repsLabel =
@@ -110,16 +121,12 @@ export function TodaysRoutineHero({
             return (
               <div
                 key={`${re.exercise_id}-${i}`}
-                className="flex items-center gap-3 rounded-xl border border-white/6 bg-background/35 p-2.5 transition-colors hover:bg-background/55"
+                className="flex items-center gap-3 py-3 first:pt-0"
               >
-                <ExerciseThumbnail
-                  src={re.exercises?.thumbnail_url}
-                  alt={re.exercises?.name ?? "Ejercicio"}
-                  className="size-11 rounded-lg"
-                />
+                <span className="font-mono text-xs font-bold text-primary/70">0{i + 1}</span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">{re.exercises?.name ?? "Ejercicio"}</p>
-                  <p className="text-xs text-muted-foreground">{re.notes ?? repsLabel}</p>
+                  <p className="truncate text-xs text-muted-foreground">{re.notes ?? repsLabel}</p>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
                   <span className="whitespace-nowrap font-mono text-xs text-secondary">{repsLabel}</span>
@@ -132,11 +139,13 @@ export function TodaysRoutineHero({
               </div>
             );
           })}
-          {exercises.length > 4 && (
-            <p className="text-center text-xs text-muted-foreground">+{exercises.length - 4} más</p>
+              {exercises.length > 3 && (
+            <p className="pt-3 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">+{exercises.length - 3} bloques más en la sesión</p>
+          )}
+            </div>
           )}
         </div>
-      )}
+      </div>
     </section>
   );
 }
