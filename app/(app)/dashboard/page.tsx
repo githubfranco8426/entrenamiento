@@ -10,6 +10,7 @@ import {
 import { es } from "date-fns/locale";
 import { SettingsIcon, SparklesIcon, ClockIcon, CheckCircleIcon, UtensilsIcon, ChevronRightIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getRoutineScope } from "@/lib/training/routine-scope";
 import { shiftTypeForDate } from "@/lib/utils/shift-pattern";
 import { MEAL_PLAN_BY_SHIFT } from "@/lib/nutrition/plan";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -44,6 +45,7 @@ function workoutDurationLabel(startedAt: string, endedAt: string | null): string
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const routineScope = await getRoutineScope(supabase);
   const today = format(new Date(), "yyyy-MM-dd");
   const weekStart = format(startOfISOWeek(new Date()), "yyyy-MM-dd'T'00:00:00");
   const weekEnd = format(endOfISOWeek(new Date()), "yyyy-MM-dd'T'23:59:59");
@@ -66,6 +68,7 @@ export default async function DashboardPage() {
       .select(
         "id, title, day_label, routine_exercises(exercise_id, order_index, notes, exercises(name, thumbnail_url), target_sets(set_index, target_reps_min, target_reps_max, target_rpe, target_weight_kg))",
       )
+      .or(routineScope)
       .order("order_index"),
     supabase
       .from("workouts")

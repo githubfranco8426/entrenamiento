@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getRoutineScope } from "@/lib/training/routine-scope";
 import { estimateOneRepMax, repsInReserve } from "@/lib/autoregulation/rpe-tables";
 import { computeAcwr, computeMonotony, type DailyLoad } from "@/lib/analytics/acwr";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { ReadinessTrendCard } from "@/components/data/readiness-trend-card";
 
 export default async function DataPage() {
   const supabase = await createClient();
+  const routineScope = await getRoutineScope(supabase);
   const twentyEightDaysAgo = new Date();
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
   twentyEightDaysAgo.setHours(0, 0, 0, 0);
@@ -50,7 +52,7 @@ export default async function DataPage() {
       .select(
         "day_label, title, routine_exercises(exercise_id, exercises(name), target_sets(target_weight_kg, target_reps_min, target_reps_max))",
       )
-      .is("microcycle_id", null),
+      .or(routineScope),
     supabase
       .from("readiness_logs")
       .select("log_date, sleep_hours, energy_level, muscle_soreness")

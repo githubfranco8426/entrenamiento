@@ -58,6 +58,8 @@ export async function advanceMicrocycle(formData: FormData) {
     throw new Error("Este mesociclo ya está en su última semana");
   }
 
+  const { data: plannedNext, error: plannedNextError } = await supabase.from("microcycles").select("id").eq("mesocycle_id", mesocycleId).eq("user_id", user.id).eq("week_number", activeMicrocycle.week_number + 1).eq("status", "planned").maybeSingle();
+  if (plannedNextError) throw new Error(plannedNextError.message);
   const nextStart = addDays(new Date(`${activeMicrocycle.end_date}T00:00:00`), 1);
   const { error: completeError } = await supabase
     .from("microcycles")
@@ -66,7 +68,9 @@ export async function advanceMicrocycle(formData: FormData) {
     .eq("user_id", user.id);
   if (completeError) throw new Error(completeError.message);
 
-  const { error: nextMicrocycleError } = await supabase.from("microcycles").insert({
+  const { error: nextMicrocycleError } = plannedNext
+    ? await supabase.from("microcycles").update({ status: "active" }).eq("id", plannedNext.id).eq("user_id", user.id)
+    : await supabase.from("microcycles").insert({
     user_id: user.id,
     mesocycle_id: mesocycleId,
     week_number: activeMicrocycle.week_number + 1,
@@ -76,6 +80,7 @@ export async function advanceMicrocycle(formData: FormData) {
   });
   if (nextMicrocycleError) throw new Error(nextMicrocycleError.message);
 
+  revalidatePath("/routines");
   revalidatePath("/dashboard");
   revalidatePath("/program");
   revalidatePath("/calendar");

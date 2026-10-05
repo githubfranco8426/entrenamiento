@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getRoutineScope } from "@/lib/training/routine-scope";
 import { estimateOneRepMax } from "@/lib/autoregulation/rpe-tables";
 import { computeAcwr, type DailyLoad } from "@/lib/analytics/acwr";
 import { pickNextRoutine } from "@/lib/utils/next-routine";
@@ -8,6 +9,7 @@ import { WorkoutSession } from "@/components/workouts/workout-session";
 export default async function WorkoutPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
+  const routineScope = await getRoutineScope(supabase);
 
   const [{ data: workout, error }, { data: exercises }] = await Promise.all([
     supabase
@@ -80,7 +82,7 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
   const acwr = computeAcwr(dailyLoads);
 
   const [{ data: liveRoutines }, { data: recentWorkouts }] = await Promise.all([
-    supabase.from("routines").select("id, title, day_label").is("microcycle_id", null),
+    supabase.from("routines").select("id, title, day_label").or(routineScope),
     supabase.from("workouts").select("routine_id, started_at").order("started_at", { ascending: false }).limit(5),
   ]);
   const nextRoutine = pickNextRoutine(liveRoutines ?? [], recentWorkouts ?? []);

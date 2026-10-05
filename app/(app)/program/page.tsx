@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -122,6 +123,7 @@ export default async function ProgramPage() {
                           </div>
                         </div>
                       )}
+                      {isActive && <div className="flex flex-wrap gap-2">{[...(meso.microcycles ?? [])].sort((a,b) => a.week_number-b.week_number).map((w) => <Link className="text-xs underline underline-offset-2" key={w.id} href={`/routines?week=${w.id}`}>Ver semana {w.week_number}{w.is_deload ? " · descarga" : ""}</Link>)}</div>}
                       {!isActive && (
                         <p className="font-mono text-xs text-muted-foreground">
                           {meso.planned_weeks} semanas planificadas

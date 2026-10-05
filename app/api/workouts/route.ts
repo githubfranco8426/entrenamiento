@@ -29,12 +29,18 @@ export async function POST(request: Request) {
     shiftContext?: string;
   };
 
+  let resolvedMicrocycleId = microcycleId ?? null;
+  if (routineId) {
+    const { data: routine, error: routineError } = await supabase.from("routines").select("microcycle_id").eq("id", routineId).eq("user_id", user.id).maybeSingle();
+    if (routineError || !routine) return NextResponse.json({ error: "Rutina no disponible" }, { status: 400 });
+    resolvedMicrocycleId = routine.microcycle_id;
+  }
   const { data, error } = await supabase
     .from("workouts")
     .insert({
       user_id: user.id,
       routine_id: routineId ?? null,
-      microcycle_id: microcycleId ?? null,
+      microcycle_id: resolvedMicrocycleId,
       shift_context: (shiftContext as never) ?? null,
       started_at: new Date().toISOString(),
     })
