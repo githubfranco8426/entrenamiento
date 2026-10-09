@@ -21,7 +21,7 @@ export function AppNav({ email }: { email: string | null }) {
   }
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col gap-1 border-r border-sidebar-border/80 bg-sidebar/85 px-3 py-6 text-sidebar-foreground backdrop-blur-xl sm:flex">
+    <aside className="hidden w-64 shrink-0 flex-col gap-1 border-r border-sidebar-border/80 bg-sidebar/85 px-3 py-6 text-sidebar-foreground backdrop-blur-xl lg:flex">
       <div className="mb-7 flex items-center gap-3 px-2">
         <div className="flex size-9 items-center justify-center rounded-xl bg-primary/15 ring-1 ring-primary/25">
           <AppLogo className="size-7 shrink-0" />

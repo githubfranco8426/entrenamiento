@@ -56,7 +56,7 @@ export function ActiveSetWidget() {
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-[calc(8.5rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 sm:bottom-24 sm:right-4 sm:left-auto sm:justify-end sm:px-0">
+    <div className="fixed inset-x-0 bottom-[calc(8.5rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 lg:bottom-24 lg:right-4 lg:left-auto lg:justify-end lg:px-0">
       <div className="flex w-full max-w-sm items-center gap-3 overflow-hidden rounded-xl bg-card/95 p-3 shadow-xl ring-1 ring-primary/40 backdrop-blur-md">
         <Link
           href={`/workouts/${state.workoutId}`}

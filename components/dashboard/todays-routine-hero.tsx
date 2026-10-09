@@ -64,8 +64,8 @@ export function TodaysRoutineHero({
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#090d16_0%,#090d16_8%,rgba(9,13,22,.35)_47%,rgba(9,13,22,.08)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,#090d16_0%,transparent_42%)]" />
       </div>
-      <div className="relative grid md:grid-cols-[1.08fr_0.92fr]">
-        <div className="relative flex flex-col p-5 sm:p-6 md:border-r md:border-white/10">
+      <div className="relative grid grid-cols-1 md:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+        <div className="relative min-w-0 flex flex-col p-4 sm:p-6 md:border-r md:border-white/10">
           <div className="flex items-center justify-between gap-3">
             <span className="inline-flex items-center gap-2 rounded-md border border-primary/25 bg-primary/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
               <span className="size-1.5 rounded-full bg-primary shadow-[0_0_10px_var(--primary)]" />
@@ -76,7 +76,7 @@ export function TodaysRoutineHero({
 
           <div className="mt-7">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Prescripción principal</p>
-            <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight text-white sm:text-4xl">{routine.title}</h2>
+            <h2 className="mt-2 break-words font-heading text-2xl font-bold tracking-tight text-white sm:text-4xl">{routine.title}</h2>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
               {routine.day_label && <span className="font-medium text-secondary">{routine.day_label}</span>}
               {daysSinceLastTrained != null && (
@@ -111,7 +111,7 @@ export function TodaysRoutineHero({
           />
         </div>
 
-        <div className="relative bg-[#090d16]/50 p-5 backdrop-blur-[1px] sm:p-6">
+        <div className="relative min-w-0 bg-[#090d16]/50 p-4 backdrop-blur-[1px] sm:p-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Enfoque de la sesión</p>

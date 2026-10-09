@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { parseISO } from "date-fns";
+import { localCalendarDate, localDateKey } from "@/lib/utils/local-date";
 import { ArrowLeftIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { shiftTypeForDate, SHIFT_TYPE_LABELS } from "@/lib/utils/shift-pattern";
@@ -9,9 +11,10 @@ export default async function NutritionMenuPage() {
   const supabase = await createClient();
   const { data: settings } = await supabase.from("user_settings").select("shift_anchor_date").maybeSingle();
 
-  const shiftType = settings?.shift_anchor_date
-    ? shiftTypeForDate(new Date(), new Date(settings.shift_anchor_date))
-    : "dia1_diurno";
+  const { data: readiness } = await supabase.from("readiness_logs").select("shift_type").eq("log_date", localDateKey()).maybeSingle();
+  const shiftType = readiness?.shift_type ?? (settings?.shift_anchor_date
+    ? shiftTypeForDate(localCalendarDate(), parseISO(settings.shift_anchor_date))
+    : "dia1_diurno");
   const plan = MEAL_PLAN_BY_SHIFT[shiftType];
 
   return (

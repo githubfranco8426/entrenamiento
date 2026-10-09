@@ -43,7 +43,7 @@ export function RestTimerWidget() {
 
   if (minimized) {
     return (
-      <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 sm:bottom-4 sm:right-4 sm:left-auto sm:justify-end sm:px-0">
+      <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 lg:bottom-4 lg:right-4 lg:left-auto lg:justify-end lg:px-0">
         <div
           className={cn(
             "flex w-full max-w-sm items-center gap-3 overflow-hidden rounded-xl bg-card/95 p-3 shadow-xl ring-1 backdrop-blur-md",
@@ -73,7 +73,7 @@ export function RestTimerWidget() {
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 sm:inset-x-auto sm:right-4 sm:bottom-4">
+    <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 lg:inset-x-auto lg:right-4 lg:bottom-4">
       <div className="flex w-full max-w-sm flex-col gap-3 overflow-hidden rounded-2xl bg-card/95 p-4 shadow-2xl ring-1 ring-primary/30 backdrop-blur-md">
         {/* Status strip */}
         <div className="flex items-center justify-between">

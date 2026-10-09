@@ -5,16 +5,19 @@ import { ClipboardListIcon, PillIcon, DropletIcon, ChevronRightIcon, type Lucide
 import { createClient } from "@/lib/supabase/server";
 import { shiftTypeForDate } from "@/lib/utils/shift-pattern";
 import { MEAL_PLAN_BY_SHIFT, SUPPLEMENT_CHECKLIST, HYDRATION_BY_SHIFT } from "@/lib/nutrition/plan";
+import { localCalendarDate, localDateKey } from "@/lib/utils/local-date";
+import { parseISO } from "date-fns";
 import { StatRing } from "@/components/dashboard/stat-ring";
 
 export default async function NutritionPage() {
   const supabase = await createClient();
   const { data: settings } = await supabase.from("user_settings").select("shift_anchor_date").maybeSingle();
 
-  const today = new Date();
-  const shiftType = settings?.shift_anchor_date
-    ? shiftTypeForDate(today, new Date(settings.shift_anchor_date))
-    : "dia1_diurno";
+  const today = localCalendarDate();
+  const { data: readiness } = await supabase.from("readiness_logs").select("shift_type").eq("log_date", localDateKey()).maybeSingle();
+  const shiftType = readiness?.shift_type ?? (settings?.shift_anchor_date
+    ? shiftTypeForDate(today, parseISO(settings.shift_anchor_date))
+    : "dia1_diurno");
   const plan = MEAL_PLAN_BY_SHIFT[shiftType];
   const hydration = HYDRATION_BY_SHIFT[shiftType];
 

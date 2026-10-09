@@ -27,9 +27,9 @@ export function StatRing({
   const offset = circumference * (1 - clamped / 100);
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size} className="-rotate-90">
+    <div className="flex min-w-0 w-full flex-col items-center gap-1.5">
+      <div className="relative aspect-square w-full" style={{ maxWidth: size }}>
+        <svg viewBox={`0 0 ${size} ${size}`} className="h-full w-full -rotate-90">
           <circle
             cx={size / 2}
             cy={size / 2}
@@ -56,7 +56,7 @@ export function StatRing({
       </div>
       <span
         className={cn(
-          "text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground",
+          "max-w-full break-words text-center font-mono text-[9px] uppercase tracking-wide sm:text-[10px] sm:tracking-widest text-muted-foreground",
         )}
       >
         {label}

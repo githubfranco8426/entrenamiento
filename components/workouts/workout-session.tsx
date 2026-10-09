@@ -695,7 +695,7 @@ function closestRirOption(rir: number): (typeof RIR_OPTIONS)[number]["value"] {
   return closest;
 }
 
-const ROW_GRID = "grid grid-cols-[2.5rem_1fr_1fr_3.5rem_2.75rem] items-center gap-2";
+const ROW_GRID = "grid grid-cols-[1.75rem_minmax(0,1fr)_minmax(0,1fr)_2.5rem_2.75rem] items-center gap-1 sm:grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_3.5rem_2.75rem] sm:gap-2";
 
 function formatRest(seconds: number | null): string | null {
   if (!seconds) return null;

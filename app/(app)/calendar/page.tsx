@@ -8,7 +8,6 @@ import {
   format,
   isSameDay,
   isSameMonth,
-  isToday,
   parseISO,
   startOfMonth,
   startOfWeek,
@@ -17,6 +16,7 @@ import {
 import { es } from "date-fns/locale";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { localCalendarDate, localDayStart } from "@/lib/utils/local-date";
 import { cn } from "@/lib/utils";
 import { shiftTypeForDate, willTrainByDefault, SHIFT_TYPE_LABELS } from "@/lib/utils/shift-pattern";
 import { SHIFT_DOT_CLASSES } from "@/lib/utils/calendar";
@@ -32,7 +32,8 @@ export default async function CalendarPage({
   searchParams: Promise<{ month?: string }>;
 }) {
   const { month } = await searchParams;
-  const anchorMonth = month ? parseISO(`${month}-01`) : new Date();
+  const today = localCalendarDate();
+  const anchorMonth = month ? parseISO(`${month}-01`) : today;
   const monthStart = startOfMonth(anchorMonth);
   const monthEnd = endOfMonth(anchorMonth);
   const gridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
@@ -44,18 +45,19 @@ export default async function CalendarPage({
   const gridEndExclusiveStr = format(addDays(gridEnd, 1), "yyyy-MM-dd");
 
   const supabase = await createClient();
-  const [{ data: settings }, { data: workouts }, { data: microcycles }] = await Promise.all([
+  const [{ data: settings }, { data: workouts }, { data: microcycles }, { data: readinessLogs }] = await Promise.all([
     supabase.from("user_settings").select("shift_anchor_date").maybeSingle(),
     supabase
       .from("workouts")
       .select("id, started_at, ended_at, routines(title, day_label)")
-      .gte("started_at", gridStartStr)
-      .lt("started_at", gridEndExclusiveStr),
+      .gte("started_at", localDayStart(gridStartStr))
+      .lt("started_at", localDayStart(gridEndExclusiveStr)),
     supabase
       .from("microcycles")
       .select("week_number, start_date, end_date, is_deload")
       .lte("start_date", gridEndStr)
       .gte("end_date", gridStartStr),
+    supabase.from("readiness_logs").select("log_date, shift_type, will_train").gte("log_date", gridStartStr).lte("log_date", gridEndStr),
   ]);
 
   const anchor = settings?.shift_anchor_date ? parseISO(settings.shift_anchor_date) : null;
@@ -69,23 +71,23 @@ export default async function CalendarPage({
   }
 
   function workoutsForDay(day: Date) {
-    return (workouts ?? []).filter((w) => isSameDay(parseISO(w.started_at), day));
+    return (workouts ?? []).filter((w) => isSameDay(localCalendarDate(w.started_at), day));
   }
 
   const prevMonthStr = format(subMonths(monthStart, 1), "yyyy-MM");
   const nextMonthStr = format(addMonths(monthStart, 1), "yyyy-MM");
-  const currentMonthStr = format(new Date(), "yyyy-MM");
+  const currentMonthStr = format(today, "yyyy-MM");
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-lg font-semibold">Calendario</h1>
           <p className="text-sm text-muted-foreground">
             Turno 4x4, semanas del programa y entrenamientos registrados.
           </p>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex w-full items-center justify-between gap-1 sm:w-auto">
           <Button variant="outline" size="icon" render={<Link href={`/calendar?month=${prevMonthStr}`} />}>
             <ChevronLeftIcon className="size-4" />
           </Button>
@@ -105,7 +107,7 @@ export default async function CalendarPage({
       )}
 
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
           <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {WEEKDAY_LABELS.map((d) => (
               <div key={d} className="pb-1 text-center text-[11px] font-medium text-muted-foreground sm:text-xs">
@@ -114,8 +116,9 @@ export default async function CalendarPage({
             ))}
             {days.map((day) => {
               const inMonth = isSameMonth(day, monthStart);
-              const shift = anchor ? shiftTypeForDate(day, anchor) : null;
-              const willTrain = shift ? willTrainByDefault(shift) : true;
+              const dailyLog = readinessLogs?.find((log) => log.log_date === format(day, "yyyy-MM-dd"));
+              const shift = dailyLog?.shift_type ?? (anchor ? shiftTypeForDate(day, anchor) : null);
+              const willTrain = dailyLog?.will_train ?? (shift ? willTrainByDefault(shift) : true);
               const mc = microcycleForDay(day);
               const dayWorkouts = workoutsForDay(day);
               const isFirstDayOfMc = mc && isSameDay(day, parseISO(mc.start_date));
@@ -124,7 +127,7 @@ export default async function CalendarPage({
                 <div
                   key={day.toISOString()}
                   className={cn(
-                    "flex min-h-[4.5rem] flex-col gap-1 rounded-lg border p-1 text-xs sm:min-h-24 sm:p-1.5",
+                    "flex min-w-0 min-h-[4.5rem] flex-col gap-1 rounded-lg border p-1 text-xs sm:min-h-24 sm:p-1.5",
                     !inMonth && "border-transparent opacity-30",
                     inMonth && mc?.is_deload && "border-accent bg-accent/40",
                     inMonth && !mc?.is_deload && "border-border",
@@ -134,7 +137,7 @@ export default async function CalendarPage({
                     <span
                       className={cn(
                         "flex size-5 items-center justify-center rounded-full font-medium",
-                        isToday(day) && "bg-primary text-primary-foreground",
+                        isSameDay(day, today) && "bg-primary text-primary-foreground",
                       )}
                     >
                       {format(day, "d")}
@@ -148,13 +151,13 @@ export default async function CalendarPage({
                   </div>
 
                   {inMonth && isFirstDayOfMc && (
-                    <Badge variant={mc?.is_deload ? "secondary" : "outline"} className="w-fit text-[10px]">
+                    <Badge variant={mc?.is_deload ? "secondary" : "outline"} className="max-w-full px-1 text-[8px] sm:text-[10px]">
                       {mc?.is_deload ? "Deload" : `Sem ${mc?.week_number}`}
                     </Badge>
                   )}
 
                   {inMonth && !willTrain && dayWorkouts.length === 0 && (
-                    <span className="text-[10px] text-muted-foreground/70">Descanso</span>
+                    <span className="break-all text-[8px] text-muted-foreground/70 sm:text-[10px]">Descanso</span>
                   )}
 
                   {inMonth &&

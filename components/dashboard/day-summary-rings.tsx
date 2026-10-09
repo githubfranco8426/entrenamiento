@@ -33,32 +33,32 @@ export function DaySummaryRings({
         <span className="text-[11px] text-primary">Lectura rápida</span>
       </div>
       <div className="grid grid-cols-3 gap-2">
-      <div className="flex flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
+      <div className="flex min-w-0 flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
         <StatRing
           pct={energyLevel != null ? (energyLevel / 5) * 100 : 0}
           value={energyLevel != null ? `${energyLevel}/5` : "—"}
           label="Readiness"
           color="var(--primary)"
         />
-        <span className="mt-1 text-[10px] text-muted-foreground">Energía y recuperación</span>
+        <span className="mt-1 px-1 text-center text-[10px] leading-tight text-muted-foreground">Energía y recuperación</span>
       </div>
-      <div className="flex flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
+      <div className="flex min-w-0 flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
         <StatRing
           pct={totalDays > 0 ? (trainedDays / totalDays) * 100 : 0}
           value={`${trainedDays}/${totalDays}`}
           label="Semana activa"
           color="var(--secondary)"
         />
-        <span className="mt-1 text-[10px] text-muted-foreground">Días completados</span>
+        <span className="mt-1 px-1 text-center text-[10px] leading-tight text-muted-foreground">Días completados</span>
       </div>
-      <div className="flex flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
+      <div className="flex min-w-0 flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
         <StatRing
           pct={acwrRatio != null ? Math.min(100, (acwrRatio / 2) * 100) : 0}
           value={acwrRatio != null ? acwrRatio.toFixed(2) : "—"}
           label="Carga (ACWR)"
           color={acwrZone ? ACWR_RING_COLOR[acwrZone] : "var(--muted-foreground)"}
         />
-        <span className="mt-1 text-[10px] text-muted-foreground">Carga de 28 días</span>
+        <span className="mt-1 px-1 text-center text-[10px] leading-tight text-muted-foreground">Carga de 28 días</span>
       </div>
       </div>
     </section>

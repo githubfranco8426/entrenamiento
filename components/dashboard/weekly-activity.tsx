@@ -4,8 +4,7 @@ import { CheckIcon, DumbbellIcon } from "lucide-react";
 
 const DAY_LETTERS = ["L", "M", "M", "J", "V", "S", "D"];
 
-export function WeeklyActivity({ weekDays, trainedDates }: { weekDays: Date[]; trainedDates: Date[] }) {
-  const today = new Date();
+export function WeeklyActivity({ weekDays, trainedDates, today }: { weekDays: Date[]; trainedDates: Date[]; today: Date }) {
 
   return (
     <section className="flex flex-col gap-2">

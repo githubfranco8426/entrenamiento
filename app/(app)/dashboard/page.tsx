@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {
   format,
+  addDays,
+  parseISO,
   startOfISOWeek,
   endOfISOWeek,
   eachDayOfInterval,
@@ -11,7 +13,7 @@ import { es } from "date-fns/locale";
 import { SettingsIcon, SparklesIcon, ClockIcon, CheckCircleIcon, UtensilsIcon, ChevronRightIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getRoutineScope } from "@/lib/training/routine-scope";
-import { shiftTypeForDate } from "@/lib/utils/shift-pattern";
+import { shiftTypeForDate, SHIFT_TYPE_LABELS } from "@/lib/utils/shift-pattern";
 import { MEAL_PLAN_BY_SHIFT } from "@/lib/nutrition/plan";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ReadinessQuickCheckin } from "@/components/dashboard/readiness-quick-checkin";
@@ -27,6 +29,7 @@ import { PeriodizationDecisionSchema } from "@/lib/ai/schema";
 import { AcwrAlert } from "@/components/dashboard/acwr-alert";
 import { DaySummaryRings } from "@/components/dashboard/day-summary-rings";
 import { computeAcwr, type DailyLoad } from "@/lib/analytics/acwr";
+import { localCalendarDate, localDateKey, localDayStart, localHour } from "@/lib/utils/local-date";
 import { pickNextRoutine } from "@/lib/utils/next-routine";
 
 const PHASE_LABELS: Record<string, string> = {
@@ -46,9 +49,11 @@ function workoutDurationLabel(startedAt: string, endedAt: string | null): string
 export default async function DashboardPage() {
   const supabase = await createClient();
   const routineScope = await getRoutineScope(supabase);
-  const today = format(new Date(), "yyyy-MM-dd");
-  const weekStart = format(startOfISOWeek(new Date()), "yyyy-MM-dd'T'00:00:00");
-  const weekEnd = format(endOfISOWeek(new Date()), "yyyy-MM-dd'T'23:59:59");
+  const now = new Date();
+  const calendarToday = localCalendarDate(now);
+  const today = localDateKey(now);
+  const weekStart = localDayStart(format(startOfISOWeek(calendarToday), "yyyy-MM-dd"));
+  const weekEnd = localDayStart(format(addDays(endOfISOWeek(calendarToday), 1), "yyyy-MM-dd"));
 
   const [
     { data: settings },
@@ -80,7 +85,7 @@ export default async function DashboardPage() {
       .from("set_logs")
       .select("completed_at, workout_exercises(exercises(muscle_group))")
       .gte("completed_at", weekStart)
-      .lte("completed_at", weekEnd),
+      .lt("completed_at", weekEnd),
     supabase
       .from("ai_periodization_runs")
       .select("id, triggered_at, raw_output")
@@ -94,27 +99,24 @@ export default async function DashboardPage() {
     ? PeriodizationDecisionSchema.safeParse(pendingRun.raw_output)
     : null;
 
-  const twentyEightDaysAgo = new Date();
-  twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
-  twentyEightDaysAgo.setHours(0, 0, 0, 0);
+  const twentyEightDaysAgo = addDays(calendarToday, -27);
   const { data: acwrSets } = await supabase
     .from("set_logs")
     .select("weight_kg, reps, completed_at")
     .not("weight_kg", "is", null)
     .not("reps", "is", null)
-    .gte("completed_at", twentyEightDaysAgo.toISOString())
+    .gte("completed_at", localDayStart(format(twentyEightDaysAgo, "yyyy-MM-dd")))
     .limit(2000);
 
   const loadByDay = new Map<string, number>();
   for (const s of acwrSets ?? []) {
-    const day = s.completed_at.slice(0, 10);
+    const day = localDateKey(s.completed_at);
     const load = (s.weight_kg ?? 0) * (s.reps ?? 0);
     loadByDay.set(day, (loadByDay.get(day) ?? 0) + load);
   }
   const dailyLoads: DailyLoad[] = Array.from({ length: 28 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (27 - i));
-    return { date: d.toISOString().slice(0, 10), load: loadByDay.get(d.toISOString().slice(0, 10)) ?? 0 };
+    const date = format(addDays(calendarToday, -(27 - i)), "yyyy-MM-dd");
+    return { date, load: loadByDay.get(date) ?? 0 };
   });
   const acwr = computeAcwr(dailyLoads);
   const acwrAlertZone = acwr.zone === "riesgo" || acwr.zone === "precaucion" ? acwr.zone : null;
@@ -123,25 +125,27 @@ export default async function DashboardPage() {
     .from("workouts")
     .select("started_at")
     .gte("started_at", weekStart)
-    .lte("started_at", weekEnd);
+    .lt("started_at", weekEnd);
 
-  const weekDays = eachDayOfInterval({ start: startOfISOWeek(new Date()), end: endOfISOWeek(new Date()) });
-  const trainedDates = (weekWorkouts ?? []).map((w) => new Date(w.started_at));
+  const weekDays = eachDayOfInterval({ start: startOfISOWeek(calendarToday), end: endOfISOWeek(calendarToday) });
+  const trainedDates = (weekWorkouts ?? []).map((w) => localCalendarDate(w.started_at));
   const trainedCount = weekDays.filter((d) => trainedDates.some((t) => isSameDay(t, d))).length;
 
-  const defaultShiftType = settings?.shift_anchor_date
-    ? shiftTypeForDate(new Date(today), new Date(settings.shift_anchor_date))
-    : "dia4_libre";
+  const defaultShiftType = readiness?.shift_type ?? (settings?.shift_anchor_date
+    ? shiftTypeForDate(calendarToday, parseISO(settings.shift_anchor_date))
+    : "dia4_libre");
 
   const activeMicro = (activeMeso?.microcycles ?? []).find((m) => m.status === "active");
 
-  const nextRoutine = pickNextRoutine(routines ?? [], workouts ?? []);
-  const todaysWorkout = (workouts ?? []).find((w) => isSameDay(new Date(w.started_at), new Date()));
+  const homeToday = /en casa/i.test(readiness?.notes ?? "");
+  const homeRoutines = (routines ?? []).filter((r) => /casa|home/i.test(`${r.title} ${r.day_label ?? ""}`));
+  const nextRoutine = pickNextRoutine(homeToday && homeRoutines.length ? homeRoutines : routines ?? [], workouts ?? []);
+  const todaysWorkout = (workouts ?? []).find((w) => isSameDay(localCalendarDate(w.started_at), calendarToday));
 
   const daysSinceLastTrained = nextRoutine
     ? (() => {
         const last = (workouts ?? []).find((w) => w.routine_id === nextRoutine.id)?.started_at;
-        return last ? differenceInCalendarDays(new Date(), new Date(last)) : null;
+        return last ? differenceInCalendarDays(calendarToday, localCalendarDate(last)) : null;
       })()
     : null;
 
@@ -202,7 +206,7 @@ export default async function DashboardPage() {
   }
   const volumeByMuscle = [...volumeMap.entries()].sort((a, b) => b[1] - a[1]);
 
-  const hour = new Date().getHours();
+  const hour = localHour(now);
   const greeting = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches";
 
   return (
@@ -232,7 +236,7 @@ export default async function DashboardPage() {
           <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-primary/90">Estado del sistema · En vivo</p>
           <h1 className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-3xl">{greeting} <span className="text-secondary">·</span> listo para entrenar</h1>
           <p className="mt-1 text-sm text-slate-300">
-            {format(new Date(), "EEEE d 'de' MMMM", { locale: es })}
+            {format(calendarToday, "EEEE d 'de' MMMM", { locale: es })}
             {activeMeso &&
               ` · ${PHASE_LABELS[activeMeso.phase] ?? activeMeso.phase}${activeMicro?.is_deload ? " (Descarga)" : ""}${activeMicro ? ` · Semana ${activeMicro.week_number}` : ""}`}
           </p>
@@ -240,7 +244,14 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <div className="order-2">
+      <div className="order-2 flex min-w-0 flex-col gap-3">
+        {readiness && (
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm">
+            <p className="font-medium text-primary">{SHIFT_TYPE_LABELS[readiness.shift_type]}</p>
+            <p className="mt-1 text-muted-foreground">{readiness.will_train ? "Entrenamiento previsto" : "Día de recuperación"}{homeToday ? " · En casa" : ""}</p>
+            {readiness.notes && <p className="mt-1 break-words text-xs text-muted-foreground">{readiness.notes}</p>}
+          </div>
+        )}
         <DaySummaryRings
           energyLevel={readiness?.energy_level ?? null}
           trainedDays={trainedCount}
@@ -352,7 +363,7 @@ export default async function DashboardPage() {
       )}
       </div>
 
-      <div className="order-3"><WeeklyActivity weekDays={weekDays} trainedDates={trainedDates} /></div>
+      <div className="order-3"><WeeklyActivity weekDays={weekDays} trainedDates={trainedDates} today={calendarToday} /></div>
 
       {!activeMeso && (
         <p className="order-9 text-sm text-muted-foreground">
@@ -448,7 +459,7 @@ export default async function DashboardPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{w.routines?.title ?? "Entreno libre"}</p>
                     <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                      {format(new Date(w.started_at), "dd/MM/yyyy · HH:mm")}
+                      {new Intl.DateTimeFormat("es-CL", { timeZone: "America/Santiago", dateStyle: "short", timeStyle: "short" }).format(new Date(w.started_at))}
                     </p>
                   </div>
                   {!w.ended_at ? (
@@ -463,7 +474,7 @@ export default async function DashboardPage() {
                 </Link>
                 <DeleteButton
                   endpoint={`/api/workouts/${w.id}`}
-                  confirmMessage={`¿Borrar el entrenamiento "${w.routines?.title ?? "Entreno libre"}" del ${format(new Date(w.started_at), "dd/MM/yyyy")}? Esta acción no se puede deshacer.`}
+                  confirmMessage={`¿Borrar el entrenamiento "${w.routines?.title ?? "Entreno libre"}" del ${format(localCalendarDate(w.started_at), "dd/MM/yyyy")}? Esta acción no se puede deshacer.`}
                   successMessage="Entrenamiento borrado"
                 />
               </div>

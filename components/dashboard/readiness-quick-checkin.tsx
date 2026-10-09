@@ -126,12 +126,12 @@ export function ReadinessQuickCheckin({
       </section>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-center gap-3 rounded-xl border border-white/8 bg-background/30 p-3">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary/10 text-secondary"><MoonStar className="size-4" /></div>
+        <div className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-white/8 bg-background/30 p-2 sm:gap-3 sm:p-3">
+          <div className="hidden size-8 shrink-0 sm:flex items-center justify-center rounded-lg bg-secondary/10 text-secondary"><MoonStar className="size-4" /></div>
           <StatRing size={58} strokeWidth={5} pct={initial?.sleep_hours != null ? Math.min(100, (initial.sleep_hours / 9) * 100) : 0} value={initial?.sleep_hours != null ? `${initial.sleep_hours}h` : "—"} label="Descanso" color="var(--secondary)" />
         </div>
-        <div className="flex items-center gap-3 rounded-xl border border-white/8 bg-background/30 p-3">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><HeartPulse className="size-4" /></div>
+        <div className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-white/8 bg-background/30 p-2 sm:gap-3 sm:p-3">
+          <div className="hidden size-8 shrink-0 sm:flex items-center justify-center rounded-lg bg-primary/10 text-primary"><HeartPulse className="size-4" /></div>
           <StatRing size={58} strokeWidth={5} pct={initial?.muscle_soreness != null ? (1 - (initial.muscle_soreness - 1) / 4) * 100 : 0} value={initial?.muscle_soreness != null ? `${initial.muscle_soreness}/5` : "—"} label="Cuerpo" color="var(--primary)" />
         </div>
       </div>
