@@ -224,6 +224,7 @@ export interface Database {
       };
       workouts: {
         Row: {
+          revision: number;
           id: string;
           user_id: string;
           routine_id: string | null;
@@ -260,6 +261,7 @@ export interface Database {
           workout_id: string;
           exercise_id: string;
           routine_exercise_id: string | null;
+          next_set_index: number;
           order_index: number;
           created_at: string;
         };
@@ -450,6 +452,8 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
+      sync_workout: { Args: { p_workout_id: string; p_operation: Json }; Returns: Json };
+      start_or_resume_workout: { Args: { p_routine_id?: string | null }; Returns: Json };
       is_active_coach_of: {
         Args: { target_user_id: string };
         Returns: boolean;

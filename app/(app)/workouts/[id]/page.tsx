@@ -4,7 +4,9 @@ import { getRoutineScope } from "@/lib/training/routine-scope";
 import { estimateOneRepMax } from "@/lib/autoregulation/rpe-tables";
 import { computeAcwr, type DailyLoad } from "@/lib/analytics/acwr";
 import { pickNextRoutine } from "@/lib/utils/next-routine";
-import { WorkoutSession } from "@/components/workouts/workout-session";
+import { PersistedSession } from "@/components/workouts/persisted-session";
+import { addDays, format } from "date-fns";
+import { localCalendarDate, localDateKey, localDayStart } from "@/lib/utils/local-date";
 
 export default async function WorkoutPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -57,26 +59,23 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
     }
   }
 
-  const twentyEightDaysAgo = new Date();
-  twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
-  twentyEightDaysAgo.setHours(0, 0, 0, 0);
+  const calendarToday = localCalendarDate();
+  const twentyEightDaysAgo = localDayStart(format(addDays(calendarToday, -27), "yyyy-MM-dd"));
   const { data: acwrSets } = await supabase
     .from("set_logs")
     .select("weight_kg, reps, completed_at")
     .not("weight_kg", "is", null)
     .not("reps", "is", null)
-    .gte("completed_at", twentyEightDaysAgo.toISOString())
+    .gte("completed_at", twentyEightDaysAgo)
     .limit(2000);
 
   const loadByDay = new Map<string, number>();
   for (const s of acwrSets ?? []) {
-    const day = s.completed_at.slice(0, 10);
+    const day = localDateKey(s.completed_at);
     loadByDay.set(day, (loadByDay.get(day) ?? 0) + (s.weight_kg ?? 0) * (s.reps ?? 0));
   }
   const dailyLoads: DailyLoad[] = Array.from({ length: 28 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (27 - i));
-    const key = d.toISOString().slice(0, 10);
+    const key = format(addDays(calendarToday, -(27-i)), "yyyy-MM-dd");
     return { date: key, load: loadByDay.get(key) ?? 0 };
   });
   const acwr = computeAcwr(dailyLoads);
@@ -88,13 +87,12 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
   const nextRoutine = pickNextRoutine(liveRoutines ?? [], recentWorkouts ?? []);
   const nextRoutineLabel = nextRoutine ? (nextRoutine.day_label ?? nextRoutine.title) : null;
 
-  return (
-    <WorkoutSession
-      workout={workout}
-      allExercises={exercises ?? []}
-      estimatedOneRepMaxByExercise={estimatedOneRepMaxByExercise}
-      acwr={acwr.ratio != null ? { ratio: acwr.ratio, zone: acwr.zone } : null}
-      nextRoutineLabel={nextRoutineLabel}
-    />
-  );
+
+  const { data: micro } = workout.microcycle_id ? await supabase.from("microcycles").select("week_number,start_date,end_date").eq("id", workout.microcycle_id).maybeSingle() : { data: null };
+  return <PersistedSession initial={{
+    workout, allExercises: exercises ?? [], estimatedOneRepMaxByExercise,
+    acwr: acwr.ratio != null ? { ratio: acwr.ratio, zone: acwr.zone } : null,
+    nextRoutineLabel,
+    programLabel: micro ? "Semana " + micro.week_number + " · " + micro.start_date + " al " + micro.end_date : null,
+  }} />;
 }

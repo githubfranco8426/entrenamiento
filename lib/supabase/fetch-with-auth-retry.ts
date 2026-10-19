@@ -11,7 +11,7 @@ export async function fetchWithAuthRetry(input: string, init?: RequestInit): Pro
   if (res.status !== 401) return res;
 
   const supabase = createClient();
-  const { data } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.refreshSession();
   if (!data.session) return res;
 
   return fetch(input, init);

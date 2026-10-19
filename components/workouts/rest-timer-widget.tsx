@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { TimerIcon, XIcon, SparklesIcon, PauseIcon, PlayIcon, MinusIcon, PlusIcon, Minimize2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRestTimer } from "@/components/workouts/rest-timer-context";
+import { useActiveWorkout } from "./active-workout-context";
 
 const REST_STEP_DOWN = 15;
 const REST_STEP_UP = 30;
@@ -32,6 +33,7 @@ function useBreathingPacer(active: boolean) {
 }
 
 export function RestTimerWidget() {
+  const { state: active } = useActiveWorkout();
   const { secondsLeft, totalSeconds, label, note, cue, nextSet, paused, minimized, adjust, togglePause, toggleMinimized, skip } =
     useRestTimer();
   const breath = useBreathingPacer(secondsLeft != null && !minimized && secondsLeft > 0);
@@ -67,6 +69,7 @@ export function RestTimerWidget() {
           >
             <XIcon className="size-4" />
           </button>
+          {active && <a className="min-h-11 py-3 text-xs underline" href={"/workouts/" + active.workoutId}>Ver sesión</a>}
         </div>
       </div>
     );
@@ -74,7 +77,7 @@ export function RestTimerWidget() {
 
   return (
     <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-50 flex justify-center px-3 lg:inset-x-auto lg:right-4 lg:bottom-4">
-      <div className="flex w-full max-w-sm flex-col gap-3 overflow-hidden rounded-2xl bg-card/95 p-4 shadow-2xl ring-1 ring-primary/30 backdrop-blur-md">
+      <div className="flex max-h-[70dvh] w-full max-w-sm flex-col gap-3 overflow-y-auto rounded-2xl bg-card/95 p-4 shadow-2xl ring-1 ring-primary/30 backdrop-blur-md">
         {/* Status strip */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
