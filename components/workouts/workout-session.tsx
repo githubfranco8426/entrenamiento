@@ -2,11 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { differenceInMinutes, format } from "date-fns";
+import { differenceInMinutes } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { repsInReserve } from "@/lib/autoregulation/rpe-tables";
-import type { AcwrZone } from "@/lib/analytics/acwr";
+import type { SessionPayload, SessionRecord, SetLog, TargetSet, WorkoutData } from "@/lib/workouts/model";
+import { nextSetIndex } from "@/lib/workouts/model";
+import { enqueue } from "@/lib/workouts/sync";
+import { changeSession } from "@/lib/workouts/storage";
+import { localDateTime } from "@/lib/utils/local-date";
+import { useSetDraft } from "./persisted-session";
 import { fetchWithAuthRetry } from "@/lib/supabase/fetch-with-auth-retry";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,67 +31,7 @@ import { useRestTimer } from "@/components/workouts/rest-timer-context";
 import { useActiveWorkout } from "@/components/workouts/active-workout-context";
 import { PlayCircleIcon, CheckIcon, PlusIcon, XIcon, MinusIcon, PencilIcon, TrashIcon, ClockIcon, RotateCcwIcon, ActivityIcon, AlertTriangleIcon, ListChecksIcon, TimerResetIcon } from "lucide-react";
 
-interface ExerciseOption {
-  id: string;
-  name: string;
-  plate_increment_kg: number;
-  thumbnail_url: string | null;
-  video_url: string | null;
-  cues?: string[] | null;
-  biomechanics_notes?: string | null;
-}
-
-interface TargetSet {
-  id: string;
-  set_index: number;
-  set_type: string;
-  target_reps_min: number | null;
-  target_reps_max: number | null;
-  target_rpe: number | null;
-  target_weight_kg: number | null;
-  rest_seconds: number | null;
-}
-
-const SET_TYPE_LABELS: Record<string, string> = {
-  myo: "+ Myo-reps",
-  dropset: "Dropset",
-  failure: "Al fallo",
-  warmup: "Calentamiento",
-};
-
-interface SetLog {
-  id: string;
-  set_index: number;
-  weight_kg: number | null;
-  reps: number | null;
-  rpe_actual: number | null;
-}
-
-interface RoutineExercise {
-  id: string;
-  exercise_id: string;
-  order_index: number;
-  notes: string | null;
-  exercises: ExerciseOption | null;
-  target_sets: TargetSet[];
-}
-
-interface WorkoutExercise {
-  id: string;
-  exercise_id: string;
-  routine_exercise_id: string | null;
-  exercises: ExerciseOption | null;
-  set_logs: SetLog[];
-}
-
-interface WorkoutData {
-  id: string;
-  started_at: string;
-  ended_at: string | null;
-  routines: { title: string; day_label: string | null; routine_exercises: RoutineExercise[] } | null;
-  workout_exercises: WorkoutExercise[];
-}
-
+const SET_TYPE_LABELS: Record<string, string> = { myo: "+ Myo-reps", dropset: "Dropset", failure: "Al fallo", warmup: "Calentamiento" };
 interface Block {
   key: string;
   exerciseId: string;
@@ -104,7 +49,7 @@ interface Block {
 
 function buildInitialBlocks(workout: WorkoutData): Block[] {
   const blocks: Block[] = [];
-  const routineExercises = (workout.routines?.routine_exercises ?? []).sort(
+  const routineExercises = [...(workout.routines?.routine_exercises ?? [])].sort(
     (a, b) => a.order_index - b.order_index,
   );
 
@@ -131,7 +76,7 @@ function buildInitialBlocks(workout: WorkoutData): Block[] {
     if (we.routine_exercise_id) continue;
     if (!we.exercises) continue;
     blocks.push({
-      key: we.id,
+      key: we.exercise_id,
       exerciseId: we.exercise_id,
       exerciseName: we.exercises.name,
       plateIncrementKg: we.exercises.plate_increment_kg,
@@ -155,184 +100,60 @@ export function WorkoutSession({
   estimatedOneRepMaxByExercise,
   acwr,
   nextRoutineLabel,
-}: {
-  workout: WorkoutData;
-  allExercises: ExerciseOption[];
-  estimatedOneRepMaxByExercise: Record<string, number>;
-  acwr: { ratio: number; zone: AcwrZone | null } | null;
-  nextRoutineLabel: string | null;
-}) {
+  programLabel,
+  record,
+}: SessionPayload & { record: SessionRecord }) {
   const router = useRouter();
   const restTimer = useRestTimer();
-  const { setActiveWorkout } = useActiveWorkout();
-  const [blocks, setBlocks] = useState<Block[]>(() => buildInitialBlocks(workout));
+  const { userId, sync } = useActiveWorkout();
+  const blocks = buildInitialBlocks(workout);
+  for (const id of record.extraExerciseIds) {
+    if (blocks.some(b => b.exerciseId === id)) continue;
+    const ex = allExercises.find(e => e.id === id);
+    if (ex) blocks.push({ key: id, exerciseId: id, exerciseName: ex.name, plateIncrementKg: ex.plate_increment_kg, thumbnailUrl: ex.thumbnail_url, videoUrl: ex.video_url, routineExerciseId: null, notes: null, cues: ex.cues ?? null, biomechanicsNotes: ex.biomechanics_notes ?? null, targetSets: [], loggedSets: [] });
+  }
   const [extraRowsByBlock, setExtraRowsByBlock] = useState<Record<string, number>>({});
-  const [ended, setEnded] = useState(!!workout.ended_at);
-  const [endedAt, setEndedAt] = useState(workout.ended_at);
+  const ended = !!workout.ended_at;
+  const endedAt = workout.ended_at;
   const [addExerciseId, setAddExerciseId] = useState("");
   const [finishing, setFinishing] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [reopening, setReopening] = useState(false);
-  const [finishDialogOpen, setFinishDialogOpen] = useState(false);
+  const [finishDialogOpen, setFinishDialogOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(location.search).get("finish") === "1" && !ended);
   const [durationDialogOpen, setDurationDialogOpen] = useState(false);
-  const [durationMinutes, setDurationMinutes] = useState("");
+  const [durationMinutes, setDurationMinutes] = useState(() => String(Math.max(1, Math.min(720, differenceInMinutes(new Date(), new Date(workout.started_at))))));
   const blockRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const hasLoggedSets = blocks.some((b) => b.loggedSets.length > 0);
 
-  function addFreestyleExercise() {
-    const ex = allExercises.find((e) => e.id === addExerciseId);
-    if (!ex) return;
-    setBlocks((prev) => [
-      ...prev,
-      {
-        key: `new-${ex.id}-${prev.length}`,
-        exerciseId: ex.id,
-        exerciseName: ex.name,
-        plateIncrementKg: ex.plate_increment_kg,
-        thumbnailUrl: ex.thumbnail_url,
-        videoUrl: ex.video_url,
-        routineExerciseId: null,
-        notes: null,
-        cues: ex.cues ?? null,
-        biomechanicsNotes: ex.biomechanics_notes ?? null,
-        targetSets: [],
-        loggedSets: [],
-      },
-    ]);
+
+  async function addFreestyleExercise() {
+    if (!addExerciseId) return;
+    await changeSession(userId, workout.id, current => {
+      if (current && !current.extraExerciseIds.includes(addExerciseId)) current.extraExerciseIds.push(addExerciseId);
+      return current;
+    }).catch(() => toast.error("No se pudo guardar el ejercicio."));
     setAddExerciseId("");
   }
 
   async function logSet(block: Block, weightKg: number, reps: number, rpeActual: number) {
-    const setIndex = block.loggedSets.length;
-    const targetSet = block.targetSets[setIndex] ?? null;
-    const tempId = `temp-${block.key}-${setIndex}-${Date.now()}`;
-
-    // Optimista: el set se muestra como hecho de inmediato; la red corre en segundo plano.
-    // Esto evita que el check se sienta lento esperando la ida y vuelta al servidor.
-    setBlocks((prev) =>
-      prev.map((b) =>
-        b.key === block.key
-          ? {
-              ...b,
-              loggedSets: [
-                ...b.loggedSets,
-                { id: tempId, set_index: setIndex, weight_kg: weightKg, reps, rpe_actual: rpeActual },
-              ],
-            }
-          : b,
-      ),
-    );
-
-    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}/sets`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        exerciseId: block.exerciseId,
-        routineExerciseId: block.routineExerciseId,
-        targetSetId: targetSet?.id ?? null,
-        setIndex,
-        weightKg,
-        reps,
-        rpeActual,
-      }),
-    });
-
-    if (!res.ok) {
-      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
-      toast.error(error);
-      setBlocks((prev) =>
-        prev.map((b) =>
-          b.key === block.key ? { ...b, loggedSets: b.loggedSets.filter((s) => s.id !== tempId) } : b,
-        ),
-      );
-      return;
-    }
-
-    const { setLog } = await res.json();
-    setBlocks((prev) =>
-      prev.map((b) =>
-        b.key === block.key
-          ? { ...b, loggedSets: b.loggedSets.map((s) => (s.id === tempId ? setLog : s)) }
-          : b,
-      ),
-    );
-
-    if (targetSet?.target_rpe) {
-      const targetReps = targetSet.target_reps_max ?? targetSet.target_reps_min ?? reps;
-      // Fire-and-forget: la sugerencia de autoregulación no debe bloquear el siguiente set.
-      // Se muestra en el widget de descanso (persistente) en vez de un toast que desaparece solo.
-      fetchWithAuthRetry("/api/autoregulate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          setLogId: setLog.id,
-          targetReps,
-          targetRpe: targetSet.target_rpe,
-          actualWeightKg: weightKg,
-          actualReps: reps,
-          actualRpe: rpeActual,
-          plateIncrementKg: block.plateIncrementKg,
-        }),
-      })
-        .then((autoRes) => (autoRes.ok ? autoRes.json() : null))
-        .then((suggestion) => suggestion && restTimer.setNote(suggestion.rationale))
-        .catch(() => {});
-    } else {
-      toast.success("Set registrado");
-    }
+    const target = block.targetSets[block.loggedSets.length] ?? null;
+    const index = nextSetIndex(record, block.exerciseId, block.routineExerciseId);
+    await enqueue(userId, workout.id, { kind: "log", setId: crypto.randomUUID(), exerciseId: block.exerciseId, routineExerciseId: block.routineExerciseId, targetSetId: target?.id ?? null, setIndex: index, completedAt: new Date().toISOString(), weightKg, reps, rpeActual }, block.key + ":" + index);
+    restTimer.start(target?.rest_seconds ?? 90, block.exerciseName);
+    void sync();
   }
-
   async function updateSet(block: Block, setLogId: string, weightKg: number, reps: number, rpeActual: number) {
-    const prevSets = block.loggedSets;
-    setBlocks((prev) =>
-      prev.map((b) =>
-        b.key === block.key
-          ? {
-              ...b,
-              loggedSets: b.loggedSets.map((s) =>
-                s.id === setLogId ? { ...s, weight_kg: weightKg, reps, rpe_actual: rpeActual } : s,
-              ),
-            }
-          : b,
-      ),
-    );
-
-    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}/sets/${setLogId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ weightKg, reps, rpeActual }),
-    });
-
-    if (!res.ok) {
-      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
-      toast.error(error);
-      setBlocks((prev) => prev.map((b) => (b.key === block.key ? { ...b, loggedSets: prevSets } : b)));
-      return;
-    }
-    toast.success("Set actualizado");
+    await enqueue(userId, workout.id, { kind: "edit", setId: setLogId, weightKg, reps, rpeActual }, "edit:" + setLogId);
+    void sync();
   }
-
   async function deleteSet(block: Block, setLogId: string) {
-    if (!window.confirm("¿Borrar este set?")) return;
-    const prevSets = block.loggedSets;
-    setBlocks((prev) =>
-      prev.map((b) =>
-        b.key === block.key ? { ...b, loggedSets: b.loggedSets.filter((s) => s.id !== setLogId) } : b,
-      ),
-    );
-
-    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}/sets/${setLogId}`, { method: "DELETE" });
-    if (!res.ok) {
-      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
-      toast.error(error);
-      setBlocks((prev) => prev.map((b) => (b.key === block.key ? { ...b, loggedSets: prevSets } : b)));
-      return;
-    }
-    toast.success("Set borrado");
+    if (!window.confirm("¿Borrar esta serie?")) return;
+    await enqueue(userId, workout.id, { kind: "delete", setId: setLogId });
+    void sync();
   }
-
   async function cancelWorkout() {
     if (!window.confirm("¿Anular este entrenamiento? Se borrará junto con las series ya registradas.")) return;
+    if (!navigator.onLine || record.queue.length) { toast.error("Sincronizá los cambios antes de anular la sesión."); return; }
     setCancelling(true);
     const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}`, { method: "DELETE" });
     setCancelling(false);
@@ -341,7 +162,8 @@ export function WorkoutSession({
       toast.error(error);
       return;
     }
-    setActiveWorkout(null);
+    restTimer.skip();
+    await changeSession(userId, workout.id, () => undefined);
     toast.success("Entrenamiento anulado");
     router.push("/dashboard");
   }
@@ -355,6 +177,7 @@ export function WorkoutSession({
     setSuggestedDuration(new Date());
     setFinishDialogOpen(true);
   }
+
 
   function openDurationDialog() {
     setSuggestedDuration(endedAt ? new Date(endedAt) : new Date());
@@ -370,89 +193,27 @@ export function WorkoutSession({
     });
   }
 
+
   async function finishWorkout() {
-    const parsedDuration = Number(durationMinutes);
-    if (!Number.isInteger(parsedDuration) || parsedDuration < 1 || parsedDuration > 720) {
-      toast.error("Ingresá una duración entre 1 y 720 minutos");
-      return;
-    }
+    const duration = Number(durationMinutes);
+    if (!Number.isInteger(duration) || duration < 1 || duration > 720) { toast.error("Ingresá una duración entre 1 y 720 minutos"); return; }
+    if (finishing) return;
     setFinishing(true);
-    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ended: true, durationMinutes: parsedDuration }),
-    });
-    setFinishing(false);
-    if (!res.ok) {
-      toast.error("No se pudo finalizar el entrenamiento");
-      return;
-    }
-    const { workout: updated } = await res.json();
-    setEnded(true);
-    setEndedAt(updated.ended_at);
-    setFinishDialogOpen(false);
-    setDurationDialogOpen(false);
-    toast.success("¡Entrenamiento finalizado! Acá tenés tu informe.");
-    // Refresca los datos del servidor (ACWR, etc.) para que incluyan las series recién registradas.
-    router.refresh();
+    try {
+      await enqueue(userId, workout.id, { kind: "finish", durationMinutes: duration });
+      restTimer.skip();
+      setFinishDialogOpen(false); setDurationDialogOpen(false);
+      void sync();
+    } catch (e) { toast.error(e instanceof Error ? e.message : "No se pudo guardar"); }
+    finally { setFinishing(false); }
   }
-
   async function reopenWorkout() {
+    if (record.queue.length) { toast.error("Sincronizá el cierre antes de reabrir."); return; }
     setReopening(true);
-    const res = await fetchWithAuthRetry(`/api/workouts/${workout.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ended: false }),
-    });
-    setReopening(false);
-    if (!res.ok) {
-      toast.error("No se pudo reabrir el entrenamiento");
-      return;
-    }
-    setEnded(false);
-    setEndedAt(null);
-    toast.success("Entrenamiento reabierto — ya podés editarlo");
+    try { await enqueue(userId, workout.id, { kind: "reopen" }); void sync(); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "No se pudo reabrir"); }
+    finally { setReopening(false); }
   }
-
-  // Publica cuál es la próxima serie pendiente para el widget flotante global (visible en
-  // cualquier pantalla mientras el entreno sigue abierto) — mismos valores por defecto que
-  // ya se precargan en la fila del set, para que "tocar el check" ahí equivalga a confirmar
-  // esta fila sin ajustar nada.
-  useEffect(() => {
-    if (ended) {
-      setActiveWorkout(null);
-      return;
-    }
-    const pendingBlock = blocks.find((b) => b.loggedSets.length < b.targetSets.length);
-    if (!pendingBlock) {
-      setActiveWorkout(null);
-      return;
-    }
-    const nextIndex = pendingBlock.loggedSets.length;
-    const nextTarget = pendingBlock.targetSets[nextIndex];
-    const defaultReps = nextTarget.target_reps_max ?? nextTarget.target_reps_min ?? null;
-    const defaultRir =
-      nextTarget.target_rpe != null ? Math.round(repsInReserve(nextTarget.target_rpe)) : DEFAULT_TARGET_RIR;
-    const defaultRpeActual = Math.min(10, Math.max(5, 10 - defaultRir));
-
-    setActiveWorkout({
-      workoutId: workout.id,
-      exerciseName: pendingBlock.exerciseName,
-      setNumber: nextIndex + 1,
-      totalSets: pendingBlock.targetSets.length,
-      quickLog:
-        nextTarget.target_weight_kg != null && defaultReps != null
-          ? {
-              exerciseId: pendingBlock.exerciseId,
-              routineExerciseId: pendingBlock.routineExerciseId,
-              targetSetId: nextTarget.id,
-              weightKg: nextTarget.target_weight_kg,
-              reps: defaultReps,
-              rpeActual: defaultRpeActual,
-            }
-          : null,
-    });
-  }, [blocks, ended, workout.id, setActiveWorkout]);
 
   const availableExercises = allExercises.filter((e) => !blocks.some((b) => b.exerciseId === e.id));
   const availableExerciseItems = Object.fromEntries(availableExercises.map((e) => [e.id, e.name]));
@@ -484,7 +245,7 @@ export function WorkoutSession({
               {workout.routines?.title ?? "Entreno libre"}
             </h1>
             <p className="mt-1 font-mono text-xs text-muted-foreground">
-              Inicio · {format(new Date(workout.started_at), "dd/MM/yyyy HH:mm")}
+              Inicio · {localDateTime(workout.started_at)}
             </p>
           </div>
           {ended ? (
@@ -559,10 +320,12 @@ export function WorkoutSession({
         />
       )}
 
+      {programLabel && <p className="text-sm text-muted-foreground">{programLabel}</p>}
       {blocks.map((block) => (
         <div key={block.key} ref={(node) => { blockRefs.current[block.key] = node; }}>
           <ExerciseBlockCard
             block={block}
+            nextLogIndex={nextSetIndex(record, block.exerciseId, block.routineExerciseId)}
             ended={ended}
             onLogSet={logSet}
             onUpdateSet={updateSet}
@@ -705,8 +468,6 @@ function formatRest(seconds: number | null): string | null {
   return rem === 0 ? `${min} min` : `${min}:${String(rem).padStart(2, "0")} min`;
 }
 
-/** Rest timer por defecto cuando el set objetivo no define rest_seconds. */
-const DEFAULT_REST_SECONDS = 90;
 
 function formatElapsed(totalSeconds: number): string {
   const h = Math.floor(totalSeconds / 3600);
@@ -740,6 +501,7 @@ function WorkoutStopwatch({ startedAt }: { startedAt: string }) {
 
 function ExerciseBlockCard({
   block,
+  nextLogIndex,
   ended,
   onLogSet,
   onUpdateSet,
@@ -750,6 +512,7 @@ function ExerciseBlockCard({
   isActive,
 }: {
   block: Block;
+  nextLogIndex: number;
   ended: boolean;
   onLogSet: (block: Block, weightKg: number, reps: number, rpeActual: number) => Promise<void>;
   onUpdateSet: (block: Block, setLogId: string, weightKg: number, reps: number, rpeActual: number) => Promise<void>;
@@ -767,33 +530,6 @@ function ExerciseBlockCard({
   const headerTarget = nextTarget ?? block.targetSets[0] ?? null;
   const targetRir = headerTarget?.target_rpe != null ? Math.round(repsInReserve(headerTarget.target_rpe)) : null;
   const restLabel = formatRest(headerTarget?.rest_seconds ?? null);
-
-  const prevLoggedCountRef = useRef(block.loggedSets.length);
-  const restTimer = useRestTimer();
-
-  useEffect(() => {
-    const prevCount = prevLoggedCountRef.current;
-    const newCount = block.loggedSets.length;
-    if (newCount > prevCount && !ended) {
-      const justCompletedTarget = block.targetSets[newCount - 1] ?? null;
-      const upcomingTarget = block.targetSets[newCount] ?? null;
-      const cue = block.biomechanicsNotes || block.cues?.[0] || null;
-      restTimer.start(justCompletedTarget?.rest_seconds ?? DEFAULT_REST_SECONDS, block.exerciseName, {
-        cue,
-        nextSet: upcomingTarget
-          ? {
-              weightKg: upcomingTarget.target_weight_kg,
-              repsMin: upcomingTarget.target_reps_min,
-              repsMax: upcomingTarget.target_reps_max,
-              rir: upcomingTarget.target_rpe != null ? Math.round(repsInReserve(upcomingTarget.target_rpe)) : null,
-            }
-          : null,
-      });
-    }
-    prevLoggedCountRef.current = newCount;
-    // restTimer.start es estable (useCallback), no hace falta en deps.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [block.loggedSets.length, block.targetSets, block.exerciseName, block.cues, block.biomechanicsNotes, ended]);
 
   return (
     <Card className={cn("overflow-hidden py-0 gap-0 transition-shadow", isActive && "ring-primary/45 shadow-[0_14px_32px_-18px_rgba(142,163,176,0.65)]")}>
@@ -857,7 +593,10 @@ function ExerciseBlockCard({
           </div>
         )}
         {block.notes && (
-          <p className="border-b border-border bg-secondary/10 px-3 py-2 text-xs text-secondary">{block.notes}</p>
+          <details className="border-b border-border bg-secondary/10 px-3 py-2 text-xs text-secondary">
+            <summary className="min-h-11 cursor-pointer py-3">Ver indicaciones de la rutina</summary>
+            <p className="whitespace-pre-wrap pb-3">{block.notes}</p>
+          </details>
         )}
         <div className={cn(ROW_GRID, "border-b border-border px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground")}>
           <span className="text-center">Set</span>
@@ -873,8 +612,9 @@ function ExerciseBlockCard({
           const status: "done" | "active" | "pending" = loggedSet ? "done" : i === nextIndex ? "active" : "pending";
           return (
             <SetRow
-              key={loggedSet?.id ?? i}
-              index={i}
+              key={loggedSet?.id ?? (block.key + ":" + nextLogIndex + ":" + i)}
+              index={loggedSet?.set_index ?? (i === nextIndex ? nextLogIndex : i)}
+              draftKey={block.key + ":" + nextLogIndex}
               status={ended && status === "active" ? "pending" : status}
               loggedSet={loggedSet}
               targetSet={targetSet}
@@ -905,6 +645,7 @@ function ExerciseBlockCard({
 
 function SetRow({
   index,
+  draftKey,
   status,
   loggedSet,
   targetSet,
@@ -914,6 +655,7 @@ function SetRow({
   onDelete,
 }: {
   index: number;
+  draftKey: string;
   status: "done" | "active" | "pending";
   loggedSet: SetLog | null;
   targetSet: TargetSet | null;
@@ -931,10 +673,9 @@ function SetRow({
         : "";
   const defaultRir = targetSet?.target_rpe != null ? String(Math.round(repsInReserve(targetSet.target_rpe))) : String(DEFAULT_TARGET_RIR);
 
-  const [weight, setWeight] = useState(defaultWeight);
-  const [reps, setReps] = useState(defaultReps);
-  const [rir, setRir] = useState(defaultRir);
+  const { weight, setWeight, reps, setReps, rir, setRir } = useSetDraft(draftKey, { weight: defaultWeight, reps: defaultReps, rir: defaultRir });
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
 
   if (status === "done" && loggedSet) {
     return (
@@ -967,17 +708,20 @@ function SetRow({
   }
 
   async function handleDone() {
+    if (submittingRef.current) return;
     const w = Number(weight);
     const r = Number(reps);
     const rirValue = Number(rir);
-    if (!w || !r || rir === "" || Number.isNaN(rirValue)) {
+    if (weight === "" || !Number.isFinite(w) || w < 0 || w > 9999 || !Number.isInteger(r) || r < 1 || r > 10000 || rir === "" || !Number.isFinite(rirValue) || rirValue < 0 || rirValue > 5) {
       toast.error("Completá kg, reps y RIR");
       return;
     }
     const rpeActual = Math.min(10, Math.max(5, 10 - rirValue));
+    submittingRef.current = true;
     setSubmitting(true);
-    await onSubmit(w, r, rpeActual);
-    setSubmitting(false);
+    try { await onSubmit(w, r, rpeActual); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "No se pudo guardar la serie"); }
+    finally { submittingRef.current = false; setSubmitting(false); }
   }
 
   const selectedRirOption = rir !== "" ? closestRirOption(Number(rir)) : null;
@@ -992,6 +736,8 @@ function SetRow({
         <div className="flex items-center gap-1.5">
           <input
             type="number"
+            aria-label="Carga en kilogramos"
+            min="0"
             step="0.5"
             inputMode="decimal"
             value={weight}
@@ -1007,6 +753,7 @@ function SetRow({
         <button
           type="button"
           onClick={() => stepReps(-1)}
+          aria-label="Quitar una repetición"
           className="flex size-12 items-center justify-center rounded-full bg-card text-foreground hover:bg-muted active:scale-90"
         >
           <MinusIcon className="size-5" />
@@ -1018,6 +765,7 @@ function SetRow({
         <button
           type="button"
           onClick={() => stepReps(1)}
+          aria-label="Añadir una repetición"
           className="flex size-12 items-center justify-center rounded-full bg-card text-primary hover:bg-muted active:scale-90"
         >
           <PlusIcon className="size-5" />
@@ -1070,10 +818,9 @@ function DoneSetRow({
   onDelete: () => Promise<void>;
 }) {
   const [editing, setEditing] = useState(false);
-  const [weight, setWeight] = useState(String(loggedSet.weight_kg ?? ""));
-  const [reps, setReps] = useState(String(loggedSet.reps ?? ""));
+
   const doneRir = loggedSet.rpe_actual != null ? Math.round(repsInReserve(loggedSet.rpe_actual)) : null;
-  const [rir, setRir] = useState(String(doneRir ?? DEFAULT_TARGET_RIR));
+  const { weight, setWeight, reps, setReps, rir, setRir } = useSetDraft("edit:" + loggedSet.id, { weight: String(loggedSet.weight_kg ?? ""), reps: String(loggedSet.reps ?? ""), rir: String(doneRir ?? DEFAULT_TARGET_RIR) });
   const [saving, setSaving] = useState(false);
 
   if (!editing) {
@@ -1112,21 +859,20 @@ function DoneSetRow({
     const w = Number(weight);
     const r = Number(reps);
     const rirValue = Number(rir);
-    if (!w || !r || rir === "" || Number.isNaN(rirValue)) {
+    if (weight === "" || !Number.isFinite(w) || w < 0 || w > 9999 || !Number.isInteger(r) || r < 1 || r > 10000 || rir === "" || !Number.isFinite(rirValue) || rirValue < 0 || rirValue > 5) {
       toast.error("Completá kg, reps y RIR");
       return;
     }
     const rpeActual = Math.min(10, Math.max(5, 10 - rirValue));
     setSaving(true);
-    await onUpdate(w, r, rpeActual);
-    setSaving(false);
-    setEditing(false);
+    try { await onUpdate(w, r, rpeActual); setEditing(false); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "No se pudo guardar"); }
+    finally { setSaving(false); }
   }
 
   async function handleDelete() {
     setSaving(true);
-    await onDelete();
-    setSaving(false);
+    try { await onDelete(); } catch (e) { toast.error(e instanceof Error ? e.message : "No se pudo borrar"); } finally { setSaving(false); }
   }
 
   return (
