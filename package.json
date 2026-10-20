@@ -4,16 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/build-offline-worker.mjs",
+    "build": "node scripts/check-build-env.mjs && npm run build:opengym && next build && node scripts/build-offline-worker.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "import:hevy": "tsx scripts/import-hevy.ts"
+    "import:hevy": "tsx scripts/import-hevy.ts",
+    "build:opengym": "node scripts/build-opengym.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@google/genai": "^2.19.0",
     "@hookform/resolvers": "^5.9.1",
+    "@next/env": "16.3.3",
     "@supabase/ssr": "^0.12.5",
     "@supabase/supabase-js": "^2.112.4",
     "class-variance-authority": "^0.7.1",

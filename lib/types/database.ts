@@ -23,6 +23,12 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: {
+      opengym_profiles: {
+        Row: { user_id: string; state: Json; revision: number; coach_pending: Json | null; coach_last_requested_at: string | null; published_ids: Json; updated_at: string };
+        Insert: { user_id?: string; state?: Json; revision?: number; coach_pending?: Json | null; coach_last_requested_at?: string | null; published_ids?: Json };
+        Update: { state?: Json; revision?: number; coach_pending?: Json | null; coach_last_requested_at?: string | null; published_ids?: Json; updated_at?: string };
+        Relationships: [];
+      };
       exercises: {
         Row: {
           id: string;
@@ -452,6 +458,8 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
+      save_opengym_state: { Args: { p_state: Json; p_revision: number }; Returns: number };
+      publish_opengym: { Args: { p_records: Json }; Returns: Json };
       sync_workout: { Args: { p_workout_id: string; p_operation: Json }; Returns: Json };
       start_or_resume_workout: { Args: { p_routine_id?: string | null }; Returns: Json };
       is_active_coach_of: {

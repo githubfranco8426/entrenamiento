@@ -16,10 +16,10 @@ import { ContinueWorkout } from "@/components/dashboard/continue-workout";
 import { getRoutineScope } from "@/lib/training/routine-scope";
 import { shiftTypeForDate, SHIFT_TYPE_LABELS } from "@/lib/utils/shift-pattern";
 import { MEAL_PLAN_BY_SHIFT } from "@/lib/nutrition/plan";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ReadinessQuickCheckin } from "@/components/dashboard/readiness-quick-checkin";
 import { BodyMetricForm } from "@/components/dashboard/body-metric-form";
-import { StartWorkoutButton } from "@/components/dashboard/start-workout-button";
+import { RoutineLibrary } from "@/components/dashboard/routine-library";
 import { TodaysRoutineHero } from "@/components/dashboard/todays-routine-hero";
 import { WeeklyActivity } from "@/components/dashboard/weekly-activity";
 import { WeeklyVolume } from "@/components/dashboard/weekly-volume";
@@ -385,60 +385,32 @@ export default async function DashboardPage() {
         <WeeklyVolume volumeByMuscle={volumeByMuscle} />
       </div>
 
-      <div className="order-11 grid gap-6 sm:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Peso corporal</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <BodyMetricForm today={today} initial={bodyMetric ?? null} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Todas las rutinas</CardTitle>
-            <CardDescription>Iniciá un entrenamiento desde cualquier rutina, o uno libre.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            <StartWorkoutButton
-              className="w-full justify-start gap-2 bg-muted text-foreground hover:bg-accent"
-              label="Empezar entreno libre"
-            />
-
-            {(routines ?? []).length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                Todavía no hay rutinas. Creá una en{" "}
-                <Link href="/routines" className="underline">
-                  Rutinas
-                </Link>
-                .
-              </p>
-            )}
-            {(routines ?? []).map((r) => {
-              const exerciseNames = (r.routine_exercises ?? [])
-                .map((re) => re.exercises?.name)
-                .filter((name): name is string => !!name);
-              return (
-                <div key={r.id} className="flex flex-col gap-2.5 rounded-lg bg-muted/60 p-3">
-                  <div>
-                    <p className="text-sm font-semibold">{r.title}</p>
-                    {r.day_label && (
-                      <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {r.day_label}
-                      </p>
-                    )}
-                    {exerciseNames.length > 0 && (
-                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{exerciseNames.join(", ")}</p>
-                    )}
-                  </div>
-                  <StartWorkoutButton routineId={r.id} className="w-full" label="Iniciar rutina" />
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
+      <div className="order-11">
+        <RoutineLibrary
+          nextRoutineId={nextRoutine?.id}
+          routines={(routines ?? []).map((routine) => ({
+            id: routine.id,
+            title: routine.title,
+            dayLabel: routine.day_label,
+            exercises: [...(routine.routine_exercises ?? [])]
+              .sort((a, b) => a.order_index - b.order_index)
+              .map((exercise) => ({
+                id: exercise.exercise_id,
+                name: exercise.exercises?.name ?? "Ejercicio",
+                sets: exercise.target_sets?.length ?? 0,
+              })),
+          }))}
+        />
       </div>
+
+      <Card className="order-11">
+        <CardHeader>
+          <CardTitle>Peso corporal</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <BodyMetricForm today={today} initial={bodyMetric ?? null} />
+        </CardContent>
+      </Card>
 
       <Card className="order-12">
         <CardHeader>

@@ -54,3 +54,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# OpenGym generated assets and vendored dependencies
+/public/opengym-app/
+/vendor/opengym/frontend/node_modules/
+/vendor/opengym/frontend/dist/
+
+/public/opengym-source.tar.gz

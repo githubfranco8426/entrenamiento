@@ -22,6 +22,7 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/calendar", label: "Calendario", icon: CalendarDaysIcon },
   { href: "/routines", label: "Rutinas", icon: ClipboardListIcon },
   { href: "/program", label: "Programa", icon: CalendarRangeIcon },
+  { href: "/opengym", label: "OpenGym", icon: ClipboardListIcon },
   { href: "/data", label: "Data", icon: LineChartIcon },
   { href: "/nutricion", label: "Nutrición", icon: UtensilsIcon },
   { href: "/ai", label: "IA", icon: SparklesIcon },
