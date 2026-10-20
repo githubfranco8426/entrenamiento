@@ -12,6 +12,6 @@ export const config = {
   // set, iniciar/cancelar entrenamiento, etc.) sumaba ~150-500ms fijos a cada click, sin aportar
   // protección real ya que esas llamadas son fetch() y no siguen redirects HTML.
   matcher: [
-    "/((?!offline-workout|api|_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!offline-workout|opengym-app/|opengym-source.tar.gz|api|_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

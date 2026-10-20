@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/build-offline-worker.mjs",
+    "build": "npm run build:opengym && next build && node scripts/build-offline-worker.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "import:hevy": "tsx scripts/import-hevy.ts"
+    "import:hevy": "tsx scripts/import-hevy.ts",
+    "build:opengym": "node scripts/build-opengym.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
