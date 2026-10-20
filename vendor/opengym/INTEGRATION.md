@@ -41,7 +41,8 @@ automatically into the user's active periodization. Transfers run atomically und
 
 ## Activation
 
-Apply the integrate_opengym migration to the app's Supabase project and deploy the branch.
+Migration 20261020034021_integrate_opengym is already applied to the Entrenamiento Supabase project.
+For another database, apply it before deploying the branch.
 Existing NEXT_PUBLIC_SUPABASE_URL/NEXT_PUBLIC_SUPABASE_ANON_KEY settings are reused.
 GEMINI_API_KEY and optional GEMINI_MODEL enable the Coach. No secrets belong in the Vite
 build. The module is available at /opengym and /opengym-app/index.html.

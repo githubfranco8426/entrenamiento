@@ -18,6 +18,10 @@ describe("OpenGym HTTP boundary",()=>{
     expect((await r.json()).user).toEqual({id:"alice",name:"a@example.test",admin:false});
     expect(r.headers.get("cache-control")).toBe("no-store");
   });
+  it("rejects a pending write after the cookie session switches accounts",async()=>{
+    const r=await PUT(new Request("https://app.test/api/opengym/data",{method:"PUT",headers:{"X-OpenGym-Account":"bob","If-Match":"3"},body:JSON.stringify({state:EMPTY_STATE})}),ctx("data"));
+    expect(r.status).toBe(409);expect(mocks.rpc).not.toHaveBeenCalled();
+  });
   it("rejects a cross-origin mutation and a missing revision",async()=>{
     const make=(headers:Record<string,string>)=>new Request("https://app.test/api/opengym/data",{method:"PUT",headers,body:JSON.stringify({state:EMPTY_STATE})});
     expect((await PUT(make({origin:"https://elsewhere.test"}),ctx("data"))).status).toBe(403);

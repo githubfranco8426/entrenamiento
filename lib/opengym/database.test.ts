@@ -9,7 +9,7 @@ beforeAll(async()=>{
   db=new PGlite();
   await db.exec("create schema auth; create table auth.users(id uuid primary key); create role authenticated; create role anon; create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;");
   await db.exec(readFileSync("supabase/migrations/0001_initial_schema.sql","utf8"));
-  await db.exec(readFileSync("supabase/migrations/20261020032742_integrate_opengym.sql","utf8"));
+  await db.exec(readFileSync("supabase/migrations/20261020034021_integrate_opengym.sql","utf8"));
   await db.exec("grant usage on schema public,auth to authenticated; grant all on all tables in schema public to authenticated;");
   await db.query("insert into auth.users(id) values ($1),($2)",[user,other]);
   await db.exec("set role authenticated");

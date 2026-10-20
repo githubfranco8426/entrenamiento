@@ -14,6 +14,8 @@ async function handle(request: Request, context: Context) {
   const supabase = await createClient();
   const user = await getAuthenticatedUser(supabase);
   if (!user) return reply({ error: "Inicia sesión en Entrenamiento." }, 401);
+  const account = request.headers.get("x-opengym-account");
+  if (account && account !== user.id) return reply({ error:"La cuenta cambió. Vuelve a abrir OpenGym." },409);
   // Cookie-authenticated mutations must originate from this application.
   if (request.method !== "GET" && request.headers.get("origin") && request.headers.get("origin") !== new URL(request.url).origin) return reply({ error: "Origen no permitido" }, 403);
   const route = (await context.params).path.join("/");

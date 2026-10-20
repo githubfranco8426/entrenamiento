@@ -5,6 +5,7 @@ export const BIO = IS_APPLE ? 'Face ID / Touch ID' : IS_ANDROID ? 'fingerprint o
 export const VAULT = IS_APPLE ? 'iCloud Keychain' : IS_ANDROID ? 'Google Password Manager' : 'your password manager'
 export const webauthnOK = () => !!(window.PublicKeyCredential && navigator.credentials)
 
+const ACCOUNT = localStorage.getItem('opengym-account')
 let syncQueue = Promise.resolve()
 export function api(path, opts) {
   if (path === '/api/data' && opts?.method === 'PUT') {
@@ -15,8 +16,10 @@ export function api(path, opts) {
   return send(path, opts)
 }
 async function send(path, opts) {
-  const r = await fetch(path.replace('/api/', '/api/opengym/'), Object.assign({ headers: { 'Content-Type': 'application/json', ...(path === '/api/data' && opts?.method === 'PUT' ? { 'If-Match': localStorage.getItem('opengym-revision:' + localStorage.getItem('opengym-account')) || '0' } : {}) } }, opts))
+  if (ACCOUNT !== localStorage.getItem('opengym-account')) throw new Error('La cuenta cambió. Vuelve a abrir OpenGym.')
+  const r = await fetch(path.replace('/api/', '/api/opengym/'), Object.assign({ headers: { 'Content-Type': 'application/json', 'X-OpenGym-Account': ACCOUNT, ...(path === '/api/data' && opts?.method === 'PUT' ? { 'If-Match': localStorage.getItem('opengym-revision:' + localStorage.getItem('opengym-account')) || '0' } : {}) } }, opts))
   const data = await r.json().catch(() => ({}))
+  if (ACCOUNT !== localStorage.getItem('opengym-account')) throw new Error('La cuenta cambió. Vuelve a abrir OpenGym.')
   if ((path === '/api/bridge/import' || (path === '/api/data' && (opts?.method === 'PUT' || localStorage.getItem('opengym:gym_dirty:' + localStorage.getItem('opengym-account')) !== '1'))) && r.ok && data.revision != null) localStorage.setItem('opengym-revision:' + localStorage.getItem('opengym-account'), String(data.revision))
   if (!r.ok) { window.dispatchEvent(new CustomEvent('opengym-sync-error', { detail: data.error || 'No se pudo sincronizar' })); const e = new Error(data.error || ('HTTP ' + r.status)); e.status = r.status; throw e }
   return data

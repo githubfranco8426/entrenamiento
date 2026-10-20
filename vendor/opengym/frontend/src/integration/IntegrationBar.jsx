@@ -30,6 +30,7 @@ export default function IntegrationBar() {
       <a href="/opengym-source.tar.gz" style={{color:'#a3e635'}}>Código fuente · AGPL</a>
     </div>
     <p style={{margin:'6px 0 0',opacity:.8}}>Publicar crea copias de rutinas nuevas/modificadas y añade sesiones terminadas. Los originales se conservan. Animaciones disponibles con licencia de Gym Visual.</p>
+    {import.meta.env.VITE_LICENSED_MEDIA_BASE && <a href="https://gymvisual.com/" target="_blank" rel="noreferrer">© Gym visual — https://gymvisual.com/</a>}
     {message && <p role="status" style={{margin:'6px 0 0'}}>{message}</p>}
   </aside>
 }

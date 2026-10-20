@@ -8,8 +8,8 @@ function run(command, args, options = {}) {
   const result = spawnSync(command, args, { cwd, stdio: "inherit", ...options });
   if (result.status !== 0) process.exit(result.status || 1);
 }
-run("npm", ["ci", "--ignore-scripts", "--no-audit", "--no-fund"]);
-run("npm", ["run", "build", "--", "--outDir", path.join(root, "public/opengym-app"), "--emptyOutDir"]);
+run("npm", ["ci", "--include=dev", "--ignore-scripts", "--no-audit", "--no-fund"]);
+run("npm", ["run", "build", "--", "--outDir", path.join(root, "public/opengym-app"), "--emptyOutDir"], { env: { ...process.env, VITE_DEMO:"0", VITE_MOBILE:"0" } });
 mkdirSync(path.join(root, "public/opengym-app/licenses"), { recursive: true });
 for (const name of ["LICENSE", "NOTICE.md", "DATASET-LICENSE.txt", "INTEGRATION.md"]) {
   copyFileSync(path.join(root, "vendor/opengym", name), path.join(root, "public/opengym-app/licenses", name));
