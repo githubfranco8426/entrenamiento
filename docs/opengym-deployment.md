@@ -5,7 +5,9 @@ La rama de integración usa las mismas variables de Supabase que Entrenamiento. 
 ## Configuración requerida
 
 - `NEXT_PUBLIC_SUPABASE_URL`: URL del proyecto de Supabase.
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: clave pública que usa actualmente Entrenamiento.
+- Una clave pública: `NEXT_PUBLIC_SUPABASE_ANON_KEY` (compatible con la configuración anterior), `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` o `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`.
+
+El navegador, el servidor y el middleware usan el mismo orden de resolución. El build comprueba esta configuración antes de compilar e informa qué nombres están presentes, sin mostrar sus valores.
 
 Ambas deben estar disponibles durante la compilación y en ejecución en el entorno de destino. Las variables `NEXT_PUBLIC_*` se incluyen en el navegador; nunca uses una clave `service_role` en ellas.
 

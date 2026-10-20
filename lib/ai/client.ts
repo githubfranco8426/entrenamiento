@@ -6,7 +6,11 @@ import { SYSTEM_PROMPT, buildUserMessage, type PeriodizationContext } from "@/li
 
 export const PERIODIZATION_MODEL = process.env.GEMINI_MODEL || "gemini-3.6-flash";
 
-const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+function getClient() {
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  if (!apiKey) throw new Error("Configura GEMINI_API_KEY para usar el entrenador IA.");
+  return new GoogleGenAI({ apiKey });
+}
 
 // Gemini acepta JSON Schema estándar en `responseSchema` desde el SDK >=1.9 (se reenvía
 // como responseJsonSchema). `$schema` no es una key soportada por el backend, se descarta.
@@ -25,7 +29,7 @@ export interface GenerateMicrocycleResult {
 export async function generateMicrocyclePlan(
   context: PeriodizationContext,
 ): Promise<GenerateMicrocycleResult> {
-  const response = await client.models.generateContent({
+  const response = await getClient().models.generateContent({
     model: PERIODIZATION_MODEL,
     contents: buildUserMessage(context),
     config: {
@@ -83,7 +87,7 @@ export async function generateExerciseCues(
     .filter(Boolean)
     .join(" · ");
 
-  const response = await client.models.generateContent({
+  const response = await getClient().models.generateContent({
     model: CUES_MODEL,
     contents: `Ejercicio: ${exerciseName}${details ? ` (${details})` : ""}`,
     config: {
