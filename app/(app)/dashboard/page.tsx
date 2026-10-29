@@ -12,6 +12,7 @@ import {
 import { es } from "date-fns/locale";
 import { SettingsIcon, SparklesIcon, ClockIcon, CheckCircleIcon, UtensilsIcon, ChevronRightIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { ContinueWorkout } from "@/components/dashboard/continue-workout";
 import { getRoutineScope } from "@/lib/training/routine-scope";
 import { shiftTypeForDate, SHIFT_TYPE_LABELS } from "@/lib/utils/shift-pattern";
 import { MEAL_PLAN_BY_SHIFT } from "@/lib/nutrition/plan";
@@ -208,9 +209,11 @@ export default async function DashboardPage() {
 
   const hour = localHour(now);
   const greeting = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches";
+  const { data: openWorkout } = await supabase.from("workouts").select("id").is("ended_at", null).order("started_at", { ascending: false }).limit(1).maybeSingle();
 
   return (
     <div className="flex flex-col gap-gutter-lg">
+      <ContinueWorkout serverId={openWorkout?.id ?? null} />
       <section className="relative border-b border-border pb-5 pt-1 sm:pb-6">
         <div className="flex flex-col gap-gutter-sm">
         <div className="flex items-center justify-between">

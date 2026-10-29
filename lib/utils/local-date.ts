@@ -39,3 +39,7 @@ export function localHour(instant = new Date()): number {
     timeZone: APP_TIME_ZONE, hour: "2-digit", hourCycle: "h23",
   }).format(instant));
 }
+
+export function localDateTime(instant: Date | string): string {
+  return new Intl.DateTimeFormat("es-CL", { timeZone: APP_TIME_ZONE, dateStyle: "short", timeStyle: "short" }).format(new Date(instant));
+}

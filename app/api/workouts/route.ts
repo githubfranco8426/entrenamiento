@@ -7,11 +7,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const limit = Number(searchParams.get("limit") ?? "20");
 
-  const { data, error } = await supabase
-    .from("workouts")
-    .select("*, routines(title, day_label)")
-    .order("started_at", { ascending: false })
-    .limit(limit);
+  let query = supabase.from("workouts").select("*, routines(title, day_label)").order("started_at", { ascending: false });
+  if (searchParams.get("active") === "true") query = query.is("ended_at", null);
+  const { data, error } = await query.limit(Math.max(1, Math.min(100, Number.isFinite(limit) ? limit : 20)));
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ workouts: data });
@@ -22,31 +20,10 @@ export async function POST(request: Request) {
   const user = await getAuthenticatedUser(supabase);
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const body = await request.json();
-  const { routineId, microcycleId, shiftContext } = body as {
-    routineId?: string;
-    microcycleId?: string;
-    shiftContext?: string;
-  };
 
-  let resolvedMicrocycleId = microcycleId ?? null;
-  if (routineId) {
-    const { data: routine, error: routineError } = await supabase.from("routines").select("microcycle_id").eq("id", routineId).eq("user_id", user.id).maybeSingle();
-    if (routineError || !routine) return NextResponse.json({ error: "Rutina no disponible" }, { status: 400 });
-    resolvedMicrocycleId = routine.microcycle_id;
-  }
-  const { data, error } = await supabase
-    .from("workouts")
-    .insert({
-      user_id: user.id,
-      routine_id: routineId ?? null,
-      microcycle_id: resolvedMicrocycleId,
-      shift_context: (shiftContext as never) ?? null,
-      started_at: new Date().toISOString(),
-    })
-    .select()
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ workout: data }, { status: 201 });
+  const body = await request.json().catch(() => null);
+  if (!body || (body.routineId != null && !/^[0-9a-f-]{36}$/i.test(body.routineId))) return NextResponse.json({ error: "Rutina inválida" }, { status: 400 });
+  const { data, error } = await supabase.rpc("start_or_resume_workout", { p_routine_id: body.routineId ?? null });
+  if (error) return NextResponse.json({ error: error.message }, { status: error.code === "22023" ? 400 : 500 });
+  return NextResponse.json(data, { status: (data as {resumed?:boolean})?.resumed ? 200 : 201 });
 }
