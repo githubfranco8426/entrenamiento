@@ -49,12 +49,14 @@ function workoutDurationLabel(startedAt: string, endedAt: string | null): string
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const routineScope = await getRoutineScope(supabase);
+  const routineScope = getRoutineScope(supabase);
   const now = new Date();
   const calendarToday = localCalendarDate(now);
   const today = localDateKey(now);
   const weekStart = localDayStart(format(startOfISOWeek(calendarToday), "yyyy-MM-dd"));
   const weekEnd = localDayStart(format(addDays(endOfISOWeek(calendarToday), 1), "yyyy-MM-dd"));
+
+  const twentyEightDaysAgo = addDays(calendarToday, -27);
 
   const [
     { data: settings },
@@ -65,17 +67,20 @@ export default async function DashboardPage() {
     { data: activeMeso },
     { data: weekSets },
     { data: pendingRuns },
+    { data: acwrSets },
+    { data: weekWorkouts },
+    { data: openWorkout },
   ] = await Promise.all([
     supabase.from("user_settings").select("*").maybeSingle(),
     supabase.from("readiness_logs").select("*").eq("log_date", today).maybeSingle(),
     supabase.from("body_metrics").select("*").eq("log_date", today).maybeSingle(),
-    supabase
+    routineScope.then((scope) => supabase
       .from("routines")
       .select(
         "id, title, day_label, routine_exercises(exercise_id, order_index, notes, exercises(name, thumbnail_url), target_sets(set_index, target_reps_min, target_reps_max, target_rpe, target_weight_kg))",
       )
-      .or(routineScope)
-      .order("order_index"),
+      .or(scope)
+      .order("order_index")),
     supabase
       .from("workouts")
       .select("id, routine_id, started_at, ended_at, routines(title, day_label)")
@@ -93,21 +98,19 @@ export default async function DashboardPage() {
       .eq("status", "pending_review")
       .order("triggered_at", { ascending: false })
       .limit(1),
+    supabase.from("set_logs").select("weight_kg, reps, completed_at")
+      .not("weight_kg", "is", null).not("reps", "is", null)
+      .gte("completed_at", localDayStart(format(twentyEightDaysAgo, "yyyy-MM-dd"))).limit(2000),
+    supabase.from("workouts").select("started_at")
+      .gte("started_at", weekStart).lt("started_at", weekEnd),
+    supabase.from("workouts").select("id").is("ended_at", null)
+      .order("started_at", { ascending: false }).limit(1).maybeSingle(),
   ]);
 
   const pendingRun = pendingRuns?.[0];
   const pendingDecision = pendingRun
     ? PeriodizationDecisionSchema.safeParse(pendingRun.raw_output)
     : null;
-
-  const twentyEightDaysAgo = addDays(calendarToday, -27);
-  const { data: acwrSets } = await supabase
-    .from("set_logs")
-    .select("weight_kg, reps, completed_at")
-    .not("weight_kg", "is", null)
-    .not("reps", "is", null)
-    .gte("completed_at", localDayStart(format(twentyEightDaysAgo, "yyyy-MM-dd")))
-    .limit(2000);
 
   const loadByDay = new Map<string, number>();
   for (const s of acwrSets ?? []) {
@@ -121,12 +124,6 @@ export default async function DashboardPage() {
   });
   const acwr = computeAcwr(dailyLoads);
   const acwrAlertZone = acwr.zone === "riesgo" || acwr.zone === "precaucion" ? acwr.zone : null;
-
-  const { data: weekWorkouts } = await supabase
-    .from("workouts")
-    .select("started_at")
-    .gte("started_at", weekStart)
-    .lt("started_at", weekEnd);
 
   const weekDays = eachDayOfInterval({ start: startOfISOWeek(calendarToday), end: endOfISOWeek(calendarToday) });
   const trainedDates = (weekWorkouts ?? []).map((w) => localCalendarDate(w.started_at));
@@ -209,7 +206,6 @@ export default async function DashboardPage() {
 
   const hour = localHour(now);
   const greeting = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches";
-  const { data: openWorkout } = await supabase.from("workouts").select("id").is("ended_at", null).order("started_at", { ascending: false }).limit(1).maybeSingle();
 
   return (
     <div className="flex flex-col gap-gutter-lg">

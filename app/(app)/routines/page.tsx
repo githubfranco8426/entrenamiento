@@ -11,19 +11,19 @@ import { DeleteButton } from "@/components/ui/delete-button";
 export default async function RoutinesPage({ searchParams }: { searchParams: Promise<{ week?: string }> }) {
   const { week } = await searchParams;
   const supabase = await createClient();
-  const activeScope = await getRoutineScope(supabase);
-  const { data: weeks } = await supabase.from("microcycles").select("id, week_number, start_date, end_date, status, is_deload, mesocycles!inner(status)").eq("mesocycles.status", "active").order("week_number");
+  const [activeScope, { data: weeks }, { data: exercises }] = await Promise.all([
+    getRoutineScope(supabase),
+    supabase.from("microcycles").select("id, week_number, start_date, end_date, status, is_deload, mesocycles!inner(status)").eq("mesocycles.status", "active").order("week_number"),
+    supabase.from("exercises").select("id, name").order("name"),
+  ]);
   const selectedWeek = (weeks ?? []).find((w) => w.id === week);
   const routineScope = selectedWeek ? `microcycle_id.eq.${selectedWeek.id}` : activeScope;
 
-  const [{ data: routines }, { data: exercises }] = await Promise.all([
-    supabase
+  const { data: routines } = await supabase
       .from("routines")
       .select("*, routine_exercises(*, exercises(name, thumbnail_url), target_sets(*))")
       .or(routineScope)
-      .order("order_index"),
-    supabase.from("exercises").select("id, name").order("name"),
-  ]);
+      .order("order_index");
 
   return (
     <div className="flex flex-col gap-6">

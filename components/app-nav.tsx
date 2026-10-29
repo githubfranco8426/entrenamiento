@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "@/components/nav-links";
 import { LogOutIcon } from "lucide-react";
 import { AppLogo } from "@/components/app-logo";
+import { NavigationPending } from "@/components/navigation-pending";
 
 export function AppNav({ email }: { email: string | null }) {
   const pathname = usePathname();
@@ -41,12 +42,13 @@ export function AppNav({ email }: { email: string | null }) {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-sidebar-foreground/75 transition-all hover:translate-x-0.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                "relative flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-sidebar-foreground/75 transition-all hover:translate-x-0.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 active && "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm hover:bg-sidebar-primary hover:text-sidebar-primary-foreground",
               )}
             >
               <Icon className="size-4 shrink-0" />
               {link.label}
+              <NavigationPending />
             </Link>
           );
         })}

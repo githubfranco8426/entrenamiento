@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { latestWeightByExercise } from "@/lib/analytics/latest-weights";
 import { getRoutineScope } from "@/lib/training/routine-scope";
 import { estimateOneRepMax, repsInReserve } from "@/lib/autoregulation/rpe-tables";
 import { computeAcwr, computeMonotony, type DailyLoad } from "@/lib/analytics/acwr";
@@ -13,7 +14,7 @@ import { ReadinessTrendCard } from "@/components/data/readiness-trend-card";
 
 export default async function DataPage() {
   const supabase = await createClient();
-  const routineScope = await getRoutineScope(supabase);
+  const routineScope = getRoutineScope(supabase);
   const twentyEightDaysAgo = new Date();
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
   twentyEightDaysAgo.setHours(0, 0, 0, 0);
@@ -47,12 +48,12 @@ export default async function DataPage() {
       .order("log_date", { ascending: false })
       .limit(60),
     supabase.from("mesocycles").select("*, microcycles(*)").eq("status", "active").maybeSingle(),
-    supabase
+    routineScope.then((scope) => supabase
       .from("routines")
       .select(
         "day_label, title, routine_exercises(exercise_id, exercises(name), target_sets(target_weight_kg, target_reps_min, target_reps_max))",
       )
-      .or(routineScope),
+      .or(scope)),
     supabase
       .from("readiness_logs")
       .select("log_date, sleep_hours, energy_level, muscle_soreness")
@@ -79,21 +80,20 @@ export default async function DataPage() {
   }
 
   const uniqueExerciseIds = [...new Set(planRowsBase.map((p) => p.exerciseId))];
-  const lastLoggedByExercise = new Map<string, number>();
-  await Promise.all(
-    uniqueExerciseIds.map(async (exId) => {
-      const { data: lastSet } = await supabase
-        .from("set_logs")
-        .select("weight_kg, completed_at, workout_exercises!inner(exercise_id)")
-        .eq("workout_exercises.exercise_id", exId)
-        .not("weight_kg", "is", null)
-        .order("completed_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (lastSet?.weight_kg != null) lastLoggedByExercise.set(exId, lastSet.weight_kg);
-    }),
-  );
-
+  const photoPaths = (photoRows ?? []).map((row) => row.photo_path).filter((path): path is string => path != null);
+  const [{ data: latestSets }, { data: signedPhotos }] = await Promise.all([
+    uniqueExerciseIds.length
+      ? supabase.from("workout_exercises").select("exercise_id, set_logs(weight_kg, completed_at)")
+        .in("exercise_id", uniqueExerciseIds)
+        .not("set_logs.weight_kg", "is", null)
+        .order("completed_at", { referencedTable: "set_logs", ascending: false })
+        .limit(1, { referencedTable: "set_logs" })
+      : Promise.resolve({ data: [] }),
+    photoPaths.length
+      ? supabase.storage.from("progress-photos").createSignedUrls(photoPaths, 60 * 60)
+      : Promise.resolve({ data: [] }),
+  ]);
+  const lastLoggedByExercise = latestWeightByExercise(latestSets ?? []);
   const planVsActualRows: PlanVsActualRow[] = planRowsBase.map((p) => ({
     dayLabel: p.dayLabel,
     exerciseName: p.exerciseName,
@@ -102,20 +102,13 @@ export default async function DataPage() {
     targetRepsMax: p.targetRepsMax,
     lastLoggedKg: lastLoggedByExercise.get(p.exerciseId) ?? null,
   }));
-
-  const photos = await Promise.all(
-    (photoRows ?? []).map(async (row) => {
-      const { data: signed } = await supabase.storage
-        .from("progress-photos")
-        .createSignedUrl(row.photo_path!, 60 * 60);
-      return {
-        date: row.log_date,
-        weightKg: row.weight_kg,
-        bodyFatPct: row.body_fat_pct,
-        url: signed?.signedUrl ?? null,
-      };
-    }),
-  );
+  const signedByPath = new Map((signedPhotos ?? []).map((photo) => [photo.path, photo.signedUrl]));
+  const photos = (photoRows ?? []).map((row) => ({
+    date: row.log_date,
+    weightKg: row.weight_kg,
+    bodyFatPct: row.body_fat_pct,
+    url: signedByPath.get(row.photo_path) ?? null,
+  }));
 
   const loadByDay = new Map<string, number>();
   for (const s of recentSets ?? []) {
