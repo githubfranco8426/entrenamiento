@@ -18,11 +18,11 @@ export interface NavLink {
 }
 
 export const NAV_LINKS: NavLink[] = [
-  { href: "/dashboard", label: "Panel", icon: LayoutDashboardIcon },
+  { href: "/dashboard", label: "Hoy", icon: LayoutDashboardIcon },
   { href: "/calendar", label: "Calendario", icon: CalendarDaysIcon },
   { href: "/routines", label: "Rutinas", icon: ClipboardListIcon },
-  { href: "/program", label: "Programa", icon: CalendarRangeIcon },
-  { href: "/data", label: "Data", icon: LineChartIcon },
+  { href: "/program", label: "Plan", icon: CalendarRangeIcon },
+  { href: "/data", label: "Rendimiento", icon: LineChartIcon },
   { href: "/nutricion", label: "Nutrición", icon: UtensilsIcon },
   { href: "/ai", label: "IA", icon: SparklesIcon },
   { href: "/coach", label: "Coach", icon: UsersIcon },

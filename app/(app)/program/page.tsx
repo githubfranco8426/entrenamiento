@@ -35,9 +35,9 @@ export default async function ProgramPage() {
       <div className="flex items-center justify-between">
         <div>
           <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-            Mission Control
+            Periodización
           </p>
-          <h1 className="font-heading text-xl font-bold">Macrociclo</h1>
+          <h1 className="font-heading text-xl font-bold">Plan de entrenamiento</h1>
           <p className="text-sm text-muted-foreground">Macrociclos, mesociclos y su fase actual.</p>
         </div>
         <MacrocycleForm />

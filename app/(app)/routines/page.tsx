@@ -29,8 +29,8 @@ export default async function RoutinesPage({ searchParams }: { searchParams: Pro
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-lg font-semibold">Rutinas</h1>
-          <p className="text-sm text-muted-foreground">Programa por semana. Las rutinas de casa sustituyen la sesión correspondiente.</p>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight">Rutinas</h1>
+          <p className="text-sm text-muted-foreground">Tus sesiones y objetivos organizados por semana.</p>
         </div>
         <RoutineForm exercises={exercises ?? []} />
       </div>

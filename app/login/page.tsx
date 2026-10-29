@@ -81,12 +81,11 @@ export default function LoginPage() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-gutter-lg bg-background px-container-padding py-gutter-xl">
       <div className="relative flex flex-col items-center gap-2 text-center">
-        <div className="pointer-events-none absolute -top-6 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative">
-          <AppLogo className="size-20 drop-shadow-[0_8px_24px_rgba(212,255,40,0.25)]" />
+          <AppLogo className="size-16" />
           <span className="absolute -bottom-1 -right-1 flex size-3.5">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-secondary opacity-75" />
-            <span className="relative inline-flex size-3.5 rounded-full bg-secondary" />
+            <span className="absolute inline-flex size-full rounded-full bg-emerald-600/15" />
+            <span className="relative inline-flex size-3.5 rounded-full border-2 border-card bg-emerald-600" />
           </span>
         </div>
         <h1 className="font-heading text-2xl font-extrabold uppercase tracking-tight">Entrenamiento</h1>

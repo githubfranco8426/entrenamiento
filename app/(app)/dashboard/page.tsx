@@ -211,14 +211,14 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-gutter-lg">
-      <section className="relative border-b border-white/10 pb-5 pt-1 sm:pb-6">
+      <section className="relative border-b border-border pb-5 pt-1 sm:pb-6">
         <div className="flex flex-col gap-gutter-sm">
         <div className="flex items-center justify-between">
           {activeMeso ? (
             <div className="inline-flex items-center gap-1.5 rounded-md border border-primary/25 bg-primary/10 px-2.5 py-1 text-primary">
               <SparklesIcon className="size-4" />
               <span className="font-mono text-[11px] font-bold uppercase tracking-wider">
-                Adaptación inteligente activa
+                Plan activo
               </span>
             </div>
           ) : (
@@ -226,16 +226,16 @@ export default async function DashboardPage() {
           )}
           <Link
             href="/settings"
-            className="flex size-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-muted-foreground transition-colors hover:bg-white/[0.08] hover:text-foreground"
+            className="flex size-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <SettingsIcon className="size-4" />
             <span className="sr-only">Ajustes</span>
           </Link>
         </div>
         <div className="flex flex-col">
-          <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-primary/90">Estado del sistema · En vivo</p>
-          <h1 className="font-heading text-2xl font-extrabold tracking-tight text-white sm:text-3xl">{greeting} <span className="text-secondary">·</span> listo para entrenar</h1>
-          <p className="mt-1 text-sm text-slate-300">
+          <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-primary/90">Tu entrenamiento · Hoy</p>
+          <h1 className="font-heading text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">{greeting} <span className="text-secondary">·</span> listo para entrenar</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {format(calendarToday, "EEEE d 'de' MMMM", { locale: es })}
             {activeMeso &&
               ` · ${PHASE_LABELS[activeMeso.phase] ?? activeMeso.phase}${activeMicro?.is_deload ? " (Descarga)" : ""}${activeMicro ? ` · Semana ${activeMicro.week_number}` : ""}`}
@@ -263,7 +263,7 @@ export default async function DashboardPage() {
 
       <Link
         href="/nutricion"
-        className="order-7 group flex items-center gap-3 rounded-2xl border border-border/80 bg-card/75 p-container-padding shadow-[0_14px_30px_-24px_rgba(0,0,0,.9)] transition-all hover:-translate-y-0.5 hover:border-primary/35 hover:bg-accent/70"
+        className="order-7 group flex items-center gap-3 rounded-2xl border border-border/80 bg-card/75 p-container-padding shadow-(--shadow-panel) transition-all hover:-translate-y-0.5 hover:border-primary/35 hover:bg-accent/70"
       >
         <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20"><UtensilsIcon className="size-5" /></div>
         <div className="min-w-0 flex-1">
@@ -314,7 +314,7 @@ export default async function DashboardPage() {
 
       <div className="order-1">
       {todaysWorkout?.ended_at ? (
-        <div className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
+        <div className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-(--shadow-panel)">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
             <CheckCircleIcon className="size-5" />
           </div>
@@ -334,7 +334,7 @@ export default async function DashboardPage() {
       ) : todaysWorkout ? (
         <Link
           href={`/workouts/${todaysWorkout.id}`}
-          className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)] transition-colors hover:bg-accent"
+          className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-(--shadow-panel) transition-colors hover:bg-accent"
         >
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
             <ClockIcon className="size-5" />

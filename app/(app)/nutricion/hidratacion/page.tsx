@@ -26,7 +26,7 @@ export default async function HydrationPage() {
         <p className="text-sm text-muted-foreground">{SHIFT_TYPE_LABELS[shiftType]}</p>
       </div>
 
-      <div className="flex flex-col items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
+      <div className="flex flex-col items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-(--shadow-panel)">
         <div className="flex size-14 items-center justify-center rounded-full bg-primary/15 text-primary">
           <DropletIcon className="size-6" />
         </div>

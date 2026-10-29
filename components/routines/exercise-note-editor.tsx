@@ -60,14 +60,20 @@ export function ExerciseNoteEditor({ routineExerciseId, initialNotes }: { routin
 
   if (initialNotes) {
     return (
-      <button
-        type="button"
-        onClick={() => setEditing(true)}
-        className="ml-7 mt-1.5 flex items-start gap-1.5 text-left text-xs text-secondary hover:text-foreground"
-      >
-        <ActivityIcon className="mt-0.5 size-3.5 shrink-0" />
-        {initialNotes}
-      </button>
+      <details className="ml-7 mt-2 rounded-md border border-border bg-muted/40 text-xs text-secondary">
+        <summary className="cursor-pointer px-3 py-2 font-medium focus-visible:outline-2 focus-visible:outline-ring">
+          Indicaciones y objetivos
+        </summary>
+        <div className="border-t border-border p-3">
+          <p className="flex items-start gap-2 leading-relaxed">
+            <ActivityIcon className="mt-0.5 size-3.5 shrink-0" />
+            <span className="whitespace-pre-wrap break-words">{initialNotes}</span>
+          </p>
+          <Button type="button" variant="ghost" size="sm" className="mt-2 gap-1.5" onClick={() => setEditing(true)}>
+            <PencilIcon className="size-3.5" /> Editar indicaciones
+          </Button>
+        </div>
+      </details>
     );
   }
 

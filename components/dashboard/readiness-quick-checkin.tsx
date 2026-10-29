@@ -90,7 +90,7 @@ export function ReadinessQuickCheckin({
         <span className="shrink-0 rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-primary">20 seg</span>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border border-primary/15 bg-[linear-gradient(120deg,rgba(0,242,254,.10),rgba(16,24,39,.92)_42%,rgba(167,139,250,.09))] p-3.5">
+      <section className="overflow-hidden rounded-lg border border-border bg-muted p-3.5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
@@ -113,8 +113,8 @@ export function ReadinessQuickCheckin({
               className={cn(
                 "group flex min-h-20 flex-col items-start justify-between rounded-xl border p-2.5 text-left transition-all disabled:opacity-60",
                 energyLevel === opt.value
-                  ? "border-primary bg-primary text-primary-foreground shadow-[0_10px_22px_-14px_rgba(0,242,254,.9)]"
-                  : "border-white/8 bg-background/45 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/35 hover:text-foreground",
+                  ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                  : "border-border bg-background/45 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/35 hover:text-foreground",
               )}
             >
               <opt.icon className={cn("size-4", energyLevel === opt.value ? "text-primary-foreground" : "text-secondary")} />
@@ -126,11 +126,11 @@ export function ReadinessQuickCheckin({
       </section>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-white/8 bg-background/30 p-2 sm:gap-3 sm:p-3">
+        <div className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-border bg-background/30 p-2 sm:gap-3 sm:p-3">
           <div className="hidden size-8 shrink-0 sm:flex items-center justify-center rounded-lg bg-secondary/10 text-secondary"><MoonStar className="size-4" /></div>
           <StatRing size={58} strokeWidth={5} pct={initial?.sleep_hours != null ? Math.min(100, (initial.sleep_hours / 9) * 100) : 0} value={initial?.sleep_hours != null ? `${initial.sleep_hours}h` : "—"} label="Descanso" color="var(--secondary)" />
         </div>
-        <div className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-white/8 bg-background/30 p-2 sm:gap-3 sm:p-3">
+        <div className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-border bg-background/30 p-2 sm:gap-3 sm:p-3">
           <div className="hidden size-8 shrink-0 sm:flex items-center justify-center rounded-lg bg-primary/10 text-primary"><HeartPulse className="size-4" /></div>
           <StatRing size={58} strokeWidth={5} pct={initial?.muscle_soreness != null ? (1 - (initial.muscle_soreness - 1) / 4) * 100 : 0} value={initial?.muscle_soreness != null ? `${initial.muscle_soreness}/5` : "—"} label="Cuerpo" color="var(--primary)" />
         </div>
@@ -153,13 +153,13 @@ export function ReadinessQuickCheckin({
       <button
         type="button"
         onClick={() => setDetailsOpen(true)}
-        className="flex items-center justify-center gap-2 rounded-xl border border-white/8 bg-background/30 px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-foreground"
+        className="flex items-center justify-center gap-2 rounded-xl border border-border bg-background/30 px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-foreground"
       >
         <ClipboardPenLine className="size-4 text-primary" />
         Completar mi bienestar
       </button>
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border border-border bg-[#101827] p-5 sm:max-w-md">
+        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border border-border bg-card p-5 sm:max-w-md">
           <DialogHeader className="pr-8">
             <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-secondary">Bienestar diario</p>
             <DialogTitle className="text-xl font-bold">Completá tu pulso de hoy</DialogTitle>

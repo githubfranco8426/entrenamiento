@@ -470,7 +470,7 @@ export function WorkoutSession({
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-container-padding shadow-[0_12px_28px_-16px_rgba(0,0,0,0.9)]">
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-container-padding shadow-(--shadow-panel)">
         {!ended && <div className="absolute inset-x-0 top-0 h-1 bg-primary" />}
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
@@ -607,7 +607,7 @@ export function WorkoutSession({
       )}
 
       <Dialog open={finishDialogOpen} onOpenChange={setFinishDialogOpen}>
-        <DialogContent className="border border-border bg-[#101827] p-5 sm:max-w-md">
+        <DialogContent className="border border-border bg-card p-5 sm:max-w-md">
           <DialogHeader className="pr-8">
             <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <CheckIcon className="size-5" />
@@ -648,7 +648,7 @@ export function WorkoutSession({
       </Dialog>
 
       <Dialog open={durationDialogOpen} onOpenChange={setDurationDialogOpen}>
-        <DialogContent className="border border-border bg-[#101827] p-5 sm:max-w-md">
+        <DialogContent className="border border-border bg-card p-5 sm:max-w-md">
           <DialogHeader className="pr-8">
             <div className="flex size-10 items-center justify-center rounded-xl bg-secondary/10 text-secondary"><TimerResetIcon className="size-5" /></div>
             <DialogTitle className="pt-1 text-xl font-bold">Corregir duración</DialogTitle>
@@ -667,7 +667,7 @@ export function WorkoutSession({
 
 function DurationField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   return (
-    <label className="flex flex-col gap-2 rounded-xl border border-white/8 bg-background/35 p-3.5">
+    <label className="flex flex-col gap-2 rounded-xl border border-border bg-background/35 p-3.5">
       <span className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-primary"><ClockIcon className="size-3.5" /> Duración real</span>
       <div className="flex items-center gap-2">
         <Input type="number" min="1" max="720" step="1" inputMode="numeric" value={value} onChange={(event) => onChange(event.target.value)} className="h-12 font-mono text-lg font-bold" />

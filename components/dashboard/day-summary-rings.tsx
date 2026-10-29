@@ -1,65 +1,26 @@
-import { StatRing } from "@/components/dashboard/stat-ring";
 import type { AcwrZone } from "@/lib/analytics/acwr";
 
-const ACWR_RING_COLOR: Record<AcwrZone, string> = {
-  undertraining: "var(--secondary)",
-  optimo: "var(--primary)",
-  precaucion: "var(--tertiary)",
-  riesgo: "var(--destructive)",
-};
-
-/**
- * Resumen del día en 3 anillos (readiness, constancia semanal, carga) — reemplaza
- * la fila de cajas/barras dispersas que hacían la pantalla inicial demasiado larga.
- * Da el mismo vistazo de estado en menos espacio vertical.
- */
-export function DaySummaryRings({
-  energyLevel,
-  trainedDays,
-  totalDays,
-  acwrRatio,
-  acwrZone,
-}: {
+export function DaySummaryRings({ energyLevel, trainedDays, totalDays, acwrRatio }: {
   energyLevel: number | null;
   trainedDays: number;
   totalDays: number;
   acwrRatio: number | null;
   acwrZone: AcwrZone | null;
 }) {
+  const metrics = [
+    { label: "Energía", value: energyLevel ?? "—", unit: "/ 5", detail: "Último check-in de hoy" },
+    { label: "Sesiones", value: trainedDays, unit: "", detail: `Días entrenados de ${totalDays}` },
+    { label: "Carga ACWR", value: acwrRatio?.toFixed(2) ?? "—", unit: "", detail: "Relación de carga 7 / 28 días" },
+  ];
   return (
-    <section className="rounded-2xl border border-white/8 bg-card/70 p-2 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.9)] backdrop-blur-xl">
-      <div className="mb-1 flex items-center justify-between px-2 pt-1">
-        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Estado de hoy</p>
-        <span className="text-[11px] text-primary">Lectura rápida</span>
-      </div>
-      <div className="grid grid-cols-3 gap-2">
-      <div className="flex min-w-0 flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
-        <StatRing
-          pct={energyLevel != null ? (energyLevel / 5) * 100 : 0}
-          value={energyLevel != null ? `${energyLevel}/5` : "—"}
-          label="Readiness"
-          color="var(--primary)"
-        />
-        <span className="mt-1 px-1 text-center text-[10px] leading-tight text-muted-foreground">Energía y recuperación</span>
-      </div>
-      <div className="flex min-w-0 flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
-        <StatRing
-          pct={totalDays > 0 ? (trainedDays / totalDays) * 100 : 0}
-          value={`${trainedDays}/${totalDays}`}
-          label="Semana activa"
-          color="var(--secondary)"
-        />
-        <span className="mt-1 px-1 text-center text-[10px] leading-tight text-muted-foreground">Días completados</span>
-      </div>
-      <div className="flex min-w-0 flex-col items-center justify-center rounded-xl bg-background/45 py-3 transition-transform hover:-translate-y-0.5">
-        <StatRing
-          pct={acwrRatio != null ? Math.min(100, (acwrRatio / 2) * 100) : 0}
-          value={acwrRatio != null ? acwrRatio.toFixed(2) : "—"}
-          label="Carga (ACWR)"
-          color={acwrZone ? ACWR_RING_COLOR[acwrZone] : "var(--muted-foreground)"}
-        />
-        <span className="mt-1 px-1 text-center text-[10px] leading-tight text-muted-foreground">Carga de 28 días</span>
-      </div>
+    <section aria-label="Resumen de actividad" className="rounded-lg border border-border bg-card p-4 shadow-(--shadow-panel)">
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Estado de hoy</p>
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        {metrics.map((m) => <div key={m.label} className="min-w-0 rounded-md bg-muted p-2.5 sm:p-3">
+          <p className="text-[10px] font-medium uppercase tracking-wide text-secondary">{m.label}</p>
+          <p className="my-2 flex flex-wrap items-baseline gap-1 text-2xl font-semibold tracking-tight text-foreground">{m.value}<span className="text-xs font-normal text-muted-foreground">{m.unit}</span></p>
+          <p className="text-[10px] leading-relaxed text-muted-foreground">{m.detail}</p>
+        </div>)}
       </div>
     </section>
   );

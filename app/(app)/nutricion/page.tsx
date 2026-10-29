@@ -35,7 +35,7 @@ export default async function NutritionPage() {
         <p className="text-sm text-muted-foreground">{plan.label}</p>
       </div>
 
-      <div className="flex items-center justify-around rounded-xl bg-card px-gutter-md py-gutter-lg ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)]">
+      <div className="flex items-center justify-around rounded-xl bg-card px-gutter-md py-gutter-lg ring-1 ring-border shadow-(--shadow-panel)">
         <StatRing pct={100} value={`${plan.totalKcal}`} label="Kcal" color="var(--primary)" />
         <StatRing pct={100} value={`${plan.totalProteinG}g`} label="Proteína" color="var(--secondary)" />
         <StatRing pct={100} value={`${plan.totalCarbsG}g`} label="Carbos" color="var(--tertiary)" />
@@ -47,7 +47,7 @@ export default async function NutritionPage() {
           <Link
             key={href}
             href={href}
-            className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_8px_20px_-8px_rgba(0,0,0,0.6)] transition-colors hover:bg-accent"
+            className="flex items-center gap-3 rounded-xl bg-card p-container-padding ring-1 ring-border shadow-(--shadow-panel) transition-colors hover:bg-accent"
           >
             <Icon className="size-5 shrink-0 text-primary" />
             <span className="flex-1 text-sm font-medium">{label}</span>

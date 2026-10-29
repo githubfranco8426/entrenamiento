@@ -70,50 +70,45 @@
   --text-headline-lg--line-height: 2rem;
 }
 
-:root,
-.dark {
-  /* Kinetic Apex / Stitch: azul noche, turquesa eléctrico, lavanda de datos
-     y coral reservado para alertas. */
-  /* Niveles de superficie (de más recesado a más elevado): background (canvas base)
-     < muted (nivel 1, paneles/listas) < card/popover (nivel 2, elevado) < accent
-     (nivel 3, presionado/activo). Antes card y muted estaban invertidos (muted más
-     claro que card), por lo que las tarjetas no se distinguían del fondo — de ahí
-     la sensación de interfaz plana. */
-  --background: #090d16;
-  --foreground: #f8fafc;
-  --card: #101827;
-  --card-foreground: #f8fafc;
-  --popover: #151e2d;
-  --popover-foreground: #f8fafc;
-  --primary: #00f2fe;
-  --primary-foreground: #06161d;
-  --secondary: #a78bfa;
-  --secondary-foreground: #160f2c;
-  --tertiary: #fb7185;
-  --tertiary-foreground: #2c0d16;
-  --muted: #0d1420;
-  --muted-foreground: #93a4bb;
-  --accent: #172236;
-  --accent-foreground: #f8fafc;
-  --destructive: #fb7185;
-  --destructive-foreground: #2c0d16;
-  --border: #26344a;
-  --input: #26344a;
-  --ring: #00f2fe;
-  --chart-1: #00f2fe;
-  --chart-2: #a78bfa;
-  --chart-3: #38bdf8;
-  --chart-4: #a78bfa;
-  --chart-5: #fb7185;
-  --radius: 0.875rem;
-  --sidebar: #0b1220;
-  --sidebar-foreground: #f8fafc;
-  --sidebar-primary: #00f2fe;
-  --sidebar-primary-foreground: #06161d;
-  --sidebar-accent: #172236;
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: #26344a;
-  --sidebar-ring: #00f2fe;
+:root {
+  /* Precision Athleticism (Stitch): superficies claras, pizarra y azul cobalto. */
+  color-scheme: light;
+  --background: #f8f9ff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #0f172a;
+  --primary-foreground: #ffffff;
+  --secondary: #334155;
+  --secondary-foreground: #ffffff;
+  --tertiary: #2563eb;
+  --tertiary-foreground: #ffffff;
+  --muted: #eff4ff;
+  --muted-foreground: #64748b;
+  --accent: #e5eeff;
+  --accent-foreground: #0f172a;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --ring: #2563eb;
+  --chart-1: #0f172a;
+  --chart-2: #2563eb;
+  --chart-3: #515f74;
+  --chart-4: #0891b2;
+  --chart-5: #b45309;
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #334155;
+  --sidebar-primary: #0f172a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #2563eb;
+  --shadow-panel: 0 1px 3px rgb(15 23 42 / 0.04);
 }
 
 @layer base {
@@ -122,15 +117,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(ellipse at 88% -8%, #a78bfa1f, transparent 36rem),
-      radial-gradient(ellipse at 10% 5%, #00f2fe13, transparent 30rem),
-      linear-gradient(135deg, #090d16 0%, #0b1220 52%, #090d16 100%);
-    background-attachment: fixed;
+    font-variant-numeric: tabular-nums;
+    -webkit-tap-highlight-color: transparent;
   }
   html {
     @apply font-sans;
   }
+  ::selection { background: #dbe1ff; color: #0f172a; }
 }
 
 @keyframes float-orb {
@@ -158,5 +151,13 @@
 @layer base {
   @media (max-width: 639px) {
     input, select, textarea { font-size: 16px; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
