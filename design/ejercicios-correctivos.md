@@ -4,6 +4,8 @@ Integración local del 2 de noviembre de 2026, sobre el repositorio `githubfranc
 
 ## Resultado
 
+La vista Hoy muestra directamente los indicadores personales; se retiró el bloque «Primero escucha. Después, entrena» y el botón «Iniciar sesión» a petición del usuario. Los registros ya guardados y la recuperación de una sesión existente se conservan.
+
 - Nueva sección autenticada `/correctivos`, dentro del layout habitual de Entrenamiento, conservando encabezado, menú lateral, barra móvil y acceso existente. No agrega otro login ni exige una segunda cuenta o invitación.
 - En escritorio: **Ejercicios correctivos** en el menú. En móvil: **Correctivos** directamente en la barra inferior; **Plan** permanece accesible dentro de **Más**.
 - Conserva del módulo anterior: evaluación diaria de fatiga percibida, sueño, dolor NRS segmentario, síntomas y turno; biblioteca por patrones y Casa/Gimnasio; prescripción editable; sesión con registro de kg/banda/peso corporal, repeticiones, RIR y calidad opcional; descanso automático; recuperación; historial, volumen comparable, doble progresión y exportación JSON.

@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Activity,
-  ArrowUpRight,
   BookOpen,
   ChartNoAxesCombined,
   ClipboardList,
@@ -27,7 +26,6 @@ export function CorrectiveWorkspace() {
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<Tab>("today");
   const locked = useRef(false);
-  const startId = useRef<string | null>(null);
   const load = useCallback(async () => {
     const response = await fetch("/api/correctivos", { cache: "no-store" });
     const result = await response.json();
@@ -96,19 +94,8 @@ export function CorrectiveWorkspace() {
   }
   const active = data?.sessions.find((s) => s.status === "active");
   const baseline = data?.baseline?.day === localDay() ? data.baseline : null;
-  async function start() {
-    if (!baseline) return;
-    startId.current ??= crypto.randomUUID();
-    if (
-      await save({ op: "start", id: startId.current, baselineId: baseline.id })
-    )
-      startId.current = null;
-  }
   return (
-    <section
-      aria-label="Ejercicios correctivos"
-      className="correctives"
-    >
+    <section aria-label="Ejercicios correctivos" className="correctives">
       <a className="correctives-skip" href="#correctives-content">
         Saltar al contenido
       </a>
@@ -185,49 +172,6 @@ export function CorrectiveWorkspace() {
                     />
                   ) : (
                     <>
-                      <section className="correctives-panel correctives-daily">
-                        <div>
-                          <p className="eyebrow">TU SESIÓN DE HOY</p>
-                          <h2>
-                            Primero escucha.
-                            <br />
-                            Después, entrena.
-                          </h2>
-                          <p>
-                            {baseline
-                              ? "Tu evaluación está guardada. Revisa el plan antes de iniciar."
-                              : "Completa tu evaluación basal para empezar una sesión."}
-                          </p>
-                          <div className="correctives-row">
-                            <Button
-                              disabled={busy || !baseline || !data.plan.length}
-                              onClick={start}
-                            >
-                              Iniciar sesión <ArrowUpRight />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              onClick={() =>
-                                setTab(baseline ? "plan" : "baseline")
-                              }
-                            >
-                              {baseline
-                                ? "Revisar prescripción"
-                                : "Evaluar mi estado"}
-                            </Button>
-                          </div>
-                          {!data.plan.length && (
-                            <small>
-                              Añade y guarda tu prescripción en Biblioteca y
-                              plan.
-                            </small>
-                          )}
-                        </div>
-                        <Activity
-                          className="correctives-hero-icon"
-                          aria-hidden="true"
-                        />
-                      </section>
                       <div className="correctives-metrics">
                         {[
                           {

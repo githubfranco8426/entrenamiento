@@ -147,28 +147,6 @@
   box-shadow: var(--shadow-panel);
   padding: 26px;
 }
-.correctives-daily {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-  background: linear-gradient(115deg, var(--card), var(--background));
-}
-.correctives-daily h2 {
-  font-size: clamp(27px, 4vw, 42px);
-}
-.correctives-daily .correctives-row {
-  justify-content: start;
-  margin: 24px 0 16px;
-}
-.correctives-hero-icon {
-  width: 145px;
-  height: 145px;
-  stroke-width: 0.6;
-  color: var(--tertiary);
-  opacity: 0.65;
-  flex-shrink: 0;
-}
 .correctives-metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -393,7 +371,6 @@
     padding: 0 0 24px;
   }
   .correctives-date,
-  .correctives-hero-icon,
   .correctives-desktop {
     display: none;
   }
@@ -442,10 +419,6 @@
   }
   .correctives-bar-row {
     grid-template-columns: 75px 1fr 50px;
-  }
-  .correctives-daily .correctives-row {
-    align-items: stretch;
-    flex-direction: column;
   }
   .correctives-footer .correctives-row {
     gap: 12px;
