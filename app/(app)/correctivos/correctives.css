@@ -1,41 +1,7 @@
-.correctives.correctives {
-  --background: #0a1b2c;
-  --foreground: #f8f5ee;
-  --card: #10283f;
-  --card-foreground: #f8f5ee;
-  --primary: #d7b56d;
-  --primary-foreground: #0a1b2c;
-  --border: #496177;
-  --input: #60768a;
-  --ring: #efd18e;
-  --muted: #16334d;
-  --muted-foreground: #c2cfda;
-  --secondary: #18344d;
-  --secondary-foreground: #f8f5ee;
-  --radius: 0.75rem;
-  min-height: 0;
-  border-radius: 24px;
-  background: var(--background);
+.correctives {
+  min-width: 0;
   color: var(--foreground);
-  font-family: var(--font-plus-jakarta-sans, Arial), sans-serif;
-  color-scheme: dark;
-  flex: 1;
-}
-.correctives.correctives-light {
-  --background: #f8f5ee;
-  --foreground: #0d253f;
-  --card: #fff;
-  --card-foreground: #0d253f;
-  --primary: #0d253f;
-  --primary-foreground: #fff;
-  --border: #a1aeb9;
-  --input: #7d8d9d;
-  --ring: #775719;
-  --muted: #e8edf0;
-  --muted-foreground: #425568;
-  --secondary: #e8edf0;
-  --secondary-foreground: #0d253f;
-  color-scheme: light;
+  font-family: var(--font-inter, Arial), sans-serif;
 }
 .correctives * {
   box-sizing: border-box;
@@ -43,7 +9,7 @@
 .correctives-wrap {
   max-width: 1160px;
   margin: auto;
-  padding: 24px 20px 48px;
+  padding: 0 0 24px;
 }
 .correctives-header,
 .correctives-row,
@@ -65,7 +31,7 @@
   font-weight: 800;
 }
 .correctives-brand span {
-  color: #d7b56d;
+  color: var(--tertiary);
 }
 .correctives-brand small {
   display: block;
@@ -79,22 +45,19 @@
   justify-content: space-between;
   gap: 24px;
   align-items: end;
-  padding: 40px 0 32px;
+  padding: 0 0 24px;
 }
 .correctives h1 {
-  font-size: clamp(36px, 6vw, 66px);
+  font-size: clamp(24px, 3vw, 32px);
   font-weight: 600;
   line-height: 1.08;
-  letter-spacing: -2.5px;
+  letter-spacing: -0.8px;
   margin: 14px 0 20px;
 }
 .correctives h1 em {
-  font-family: Georgia, serif;
+  font-family: var(--font-plus-jakarta-sans, Arial), sans-serif;
   font-weight: 400;
-  color: #e8c985;
-}
-.correctives-light h1 em {
-  color: #785719;
+  color: var(--tertiary);
 }
 .correctives h2 {
   font-size: clamp(23px, 3vw, 32px);
@@ -121,11 +84,8 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: #e8c985;
+  color: var(--tertiary);
   margin: 0 0 12px;
-}
-.correctives-light .eyebrow {
-  color: #785719;
 }
 .correctives-date {
   display: grid;
@@ -137,7 +97,7 @@
 }
 .correctives-date svg {
   margin-left: auto;
-  color: #d7b56d;
+  color: var(--tertiary);
 }
 .correctives-date strong {
   font-size: 20px;
@@ -183,7 +143,8 @@
 .correctives-panel {
   border: 1px solid var(--border);
   background: var(--card);
-  border-radius: 20px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-panel);
   padding: 26px;
 }
 .correctives-daily {
@@ -204,7 +165,7 @@
   width: 145px;
   height: 145px;
   stroke-width: 0.6;
-  color: #d7b56d;
+  color: var(--tertiary);
   opacity: 0.65;
   flex-shrink: 0;
 }
@@ -306,10 +267,7 @@
 .correctives-timer strong {
   font-size: 40px;
   font-variant-numeric: tabular-nums;
-  color: #e8c985;
-}
-.correctives-light .correctives-timer strong {
-  color: #785719;
+  color: var(--tertiary);
 }
 .correctives-set-list {
   list-style: none;
@@ -327,17 +285,17 @@
 }
 .correctives-alert {
   padding: 20px;
-  border: 1px solid #f8b8a8;
+  border: 1px solid var(--destructive);
   border-radius: 12px;
-  background: #422824;
+  background: color-mix(in srgb, var(--destructive) 8%, var(--card));
   display: flex;
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  color: #fff;
+  color: var(--destructive);
 }
 .correctives-alert p {
-  color: #fff;
+  color: var(--destructive);
 }
 .correctives-success {
   color: var(--foreground) !important;
@@ -404,7 +362,7 @@
 }
 .correctives-bar-row i {
   display: block;
-  background: #d7b56d;
+  background: var(--tertiary);
   height: 100%;
 }
 .correctives-bar-row strong {
@@ -432,7 +390,7 @@
 }
 @media (max-width: 700px) {
   .correctives-wrap {
-    padding: 18px 14px 32px;
+    padding: 0 0 24px;
   }
   .correctives-date,
   .correctives-hero-icon,
@@ -440,7 +398,7 @@
     display: none;
   }
   .correctives-intro {
-    padding: 28px 0 22px;
+    padding: 0 0 22px;
   }
   .correctives-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -450,7 +408,7 @@
   }
   .correctives-nav {
     position: sticky;
-    top: 0;
+    top: 64px;
     z-index: 10;
   }
   .correctives-nav button {

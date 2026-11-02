@@ -6,8 +6,6 @@ import {
   BookOpen,
   ChartNoAxesCombined,
   ClipboardList,
-  Moon,
-  Sun,
   ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,7 +26,6 @@ export function CorrectiveWorkspace() {
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<Tab>("today");
-  const [light, setLight] = useState(false);
   const locked = useRef(false);
   const startId = useRef<string | null>(null);
   const load = useCallback(async () => {
@@ -110,39 +107,16 @@ export function CorrectiveWorkspace() {
   return (
     <section
       aria-label="Ejercicios correctivos"
-      className={`correctives ${light ? "correctives-light" : "dark"}`}
+      className="correctives"
     >
       <a className="correctives-skip" href="#correctives-content">
         Saltar al contenido
       </a>
       <div className="correctives-wrap">
-        <header className="correctives-header">
-          <p className="eyebrow">ENTRENAMIENTO / CONTROL MOTOR</p>
-          <div className="correctives-row">
-            <Button
-              variant="outline"
-              aria-label={
-                light
-                  ? "Activar modo oscuro de alto contraste"
-                  : "Activar modo claro"
-              }
-              onClick={() => setLight((v) => !v)}
-            >
-              {light ? <Moon /> : <Sun />}
-              <span className="correctives-desktop">
-                {light ? "Oscuro" : "Claro"}
-              </span>
-            </Button>
-          </div>
-        </header>
         <div className="correctives-intro">
           <div>
             <p className="eyebrow">CONTROL MOTOR & RECUPERACIÓN</p>
-            <h1>
-              Ejercicios
-              <br />
-              <em>correctivos.</em>
-            </h1>
+            <h1>Ejercicios correctivos</h1>
             <p>Evalúa tu estado, ajusta tu dosis y registra lo que importa.</p>
           </div>
           <div className="correctives-date">
