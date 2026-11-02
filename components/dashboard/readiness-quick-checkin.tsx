@@ -4,29 +4,43 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { BatteryLow, BatteryMedium, ClipboardPenLine, HeartPulse, MoonStar, Sparkles, Zap } from "lucide-react";
+import {
+  BatteryLow,
+  BatteryMedium,
+  ClipboardPenLine,
+  HeartPulse,
+  MoonStar,
+  Sparkles,
+  Zap,
+} from "lucide-react";
 import { willTrainByDefault } from "@/lib/utils/shift-pattern";
 import { ReadinessForm } from "@/components/dashboard/readiness-form";
 import { StatRing } from "@/components/dashboard/stat-ring";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { ShiftType } from "@/lib/types/database";
 
-interface ReadinessLogData {
-  log_date: string;
-  shift_type: ShiftType;
-  will_train: boolean;
-  sleep_hours: number | null;
-  sleep_quality: number | null;
-  stress_level: number | null;
-  muscle_soreness: number | null;
-  energy_level: number | null;
-  notes: string | null;
-}
+import type { ReadinessLogData, ClinicalCheckin } from "@/lib/readiness/model";
 
 const ENERGY_OPTIONS = [
   { label: "Voy suave", hint: "Poca energía", value: 2, icon: BatteryLow },
-  { label: "Estoy bien", hint: "Energía estable", value: 3, icon: BatteryMedium },
-  { label: "Me siento fuerte", hint: "Listo para dar más", value: 5, icon: Zap },
+  {
+    label: "Estoy bien",
+    hint: "Energía estable",
+    value: 3,
+    icon: BatteryMedium,
+  },
+  {
+    label: "Me siento fuerte",
+    hint: "Listo para dar más",
+    value: 5,
+    icon: Zap,
+  },
 ] as const;
 
 export function ReadinessQuickCheckin({
@@ -34,44 +48,49 @@ export function ReadinessQuickCheckin({
   defaultShiftType,
   initial,
   aiNote,
+  clinical,
 }: {
   today: string;
   defaultShiftType: ShiftType;
   initial: ReadinessLogData | null;
+  clinical?: ClinicalCheckin | null;
   /** Frase corta mostrando cómo el próximo entrenamiento se ajusta a este check-in (opcional). */
   aiNote?: string | null;
 }) {
   const router = useRouter();
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [saving, setSaving] = useState<number | null>(null);
-  const [energyLevel, setEnergyLevel] = useState(initial?.energy_level ?? null);
+  const energyLevel = initial?.energy_level ?? null;
 
   async function setEnergy(value: number) {
     setSaving(value);
-    const res = await fetch("/api/readiness", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        logDate: today,
-        shiftType: initial?.shift_type ?? defaultShiftType,
-        willTrain: initial?.will_train ?? willTrainByDefault(defaultShiftType),
-        sleepHours: initial?.sleep_hours ?? null,
-        sleepQuality: initial?.sleep_quality ?? null,
-        stressLevel: initial?.stress_level ?? null,
-        muscleSoreness: initial?.muscle_soreness ?? null,
-        energyLevel: value,
-        notes: initial?.notes ?? null,
-      }),
-    });
-    setSaving(null);
-    if (!res.ok) {
-      const { error } = await res.json().catch(() => ({ error: "Error desconocido" }));
-      toast.error(error);
-      return;
+    try {
+      const res = await fetch("/api/readiness", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          logDate: today,
+          shiftType: initial?.shift_type ?? defaultShiftType,
+          willTrain:
+            initial?.will_train ?? willTrainByDefault(defaultShiftType),
+          energyLevel: value,
+        }),
+      });
+      setSaving(null);
+      if (!res.ok) {
+        const { error } = await res
+          .json()
+          .catch(() => ({ error: "Error desconocido" }));
+        toast.error(error);
+        return;
+      }
+      toast.success("Nivel de energía guardado");
+      router.refresh();
+    } catch {
+      toast.error("No se pudo confirmar el guardado. Reintenta.");
+    } finally {
+      setSaving(null);
     }
-    setEnergyLevel(value);
-    toast.success("Nivel de energía guardado");
-    router.refresh();
   }
 
   return (
@@ -82,12 +101,20 @@ export function ReadinessQuickCheckin({
             <HeartPulse className="size-5" />
           </div>
           <div>
-            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-secondary">Bienestar · check-in diario</p>
-            <h2 className="mt-1 font-heading text-xl font-bold tracking-tight">Tu pulso de hoy</h2>
-            <p className="mt-1 text-sm leading-5 text-muted-foreground">Contanos cómo venís y ajustamos la sesión a tu realidad.</p>
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-secondary">
+              Bienestar · check-in diario
+            </p>
+            <h2 className="mt-1 font-heading text-xl font-bold tracking-tight">
+              ¿Cómo llegas hoy?
+            </h2>
+            <p className="mt-1 text-sm leading-5 text-muted-foreground">
+              Contanos cómo venís y ajustamos la sesión a tu realidad.
+            </p>
           </div>
         </div>
-        <span className="shrink-0 rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-primary">20 seg</span>
+        <span className="shrink-0 rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-primary">
+          20 seg
+        </span>
       </div>
 
       <section className="overflow-hidden rounded-lg border border-border bg-muted p-3.5">
@@ -97,7 +124,9 @@ export function ReadinessQuickCheckin({
               <BatteryMedium className="size-3.5" />
               Energía disponible
             </p>
-            <p className="mt-1 text-sm text-foreground">¿Con cuánto te gustaría encarar el entrenamiento?</p>
+            <p className="mt-1 text-sm text-foreground">
+              ¿Con cuánto te gustaría encarar el entrenamiento?
+            </p>
           </div>
           <span className="font-mono text-xs font-bold text-primary">
             {energyLevel != null ? `${energyLevel}/5` : "—"}
@@ -117,9 +146,27 @@ export function ReadinessQuickCheckin({
                   : "border-border bg-background/45 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/35 hover:text-foreground",
               )}
             >
-              <opt.icon className={cn("size-4", energyLevel === opt.value ? "text-primary-foreground" : "text-secondary")} />
-              <span className="text-xs font-semibold leading-tight">{opt.label}</span>
-              <span className={cn("text-[10px] leading-tight", energyLevel === opt.value ? "text-primary-foreground/75" : "text-muted-foreground")}>{opt.hint}</span>
+              <opt.icon
+                className={cn(
+                  "size-4",
+                  energyLevel === opt.value
+                    ? "text-primary-foreground"
+                    : "text-secondary",
+                )}
+              />
+              <span className="text-xs font-semibold leading-tight">
+                {opt.label}
+              </span>
+              <span
+                className={cn(
+                  "text-[10px] leading-tight",
+                  energyLevel === opt.value
+                    ? "text-primary-foreground/75"
+                    : "text-muted-foreground",
+                )}
+              >
+                {opt.hint}
+              </span>
             </button>
           ))}
         </div>
@@ -127,12 +174,44 @@ export function ReadinessQuickCheckin({
 
       <div className="grid grid-cols-2 gap-3">
         <div className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-border bg-background/30 p-2 sm:gap-3 sm:p-3">
-          <div className="hidden size-8 shrink-0 sm:flex items-center justify-center rounded-lg bg-secondary/10 text-secondary"><MoonStar className="size-4" /></div>
-          <StatRing size={58} strokeWidth={5} pct={initial?.sleep_hours != null ? Math.min(100, (initial.sleep_hours / 9) * 100) : 0} value={initial?.sleep_hours != null ? `${initial.sleep_hours}h` : "—"} label="Descanso" color="var(--secondary)" />
+          <div className="hidden size-8 shrink-0 sm:flex items-center justify-center rounded-lg bg-secondary/10 text-secondary">
+            <MoonStar className="size-4" />
+          </div>
+          <StatRing
+            size={58}
+            strokeWidth={5}
+            pct={
+              initial?.sleep_hours != null
+                ? Math.min(100, (initial.sleep_hours / 9) * 100)
+                : 0
+            }
+            value={
+              initial?.sleep_hours != null ? `${initial.sleep_hours}h` : "—"
+            }
+            label="Descanso"
+            color="var(--secondary)"
+          />
         </div>
         <div className="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-border bg-background/30 p-2 sm:gap-3 sm:p-3">
-          <div className="hidden size-8 shrink-0 sm:flex items-center justify-center rounded-lg bg-primary/10 text-primary"><HeartPulse className="size-4" /></div>
-          <StatRing size={58} strokeWidth={5} pct={initial?.muscle_soreness != null ? (1 - (initial.muscle_soreness - 1) / 4) * 100 : 0} value={initial?.muscle_soreness != null ? `${initial.muscle_soreness}/5` : "—"} label="Cuerpo" color="var(--primary)" />
+          <div className="hidden size-8 shrink-0 sm:flex items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <HeartPulse className="size-4" />
+          </div>
+          <StatRing
+            size={58}
+            strokeWidth={5}
+            pct={
+              initial?.muscle_soreness != null
+                ? (1 - (initial.muscle_soreness - 1) / 4) * 100
+                : 0
+            }
+            value={
+              initial?.muscle_soreness != null
+                ? `${initial.muscle_soreness}/5`
+                : "—"
+            }
+            label="Cuerpo"
+            color="var(--primary)"
+          />
         </div>
       </div>
 
@@ -156,16 +235,28 @@ export function ReadinessQuickCheckin({
         className="flex items-center justify-center gap-2 rounded-xl border border-border bg-background/30 px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/8 hover:text-foreground"
       >
         <ClipboardPenLine className="size-4 text-primary" />
-        Completar mi bienestar
+        Completar evaluación de hoy
       </button>
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border border-border bg-card p-5 sm:max-w-md">
           <DialogHeader className="pr-8">
-            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-secondary">Bienestar diario</p>
-            <DialogTitle className="text-xl font-bold">Completá tu pulso de hoy</DialogTitle>
-            <DialogDescription>Unos datos más nos permiten ajustar mejor el entrenamiento.</DialogDescription>
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-secondary">
+              Bienestar diario
+            </p>
+            <DialogTitle className="text-xl font-bold">
+              ¿Cómo llegas hoy?
+            </DialogTitle>
+            <DialogDescription>
+              Unos datos más nos permiten ajustar mejor el entrenamiento.
+            </DialogDescription>
           </DialogHeader>
-          <ReadinessForm today={today} defaultShiftType={defaultShiftType} initial={initial} />
+          <ReadinessForm
+            today={today}
+            defaultShiftType={defaultShiftType}
+            initial={initial}
+            clinical={clinical}
+            onSaved={() => setDetailsOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </Card>

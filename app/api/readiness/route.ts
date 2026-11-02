@@ -1,62 +1,68 @@
-import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAuthenticatedUser } from "@/lib/supabase/get-authenticated-user";
-import type { ShiftType } from "@/lib/types/database";
+import { checkinPayload, checkinSchema } from "@/lib/readiness/model";
 
-interface ReadinessBody {
-  logDate: string;
-  shiftType: ShiftType;
-  willTrain: boolean;
-  sleepHours?: number | null;
-  sleepQuality?: number | null;
-  stressLevel?: number | null;
-  muscleSoreness?: number | null;
-  energyLevel?: number | null;
-  notes?: string | null;
+const headers = { "Cache-Control": "private, no-store, max-age=0" };
+function json(body: unknown, status = 200) {
+  return Response.json(body, { status, headers });
 }
-
 export async function GET(request: Request) {
-  const supabase = await createClient();
-  const { searchParams } = new URL(request.url);
-  const days = Number(searchParams.get("days") ?? "14");
-
-  const { data, error } = await supabase
-    .from("readiness_logs")
-    .select("*")
-    .order("log_date", { ascending: false })
-    .limit(days);
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ readinessLogs: data });
+  try {
+    const db = await createClient();
+    const user = await getAuthenticatedUser(db);
+    if (!user) return json({ error: "No autenticado" }, 401);
+    const raw = Number(new URL(request.url).searchParams.get("days") ?? 14);
+    const days = Number.isFinite(raw)
+      ? Math.max(1, Math.min(365, Math.floor(raw)))
+      : 14;
+    const { data, error } = await db
+      .from("readiness_logs")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("log_date", { ascending: false })
+      .limit(days);
+    if (error)
+      return json({ error: "No se pudo cargar tu chequeo diario." }, 503);
+    return json({ readinessLogs: data });
+  } catch {
+    return json({ error: "No se pudo cargar tu chequeo diario." }, 503);
+  }
 }
-
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const user = await getAuthenticatedUser(supabase);
-  if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
-
-  const body = (await request.json()) as ReadinessBody;
-
-  const { data, error } = await supabase
-    .from("readiness_logs")
-    .upsert(
-      {
-        user_id: user.id,
-        log_date: body.logDate,
-        shift_type: body.shiftType,
-        will_train: body.willTrain,
-        sleep_hours: body.sleepHours ?? null,
-        sleep_quality: body.sleepQuality ?? null,
-        stress_level: body.stressLevel ?? null,
-        muscle_soreness: body.muscleSoreness ?? null,
-        energy_level: body.energyLevel ?? null,
-        notes: body.notes ?? null,
-      },
-      { onConflict: "user_id,log_date" },
-    )
-    .select()
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ readinessLog: data });
+  if (request.headers.get("origin") !== new URL(request.url).origin)
+    return json({ error: "Origen no permitido." }, 403);
+  try {
+    const db = await createClient();
+    const user = await getAuthenticatedUser(db);
+    if (!user) return json({ error: "No autenticado" }, 401);
+    const text = await request.text();
+    if (text.length > 24000)
+      return json({ error: "Registro demasiado grande." }, 413);
+    let input: unknown;
+    try {
+      input = JSON.parse(text);
+    } catch {
+      return json({ error: "Formato inválido." }, 400);
+    }
+    const parsed = checkinSchema.safeParse(input);
+    if (!parsed.success)
+      return json(
+        { error: parsed.error.issues[0]?.message ?? "Revisa los valores." },
+        400,
+      );
+    const { data, error } = await db.rpc("save_daily_checkin", {
+      p: checkinPayload(parsed.data),
+    });
+    if (error)
+      return json(
+        {
+          error:
+            "No se guardó la evaluación. Revisa los datos y vuelve a intentar.",
+        },
+        409,
+      );
+    return json({ readinessLog: data });
+  } catch {
+    return json({ error: "No pudimos confirmar el guardado. Reintenta." }, 503);
+  }
 }

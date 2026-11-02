@@ -5,8 +5,28 @@ export const patterns = [
   "Tracción",
   "Dominante rodilla",
   "Cadena posterior",
+  "Control lumbopélvico",
 ] as const;
 export const library = [
+  {
+    id: "basculacion-pelvica",
+    name: "Basculación pélvica suave",
+    pattern: "Control lumbopélvico",
+    place: "Casa",
+  },
+  {
+    id: "deslizamiento-talon",
+    name: "Deslizamiento de talón",
+    pattern: "Control lumbopélvico",
+    place: "Casa",
+  },
+  {
+    id: "bird-dog-corto",
+    name: "Bird dog corto con pie apoyado",
+    pattern: "Control lumbopélvico",
+    place: "Casa",
+  },
+
   {
     id: "press-mancuernas",
     name: "Press con mancuernas",

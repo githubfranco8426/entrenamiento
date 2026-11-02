@@ -4,14 +4,14 @@ Integración local del 2 de noviembre de 2026, sobre el repositorio `githubfranc
 
 ## Resultado
 
-La vista Hoy muestra directamente los indicadores personales; se retiró el bloque «Primero escucha. Después, entrena» y el botón «Iniciar sesión» a petición del usuario. Los registros ya guardados y la recuperación de una sesión existente se conservan.
+Correctivos abre en Mi rutina: propuesta inicial para hiperlordosis, editable y con instrucciones. La evaluación «¿Cómo llegas hoy?» se integra al chequeo existente de Inicio. Se conserva la retirada del bloque de inicio de sesión y el tema natural de la app.
 
 - Nueva sección autenticada `/correctivos`, dentro del layout habitual de Entrenamiento, conservando encabezado, menú lateral, barra móvil y acceso existente. No agrega otro login ni exige una segunda cuenta o invitación.
 - En escritorio: **Ejercicios correctivos** en el menú. En móvil: **Correctivos** directamente en la barra inferior; **Plan** permanece accesible dentro de **Más**.
 - Conserva del módulo anterior: evaluación diaria de fatiga percibida, sueño, dolor NRS segmentario, síntomas y turno; biblioteca por patrones y Casa/Gimnasio; prescripción editable; sesión con registro de kg/banda/peso corporal, repeticiones, RIR y calidad opcional; descanso automático; recuperación; historial, volumen comparable, doble progresión y exportación JSON.
 - La interfaz hereda la paleta natural de Entrenamiento: superficies claras, pizarra y azul cobalto. No fuerza un tema propio ni añade un selector de tema separado. Usa los componentes shadcn/ui existentes.
 - Utiliza Supabase SSR/Auth y la función `getAuthenticatedUser` de la app; integra los nuevos objetos en sus tipos de base de datos. Reutiliza el calendario chileno existente.
-- Los registros correctivos usan tablas propias y no escriben en `workouts`, `set_logs` o `readiness_logs`. No cambian el volumen, la autorregulación ni el plan de fuerza. Las sesiones correctivas y sus temporizadores son independientes de la sesión de fuerza.
+- Los registros correctivos usan tablas propias y no escriben en `workouts`, `set_logs` o `readiness_logs`. El nuevo chequeo reutiliza readiness_logs para sus datos habituales y guarda los campos clínicos privados en readiness_clinical; la rutina correctiva no se suma al volumen de fuerza. Las sesiones correctivas y sus temporizadores son independientes de la sesión de fuerza.
 - No comparte estos registros con un coach. RLS exige el propietario exacto, sin extender las políticas de colaboración del resto de la app.
 - El código anterior de App-Centro-Rehabilitame se conserva. No se movieron ni eliminaron datos.
 
@@ -58,3 +58,13 @@ Modificados: `components/nav-links.ts`, `components/app-mobile-nav.tsx`, `lib/ty
 ## Límites conservados del MVP
 
 Biblioteca inicial de ocho variantes y una plantilla personal; una zona de dolor por evaluación diaria; eficiencia del sueño introducida manualmente; sin prescripción clínica automática ni sincronización sin conexión. Las series confirmadas no se editan desde la interfaz. El módulo todavía no admite adjuntar imágenes ni incorporar automáticamente sus datos a la IA o al resumen del coach. La recuperación cubre lo confirmado en el servidor; los campos no enviados de un formulario no sobreviven a una recarga.
+
+## Chequeo único y rutina para hiperlordosis
+
+El chequeo habitual de Inicio incorpora fatiga percibida, eficiencia estimada de sueño, dolor NRS y zona, y síntomas respiratorios, todos opcionales. Una RPC security invoker guarda la parte habitual y la parte clínica privada dentro de una única transacción. Una actualización rápida de energía omite los otros valores; no los transforma en nulos. Los campos adicionales no se incorporan al resumen del coach. Las evaluaciones correctivas anteriores se conservan y se copian a la tabla privada de seguimiento por fecha sin inventar horarios de turno ni registros habituales. La exportación propia incluye las dos partes.
+
+Correctivos muestra una propuesta de control lumbopélvico: basculación suave (1 × 6–8), deslizamiento de talón (1 × 6–8 por lado), puente (1 × 8–10) y bird dog corto con pie apoyado (1 × 5–6 por lado). Descansos de 30–45 segundos. Inicio orientativo: tres días semanales, esfuerzo cómodo lejos del fallo, revisión de la respuesta del día y de la mañana siguiente. La dosis es una propuesta editable; no se presenta como un protocolo demostrado para cambiar el ángulo de lordosis. Incluye una variante más fácil y criterios para detener cada práctica ante síntomas nuevos. La plantilla se muestra sin sobrescribir un plan guardado; el usuario debe guardar sus cambios para adoptarla. No se añade otro botón para iniciar una sesión.
+
+Fuentes: [revisión de ejercicio y curvaturas vertebrales](https://pubmed.ncbi.nlm.nih.gov/31034509/), [movilidad lumbar de Cambridge University Hospitals](https://www.cuh.nhs.uk/patient-information/back-mobility-exercises/), [ejercicios de control abdominal de NHS Fife](https://www.nhsfife.org/services/all-services/patient-advice/stage-two-exercises-for-your-tummy-muscles/). Las técnicas están adaptadas a una propuesta inicial conservadora; no se extrapolan resultados de otras poblaciones como una garantía individual.
+
+Pruebas: 63 aprobadas, TypeScript, ESLint y compilación. Nueva migración 20261102175100_unified_daily_checkin.sql aplicada en Entrenamiento; comprobación transaccional real de guardado conjunto, preservación tras actualizar energía y aislamiento, con reversión de todos los datos de prueba.

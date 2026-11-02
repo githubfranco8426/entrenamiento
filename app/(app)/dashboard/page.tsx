@@ -70,6 +70,7 @@ export default async function DashboardPage() {
     { data: acwrSets },
     { data: weekWorkouts },
     { data: openWorkout },
+    { data: clinical },
   ] = await Promise.all([
     supabase.from("user_settings").select("*").maybeSingle(),
     supabase.from("readiness_logs").select("*").eq("log_date", today).maybeSingle(),
@@ -105,6 +106,7 @@ export default async function DashboardPage() {
       .gte("started_at", weekStart).lt("started_at", weekEnd),
     supabase.from("workouts").select("id").is("ended_at", null)
       .order("started_at", { ascending: false }).limit(1).maybeSingle(),
+    supabase.from("readiness_clinical").select("*").eq("log_date", today).maybeSingle(),
   ]);
 
   const pendingRun = pendingRuns?.[0];
@@ -301,6 +303,7 @@ export default async function DashboardPage() {
           today={today}
           defaultShiftType={defaultShiftType}
           initial={readiness ?? null}
+          clinical={clinical ?? null}
           aiNote={
             !todaysWorkout && nextRoutine
               ? readiness

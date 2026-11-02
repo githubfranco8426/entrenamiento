@@ -6,7 +6,9 @@ type CorrectiveTable =
   | "corrective_baselines"
   | "corrective_plans"
   | "corrective_sessions"
-  | "corrective_sets";
+  | "corrective_sets"
+  | "readiness_clinical"
+  | "readiness_logs";
 
 export const dynamic = "force-dynamic";
 const headers = {
@@ -28,7 +30,13 @@ async function rows(
       .from(table)
       .select("*")
       .eq("user_id", user)
-      .order(table === "corrective_plans" ? "user_id" : "id")
+      .order(
+        table === "corrective_plans"
+          ? "user_id"
+          : table === "readiness_clinical"
+            ? "log_date"
+            : "id",
+      )
       .range(offset, offset + 499);
     if (error) throw new Error("storage");
     all.push(...data);
@@ -39,14 +47,19 @@ export async function GET(request: Request) {
   try {
     const { db, user } = await correctiveAccess();
     if (!user) return json({ error: "Inicia sesión para continuar." }, 401);
-    const [baselines, plans, sessions, sets] = await Promise.all([
-      rows(db, "corrective_baselines", user.id),
-      rows(db, "corrective_plans", user.id),
-      rows(db, "corrective_sessions", user.id),
-      rows(db, "corrective_sets", user.id),
-    ]);
+    const [baselines, plans, sessions, sets, clinicalCheckins, readinessLogs] =
+      await Promise.all([
+        rows(db, "corrective_baselines", user.id),
+        rows(db, "corrective_plans", user.id),
+        rows(db, "corrective_sessions", user.id),
+        rows(db, "corrective_sets", user.id),
+        rows(db, "readiness_clinical", user.id),
+        rows(db, "readiness_logs", user.id),
+      ]);
     const data = {
       userId: user.id,
+      clinicalCheckins,
+      readinessLogs,
       baseline: baselines.find((b) => b.day === localDay()) ?? null,
       baselines,
       plan: plans[0]?.plan ?? [],

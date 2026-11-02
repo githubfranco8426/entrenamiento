@@ -1,20 +1,15 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Activity,
-  BookOpen,
-  ChartNoAxesCombined,
-  ClipboardList,
-  ShieldCheck,
-} from "lucide-react";
+import { BookOpen, ChartNoAxesCombined, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BaselineForm, PlanEditor } from "./forms";
+import { PlanEditor } from "./forms";
 import { SessionLogger } from "./logger";
 import { Progress } from "./progress";
-import { localDay, type Workspace } from "@/lib/correctives/model";
+import type { Workspace } from "@/lib/correctives/model";
+import { CorrectiveRoutine } from "./routine";
+import { lumbarRoutine } from "@/lib/correctives/routine";
 const tabs = [
-  { id: "today", label: "Hoy", icon: Activity },
-  { id: "baseline", label: "Evaluación", icon: ClipboardList },
+  { id: "routine", label: "Mi rutina", icon: BookOpen },
   { id: "plan", label: "Biblioteca y plan", icon: BookOpen },
   { id: "progress", label: "Evolución", icon: ChartNoAxesCombined },
 ] as const;
@@ -24,7 +19,7 @@ export function CorrectiveWorkspace() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState<Tab>("today");
+  const [tab, setTab] = useState<Tab>("routine");
   const locked = useRef(false);
   const load = useCallback(async () => {
     const response = await fetch("/api/correctivos", { cache: "no-store" });
@@ -93,7 +88,6 @@ export function CorrectiveWorkspace() {
     }
   }
   const active = data?.sessions.find((s) => s.status === "active");
-  const baseline = data?.baseline?.day === localDay() ? data.baseline : null;
   return (
     <section aria-label="Ejercicios correctivos" className="correctives">
       <a className="correctives-skip" href="#correctives-content">
@@ -104,7 +98,10 @@ export function CorrectiveWorkspace() {
           <div>
             <p className="eyebrow">CONTROL MOTOR & RECUPERACIÓN</p>
             <h1>Ejercicios correctivos</h1>
-            <p>Evalúa tu estado, ajusta tu dosis y registra lo que importa.</p>
+            <p>
+              Control lumbopélvico para hiperlordosis. Tu chequeo diario está en
+              Inicio.
+            </p>
           </div>
           <div className="correctives-date">
             <ShieldCheck aria-hidden="true" />
@@ -161,65 +158,29 @@ export function CorrectiveWorkspace() {
           )}
           {data && (
             <>
-              {tab === "today" && (
-                <>
-                  {active ? (
-                    <SessionLogger
-                      session={active}
-                      sets={data.sets}
-                      save={save}
-                      busy={busy}
-                    />
-                  ) : (
-                    <>
-                      <div className="correctives-metrics">
-                        {[
-                          {
-                            name: "Fatiga percibida",
-                            value: baseline ? `${baseline.fatigue}/10` : "—",
-                            note: "Autorreporte subjetivo",
-                          },
-                          {
-                            name: "Sueño",
-                            value: baseline ? `${baseline.sleep_hours} h` : "—",
-                            note:
-                              baseline?.sleep_efficiency == null
-                                ? "Eficiencia no registrada"
-                                : `${baseline.sleep_efficiency}% de eficiencia estimada`,
-                          },
-                          {
-                            name: "Dolor NRS",
-                            value: baseline ? `${baseline.pain}/10` : "—",
-                            note:
-                              baseline?.pain_segment ?? "Sin evaluación de hoy",
-                          },
-                          {
-                            name: "Contexto",
-                            value: baseline?.respiratory ?? "—",
-                            note: baseline?.shift ?? "Turno pendiente",
-                          },
-                        ].map((m) => (
-                          <section key={m.name} className="correctives-panel">
-                            <h3>{m.name}</h3>
-                            <strong>{m.value}</strong>
-                            <p>{m.note}</p>
-                          </section>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </>
+              {tab === "routine" && (
+                <CorrectiveRoutine
+                  plan={data.plan}
+                  edit={() => setTab("plan")}
+                />
               )}
-              {tab === "baseline" && (
-                <BaselineForm
-                  key={baseline?.id ?? "new"}
-                  value={baseline}
+              {tab === "routine" && active && (
+                <details>
+                  <summary>Recuperar una sesión ya abierta</summary>
+                  <SessionLogger
+                    session={active}
+                    sets={data.sets}
+                    save={save}
+                    busy={busy}
+                  />
+                </details>
+              )}
+              {tab === "plan" && (
+                <PlanEditor
+                  value={data.plan.length ? data.plan : lumbarRoutine}
                   save={save}
                   busy={busy}
                 />
-              )}
-              {tab === "plan" && (
-                <PlanEditor value={data.plan} save={save} busy={busy} />
               )}
               {tab === "progress" && <Progress data={data} />}
               <footer className="correctives-footer">

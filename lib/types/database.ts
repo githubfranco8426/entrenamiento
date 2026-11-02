@@ -1,3 +1,4 @@
+import type { ClinicalCheckin } from "@/lib/readiness/model";
 // Tipos generados desde el schema real de supabase/migrations/*.sql vía
 // `mcp__plugin_supabase_supabase__generate_typescript_types` (proyecto "saveplata",
 // ref rwwuvvhwdexqjvxgbqkb, reutilizado para esta app). Las columnas con check
@@ -25,6 +26,12 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: CorrectiveTables & {
+      readiness_clinical: {
+        Row: ClinicalCheckin;
+        Insert: Partial<ClinicalCheckin> & Pick<ClinicalCheckin,"user_id"|"log_date">;
+        Update: Partial<ClinicalCheckin>;
+        Relationships: [];
+      };
       exercises: {
         Row: {
           id: string;
@@ -454,6 +461,7 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: CorrectiveFunctions & {
+      save_daily_checkin: { Args: {p:Json}; Returns:Json };
       sync_workout: { Args: { p_workout_id: string; p_operation: Json }; Returns: Json };
       start_or_resume_workout: { Args: { p_routine_id?: string | null }; Returns: Json };
       is_active_coach_of: {
