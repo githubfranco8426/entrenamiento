@@ -9,7 +9,7 @@ import { NAV_LINKS } from "@/components/nav-links";
 import { NavigationPending } from "@/components/navigation-pending";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-const PRIMARY_PATHS = ["/dashboard", "/routines", "/program", "/data"];
+const PRIMARY_PATHS = ["/dashboard", "/routines", "/correctivos", "/data"];
 const primaryLinks = PRIMARY_PATHS.map((href) => NAV_LINKS.find((link) => link.href === href)!);
 const moreLinks = NAV_LINKS.filter((link) => !PRIMARY_PATHS.includes(link.href));
 const itemClass = "relative flex min-w-0 min-h-14 flex-col items-center justify-center gap-1 px-1 text-[11px] font-medium text-sidebar-foreground/70 transition-colors";
@@ -28,7 +28,7 @@ export function AppMobileNav() {
           return (
             <Link key={link.href} href={link.href} aria-current={active ? "page" : undefined} className={cn(itemClass, active && "bg-muted text-sidebar-primary")}>
               <Icon className="size-5 shrink-0" />
-              <span className="truncate max-w-full">{link.label}</span>
+              <span className="truncate max-w-full">{link.href === "/correctivos" ? "Correctivos" : link.label}</span>
               <NavigationPending />
             </Link>
           );

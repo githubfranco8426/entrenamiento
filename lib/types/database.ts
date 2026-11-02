@@ -6,6 +6,8 @@
 // reales para que el resto del código (autoregulation, ai/*) tenga tipado fino.
 // Si se corre supabase gen types de nuevo, hay que reaplicar esas uniones.
 
+import type { CorrectiveTables, CorrectiveFunctions } from "@/lib/correctives/database";
+
 export type SetType = "normal" | "warmup" | "dropset" | "failure" | "myo";
 export type MesocyclePhase = "acumulacion" | "intensificacion" | "deload" | "realizacion";
 export type CycleStatus = "planned" | "active" | "completed";
@@ -22,7 +24,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 
 export interface Database {
   public: {
-    Tables: {
+    Tables: CorrectiveTables & {
       exercises: {
         Row: {
           id: string;
@@ -451,7 +453,7 @@ export interface Database {
       };
     };
     Views: Record<string, never>;
-    Functions: {
+    Functions: CorrectiveFunctions & {
       sync_workout: { Args: { p_workout_id: string; p_operation: Json }; Returns: Json };
       start_or_resume_workout: { Args: { p_routine_id?: string | null }; Returns: Json };
       is_active_coach_of: {
